@@ -51,13 +51,19 @@ export default class extends Controller {
 
   async #addLayers() {
     const empty = { type: "FeatureCollection", features: [] }
+    // Two views of the districts: outlines for the lines and fill, centroids for the labels.
+    this.map.addSource("district-outlines", { type: "geojson", data: empty })
     this.map.addSource("districts", { type: "geojson", data: empty })
     this.map.addSource("units", { type: "geojson", data: empty })
     this.map.addSource("buildings", { type: "geojson", data: empty })
     this.map.addSource("mine", { type: "geojson", data: empty })
     this.map.addSource("selected", { type: "geojson", data: empty })
-    this.map.addLayer({ id: "districts-line", type: "line", source: "districts", paint: { "line-color": "#022EAC", "line-width": 1.5 } })
+    // Halos sit under the lines and show only on imagery, where a bare line vanishes.
+    this.map.addLayer({ id: "districts-fill", type: "fill", source: "district-outlines", maxzoom: 13, paint: { "fill-color": "#022EAC", "fill-opacity": 0.05 } })
+    this.map.addLayer({ id: "districts-halo", type: "line", source: "district-outlines", layout: { visibility: "none" }, paint: { "line-color": "#0B0C11", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 5, 14, 8], "line-opacity": 0.55, "line-blur": 1 } })
+    this.map.addLayer({ id: "districts-line", type: "line", source: "district-outlines", paint: { "line-color": "#022EAC", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.2, 14, 2.2], "line-opacity": 0.9 } })
     this.map.addLayer({ id: "district-labels", type: "symbol", source: "districts", maxzoom: 13.5, layout: { "text-field": ["get", "name"], "text-font": ["Open Sans Bold"], "text-size": 13 }, paint: { "text-color": "#022EAC", "text-halo-color": "#fff", "text-halo-width": 1.6 } })
+    this.map.addLayer({ id: "units-halo", type: "line", source: "units", minzoom: 15, layout: { visibility: "none" }, paint: { "line-color": "#0B0C11", "line-width": 4.5, "line-opacity": 0.5, "line-blur": 1 } })
     this.map.addLayer({ id: "units-line", type: "line", source: "units", minzoom: 15, paint: { "line-color": "#022EAC", "line-width": 1, "line-opacity": 0.55 } })
     this.map.addLayer({ id: "selected-fill", type: "fill", source: "selected", paint: { "fill-color": "#FBA30C", "fill-opacity": 0.3 } })
     this.map.addLayer({ id: "selected-line", type: "line", source: "selected", paint: { "line-color": "#022EAC", "line-width": 3 } })
@@ -73,11 +79,10 @@ export default class extends Controller {
     this.#loadMine()
     const districts = await this.#get("/districts")
     if (districts) {
-      districts.features.forEach(f => { f.geometry = { type: "Point", coordinates: [f.properties.centroid_lng, f.properties.centroid_lat] }; f.properties.name = `${f.properties.name || ""}\n${f.properties.code}` })
-      this.map.getSource("districts").setData(districts)
+      this.map.getSource("district-outlines").setData(districts)
+      const labels = { type: "FeatureCollection", features: districts.features.map(f => ({ type: "Feature", geometry: { type: "Point", coordinates: [f.properties.centroid_lng, f.properties.centroid_lat] }, properties: { ...f.properties, name: `${f.properties.name || ""}\n${f.properties.code}` } })) }
+      this.map.getSource("districts").setData(labels)
     }
-    const outlines = await this.#get("/districts")
-    if (outlines) this.map.addLayer({ id: "districts-fill", type: "fill", source: { type: "geojson", data: outlines }, maxzoom: 13, paint: { "fill-color": "#022EAC", "fill-opacity": 0.05 } }, "districts-line")
     this.#refresh()
     try { this.satellite = localStorage.getItem("pano.basemap") === "sat" } catch { this.satellite = false }
     if (this.satellite) this.#applyBasemap()
@@ -132,11 +137,13 @@ export default class extends Controller {
     // Lines that read on a grey map vanish on imagery: switch them to white there.
     const line = sat ? "#FFFFFF" : "#022EAC"
     for (const id of ["districts-line", "units-line"]) if (this.map.getLayer(id)) this.map.setPaintProperty(id, "line-color", line)
-    // Faint lines read on the grey map and vanish over roofs: stronger on imagery.
+    // Faint lines read on the grey map and vanish over roofs: heavier, with a dark halo, on imagery.
     if (this.map.getLayer("units-line")) {
-      this.map.setPaintProperty("units-line", "line-opacity", sat ? 0.9 : 0.55)
-      this.map.setPaintProperty("units-line", "line-width", sat ? 1.6 : 1)
+      this.map.setPaintProperty("units-line", "line-opacity", sat ? 0.95 : 0.55)
+      this.map.setPaintProperty("units-line", "line-width", sat ? 2 : 1)
     }
+    if (this.map.getLayer("districts-line")) this.map.setPaintProperty("districts-line", "line-width", sat ? ["interpolate", ["linear"], ["zoom"], 10, 2.4, 14, 3.5] : ["interpolate", ["linear"], ["zoom"], 10, 1.2, 14, 2.2])
+    for (const id of ["districts-halo", "units-halo"]) if (this.map.getLayer(id)) this.map.setLayoutProperty(id, "visibility", sat ? "visible" : "none")
     if (this.map.getLayer("district-labels")) this.map.setPaintProperty("district-labels", "text-color", sat ? "#FFFFFF" : "#022EAC")
     if (this.map.getLayer("district-labels")) this.map.setPaintProperty("district-labels", "text-halo-color", sat ? "rgba(0,0,0,.6)" : "#fff")
     this.#paintBasemapButton()
