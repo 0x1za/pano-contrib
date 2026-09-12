@@ -79,9 +79,10 @@ class Changeset < ApplicationRecord
         @contributions = contributions.sort_by(&:reviewed_at)
       end
 
+      # Names are a maintainer's input through the seeds now; the section
+      # stays in the contract, empty, so zoning's reader is unchanged.
       def names
-        @contributions.select(&:kind_name_place?)
-          .to_h { |c| [ c.target_code, c.name ] }
+        {}
       end
 
       def buildings

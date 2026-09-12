@@ -24,12 +24,11 @@ class ContributionTest < ActiveSupport::TestCase
     assert_includes c.errors[:kind], "cannot target a district"
   end
 
-  test "a name has to be short and present" do
+  test "naming a place is retired" do
     c = Contribution.new(kind: :name_place, target_kind: :unit, target_code: "LS1 1CC",
-                         gazetteer_version: gazetteer_versions(:current), device: devices(:phone), payload: { "name" => "x" * 81 })
+                         gazetteer_version: gazetteer_versions(:current), device: devices(:phone), payload: { "name" => "Sable Road side" })
     assert_not c.valid?
-    c.payload = { "name" => "Sable Road side" }
-    assert c.valid?, c.errors.full_messages.to_sentence
+    assert_includes c.errors[:kind], "is no longer accepted"
   end
 
   test "a confirmation may name the home inside a shared building, normalised" do

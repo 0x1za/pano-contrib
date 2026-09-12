@@ -31,12 +31,12 @@ class ContributionReviewTest < ActiveSupport::TestCase
     assert_equal(-1, users(:one).reload.reputation)
   end
 
-  test "accepting a later name supersedes the earlier accepted one" do
-    earlier = Contribution.create!(kind: :name_place, target_kind: :unit, target_code: "LS1 1CC", payload: { "name" => "Sable" },
+  test "accepting a later report on the same building supersedes the earlier accepted one" do
+    earlier = Contribution.create!(kind: :dispute_address, target_kind: :building, building: buildings(:two), payload: { "reason" => "wrong_number" },
                                    gazetteer_version: gazetteer_versions(:current), device: devices(:other))
     earlier.accept!(by: users(:moderator))
     accepted_version = earlier.reload.version
-    later = Contribution.create!(kind: :name_place, target_kind: :unit, target_code: "LS1 1CC", payload: { "name" => "Sable Road side" },
+    later = Contribution.create!(kind: :dispute_address, target_kind: :building, building: buildings(:two), payload: { "reason" => "two_buildings" },
                                  gazetteer_version: gazetteer_versions(:current), device: devices(:phone))
     later.accept!(by: users(:moderator))
     assert earlier.reload.status_superseded?

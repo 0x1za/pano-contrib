@@ -14,10 +14,11 @@ class Contribution < ApplicationRecord
 
   DISPUTE_REASONS = %w[not_here not_a_building two_buildings wrong_number].freeze
 
-  # Kinds no longer accepted from contributors. District names are a
-  # curated input to the map (the seeds), not something to vote on from a
-  # phone; existing rows stay for the record.
-  RETIRED_KINDS = %w[dispute_district].freeze
+  # Kinds no longer accepted from contributors. Names are a curated input
+  # to the map (the seeds, fed from OpenStreetMap), not something to vote
+  # on from a phone: districts already have them, and units are our own
+  # cuts that nobody has a name for. Existing rows stay for the record.
+  RETIRED_KINDS = %w[dispute_district name_place].freeze
 
   # A home inside a shared building, as residents label it: `3`, `B`,
   # `BLOCK C 12`. Free text, normalised like the Rust core's SubAddress:

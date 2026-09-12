@@ -30,7 +30,6 @@
   <% end %>
   <div class="actions">
     <%= link_to t(".confirm", name: @place.display_name), new_contribution_path(kind: "confirm_district", target_code: @place.code), class: "btn" if @place.tier_district? %>
-    <%= link_to t(".name"), new_contribution_path(kind: "name_place", target_code: @place.code), class: "btn btn--ghost" unless @place.tier_district? %>
     <%= link_to t(".back_to_map"), root_path, class: "btn btn--ghost" %>
   </div>
 </main>

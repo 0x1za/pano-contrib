@@ -135,7 +135,6 @@ en:
     street: { name: "Street", how: "Ten things you said are on the map: about a street's worth." }
     block: { name: "Block", how: "Fifty accepted: a block of about forty buildings, and change." }
     compound: { name: "Compound", how: "Two hundred accepted. Whole compounds have been fixed by you." }
-    signwriter: { name: "Signwriter", how: "A name you gave a place is the one the map now uses." }
     sharp_eyes: { name: "Sharp eyes", how: "You reported a wrong address and a moderator agreed." }
     caretaker: { name: "Caretaker", how: "You described a shared building: how many homes and how they are labelled." }
     courier: { name: "Courier", how: "Five delivery notes accepted: a gate colour, a landmark, who to ask for." }
@@ -181,7 +180,6 @@ en:
       do_dispute_html: "<b>Report a problem.</b> No building here, two buildings counted as one, the wrong number. A moderator looks at every report."
       do_homes_html: "<b>Describe a shared building.</b> A block of flats or a plot with several houses: how many homes, how they are labelled, and which is yours. Each gets its own address, like LS33 9XX 17/3."
       do_district_html: "<b>Confirm a district.</b> Is this Kabulonga? District names are set with the map itself, so here you only say yes."
-      do_name_html: "<b>Name a place.</b> Units and sectors only have codes today. Five people agreeing, with nobody disagreeing, names one."
       do_note_html: "<b>Leave a delivery note.</b> A gate colour, a landmark, who to ask for. Nothing private."
       review_h: "How it becomes official"
       review_p: "Contributions are pending until enough people agree with them or a moderator accepts them. Accepted ones are gathered into the next cut of the map, and the map records what changed. You never need an account, but one lets you vote from any phone as one person."
@@ -202,11 +200,10 @@ en:
       recent: "Recent contributions"
       pending: "Waiting for votes"
       confirm: "Yes, this is %{name}"
-      name: "It is called…"
       back_to_map: "Back to the map"
   contributions:
     no_gazetteer: "No gazetteer has been imported yet, so there is nothing to contribute to."
-    retired: "District names are set with the map, not voted on here. Tap a building instead: which home is yours, and how many are inside."
+    retired: "Place names are set with the map, not voted on here. Tap a building instead: which home is yours, and how many are inside."
     kinds:
       confirm_address: "I live here"
       dispute_address: "Something is wrong with this address"

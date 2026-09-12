@@ -36,7 +36,7 @@ class ContributionsControllerTest < ActionDispatch::IntegrationTest
       post contributions_path, params: { contribution: { kind: "dispute_district", target_code: "LS1", payload: { name: "Ibex Hill" } } }
     end
     assert_redirected_to root_path
-    assert_match(/District names are set with the map/, flash[:alert])
+    assert_match(/Place names are set with the map/, flash[:alert])
   end
 
   test "a district can still be confirmed" do
@@ -83,8 +83,8 @@ class ContributionsControllerTest < ActionDispatch::IntegrationTest
     get new_contribution_path(kind: "confirm_district", target_code: "LS1")
     assert_redirected_to contribution_path(first), "the form itself sends a repeat to what was said"
 
-    assert_difference -> { Contribution.count }, 1 do
-      post contributions_path, params: { contribution: { kind: "name_place", target_code: "LS1 1CC", payload: { name: "Sable Road side" } } }
+    assert_difference -> { Contribution.count }, 1, "a different kind about the same place is a different question" do
+      post contributions_path, params: { contribution: { kind: "confirm_address", building_id: buildings(:two).ingest_id } }
     end
     first.reject!(by: users(:moderator))
     assert_difference -> { Contribution.count }, 1 do

@@ -206,7 +206,7 @@ export default class extends Controller {
     this.#fitTo(body.boundary)
     this.at = { lng: body.centroid.lng, lat: body.centroid.lat }
     if (body.tier === "district") this.#showDistrict({ code: body.code, name: name || "" })
-    else this.#card(body.tier === "sector" ? "Sector" : "Unit", body.code, body.tier === "unit" ? [ this.#link("Name this place", `/contributions/new?kind=name_place&target_code=${encodeURIComponent(body.code)}`, "btn btn--ghost") ] : [], body.tier === "unit" ? "Tap a building for its address." : `${body.units?.length || 0} units`)
+    else this.#card(body.tier === "sector" ? "Sector" : "Unit", body.code, [], body.tier === "unit" ? "Tap a building for its address." : `${body.units?.length || 0} units`)
   }
 
   #fitTo(geometry) {
@@ -307,9 +307,7 @@ export default class extends Controller {
   }
 
   #showUnit(body) {
-    this.#card("Unit", body.code, [
-      this.#link("Name this place", `/contributions/new?kind=name_place&target_code=${encodeURIComponent(body.code)}`, "btn btn--ghost")
-    ], "Tap a building for its address.")
+    this.#card("Unit", body.code, [], "Tap a building for its address.")
   }
 
   #showDistrict(p) {

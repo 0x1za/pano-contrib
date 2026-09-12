@@ -10,9 +10,9 @@ class ChangesetsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "a moderator drafts, exports and downloads a changeset" do
-    named = Contribution.create!(kind: :name_place, target_kind: :unit, target_code: "LS1 1CC", payload: { "name" => "Ibex Hill" },
-                                 gazetteer_version: gazetteer_versions(:current), device: devices(:other))
-    named.accept!(by: users(:moderator))
+    home = Contribution.create!(kind: :confirm_address, target_kind: :building, building: buildings(:one), payload: { "sub" => "3" },
+                                gazetteer_version: gazetteer_versions(:current), device: devices(:other))
+    home.accept!(by: users(:moderator))
     sign_in_as(users(:moderator))
     get changesets_path
     assert_response :success
@@ -25,14 +25,15 @@ class ChangesetsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to changeset_path(changeset)
     follow_redirect!
     assert_select "h1", changeset.id.first(8)
-    assert_select ".list li span", /Ibex Hill/
+    assert_select ".list li strong", "LS1 1CC 1/3"
 
     patch export_changeset_path(changeset)
     assert changeset.reload.status_exported?
     get download_changeset_path(changeset)
     assert_response :success
     body = response.parsed_body
-    assert_equal "Ibex Hill", body["names"]["LS1 1CC"]
+    assert_equal({ "LS1 1CC 1" => [ "3" ] }, body["sub_addresses"])
+    assert_equal({}, body["names"])
     assert_equal gazetteer_versions(:current).sha256, body["generated_by"]
   end
 end

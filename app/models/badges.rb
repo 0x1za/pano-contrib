@@ -14,7 +14,6 @@ module Badges
     Badge.new(key: :block, threshold: 50, stat: :accepted),
     Badge.new(key: :compound, threshold: 200, stat: :accepted),
     # The marks: one for each thing the map needs people for.
-    Badge.new(key: :signwriter, threshold: 1, stat: :names_accepted),
     Badge.new(key: :sharp_eyes, threshold: 1, stat: :reports_accepted),
     Badge.new(key: :caretaker, threshold: 1, stat: :blocks_accepted),
     Badge.new(key: :courier, threshold: 5, stat: :notes_accepted),
@@ -50,7 +49,6 @@ module Badges
     {
       accepted: accepted.count,
       homes_confirmed: accepted.where(kind: :confirm_address).count,
-      names_accepted: accepted.where(kind: :name_place).count,
       reports_accepted: accepted.where(kind: %i[dispute_address missing_building boundary_move]).count,
       blocks_accepted: accepted.where(kind: :multi_occupancy).count,
       notes_accepted: accepted.where(kind: :delivery_note).count,

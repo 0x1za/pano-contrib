@@ -2,7 +2,7 @@
 
 Where people improve [pano](https://github.com/0x1za/pano), the addressing
 scheme for Lusaka: say you live somewhere, describe the homes inside a
-shared building, dispute an address, name a unit, leave a
+shared building, dispute an address, leave a
 delivery note. Contributions are reviewed, batched into changesets, and
 consumed by the next gazetteer cut. The plan is in the pano repo under
 `docs/contributions-plan.md`; this is phase 1.

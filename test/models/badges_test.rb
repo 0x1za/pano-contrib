@@ -8,7 +8,6 @@ class BadgesTest < ActiveSupport::TestCase
     [ { accepted: 10 }, %i[street], "ten acceptances are a street" ],
     [ { accepted: 50 }, %i[street block], "fifty keep the street and add the block" ],
     [ { accepted: 200 }, %i[street block compound], "two hundred: a compound" ],
-    [ { names_accepted: 1 }, %i[signwriter], "a name the map now uses" ],
     [ { reports_accepted: 1 }, %i[sharp_eyes], "a confirmed report" ],
     [ { blocks_accepted: 1 }, %i[caretaker], "a described shared building" ],
     [ { notes_accepted: 4 }, [], "four notes are not five" ],
@@ -25,7 +24,6 @@ class BadgesTest < ActiveSupport::TestCase
     assert_equal :street, badge.key
     assert_equal 2, distance
     assert_nil Badges.next({ accepted: 200, votes: 100, notes_accepted: 5, districts: 5, weeks: 4 }), "every chased badge earned; the one-off marks are not chased"
-    assert_nil Badges.next({ accepted: 200, votes: 100, notes_accepted: 5, districts: 5, weeks: 4, names_accepted: 0 })
   end
 
   test "a person's stats come from their contributions" do
