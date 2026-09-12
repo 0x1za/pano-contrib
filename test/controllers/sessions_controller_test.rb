@@ -22,7 +22,7 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     post session_path, params: { email_address: @user.email_address, password: "password" }
     assert_equal @user, mine.reload.user
     get contributions_path
-    assert_select ".list li", 1
+    assert_select ".entry", 1
   end
 
   test "create with invalid credentials" do

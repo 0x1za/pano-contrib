@@ -235,3 +235,35 @@ a:hover { text-decoration: underline; text-underline-offset: .2em; }
   .site-header nav a, .site-header nav form { flex: none; }
 }
 .badges + .hint { margin: 1.4rem 0 2.4rem; }
+
+/* Contribution entries: cards with a status stripe, built for the panel. */
+.entries { list-style: none; margin: 1.6rem 0 0; padding: 0; display: grid; gap: .8rem; }
+.entry > a { display: flex; align-items: flex-start; justify-content: space-between; gap: 1.2rem; padding: 1.2rem 1.4rem 1.2rem 1.6rem; border: 1px solid var(--hairline); border-left: 4px solid var(--amber); border-radius: var(--radius); color: var(--ink); background: var(--paper); }
+.entry > a:hover { text-decoration: none; border-color: var(--accent); border-left-color: var(--amber); }
+.entry.is-accepted > a { border-left-color: #0F7A32; }
+.entry.is-rejected > a { border-left-color: #C8102E; }
+.entry.is-superseded > a { border-left-color: #8A8F98; }
+.entry-main { display: flex; flex-direction: column; gap: .2rem; min-width: 0; }
+.entry-label { color: var(--accent); font-size: 1.8rem; font-weight: 900; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.entry-kind { color: var(--subtle); font-size: 1.3rem; }
+.entry-side { display: flex; flex-direction: column; align-items: flex-end; gap: .4rem; flex: none; }
+.entry-when { color: var(--subtle); font-size: 1.1rem; white-space: nowrap; }
+.pill { display: inline-block; padding: .25rem .7rem; border-radius: 999px; font-size: 1.05rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink); background: rgba(251, 163, 12, .2); }
+.pill.is-accepted { background: rgba(15, 122, 50, .14); color: #0F7A32; }
+.pill.is-rejected { background: rgba(200, 16, 46, .12); color: #C8102E; }
+.pill.is-superseded { background: rgba(var(--ink-rgb), .08); color: var(--subtle); }
+.entry-head { position: relative; padding-bottom: 1.2rem; margin-bottom: .4rem; }
+.entry-head .display { margin-bottom: .8rem; }
+.entry-head .pill { font-size: 1.15rem; }
+
+/* Badges, compact: earned chips and a disclosure for the rest. */
+.chips { display: flex; flex-wrap: wrap; gap: .6rem; margin: .4rem 0 0; }
+.chip { display: inline-flex; align-items: center; gap: .5rem; padding: .4rem .9rem .4rem .6rem; border: 1px solid var(--amber); border-radius: 999px; background: rgba(251, 163, 12, .1); color: var(--ink); font-size: 1.3rem; font-weight: 700; }
+.chip svg { width: 1.8rem; height: 1.8rem; color: var(--accent); }
+.badges-all { margin: 1rem 0 1.6rem; }
+.badges-all summary { cursor: pointer; color: var(--accent); font-size: 1.3rem; font-weight: 700; list-style: none; }
+.badges-all summary::-webkit-details-marker { display: none; }
+.badges-all summary::before { content: "▸ "; }
+.badges-all[open] summary::before { content: "▾ "; }
+.badges-all .badges { margin-top: 1rem; }
+.modal .badges-all .badges { grid-template-columns: 1fr; }

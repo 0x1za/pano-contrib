@@ -10,18 +10,23 @@
       <div><dt><%= t(".votes_cast") %></dt><dd><%= stats[:votes] %></dd></div>
       <% if current_user %><div><dt><%= t(".reputation") %></dt><dd><%= current_user.reputation %></dd></div><% end %>
     </dl>
-    <%= render "shared/badges", stats: stats %>
+    <%= render "shared/badges", stats: stats, compact: true %>
   <% end %>
   <% if @contributions.empty? %>
     <p class="sub"><%= t(".empty") %></p>
   <% else %>
-    <ul class="list">
+    <ul class="entries">
       <% @contributions.each do |c| %>
-        <li>
+        <li class="entry is-<%= c.status %>">
           <%= link_to contribution_path(c) do %>
-            <strong><%= c.target_label %></strong>
-            <span><%= t("contributions.kinds.#{c.kind}") %></span>
-            <span class="status is-<%= c.status %>"><%= t("contributions.statuses.#{c.status}") %></span>
+            <span class="entry-main">
+              <strong class="entry-label"><%= c.target_label %></strong>
+              <span class="entry-kind"><%= t("contributions.kinds.#{c.kind}") %><% if c.name || c.reason %> · <%= c.name || t("contributions.reasons.#{c.reason}") %><% end %></span>
+            </span>
+            <span class="entry-side">
+              <span class="pill is-<%= c.status %>"><%= t("contributions.statuses.#{c.status}") %></span>
+              <time class="entry-when" datetime="<%= c.created_at.iso8601 %>"><%= time_ago_in_words(c.created_at) %> <%= t(".ago") %></time>
+            </span>
           <% end %>
         </li>
       <% end %>

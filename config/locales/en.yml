@@ -128,6 +128,10 @@ en:
       welcome_more: "How it works"
       bemba: "pano is Bemba for here."
   badges:
+    none_yet: "No badges yet. Your first accepted contribution earns one."
+    all:
+      one: "All badges"
+      other: "All %{count} badges"
     next:
       one: "One more and you are a %{name}."
       other: "%{count} more to %{name}."
@@ -266,5 +270,6 @@ en:
       accepted: "Accepted"
       votes_cast: "Votes cast"
       reputation: "Reputation"
+      ago: "ago"
       empty: "Nothing yet. Tap a building on the map to start."
       back_to_map: "Back to the map"

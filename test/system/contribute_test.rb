@@ -10,8 +10,9 @@ class ContributeTest < ApplicationSystemTestCase
     assert_selector ".display", text: "LS1 1CC 2"
 
     click_link "All my contributions"
-    assert_selector ".list li", count: 1
-    assert_selector ".list strong", text: "LS1 1CC 2"
+    assert_selector ".entry", count: 1
+    assert_selector ".entry-label", text: "LS1 1CC 2"
+    assert_selector ".entry .pill", text: /pending/i
   end
 
   test "disputing an address asks for a reason before it saves" do

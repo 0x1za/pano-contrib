@@ -50,8 +50,9 @@ class ContributionsControllerTest < ActionDispatch::IntegrationTest
     post contributions_path, params: { contribution: { kind: "confirm_address", building_id: buildings(:two).ingest_id } }
     get contributions_path
     assert_response :success
-    assert_select ".list li", 1
-    assert_select ".list strong", "LS1 1CC 2"
+    assert_select ".entry", 1
+    assert_select ".entry-label", "LS1 1CC 2"
+    assert_select ".entry .pill.is-pending", "Pending"
   end
 
   test "another device cannot open my contribution" do

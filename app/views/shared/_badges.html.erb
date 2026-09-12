@@ -1,14 +1,35 @@
-<%# stats: the counters; shows earned badges and the next one to reach. %>
+<%# stats: the counters. Compact: earned badges as chips, the full set behind a disclosure.
+    Full: the whole grid. Both show the next counting badge to reach. %>
 <% earned = Badges.earned(stats) %>
-<ul class="badges">
-  <% Badges::ALL.each do |b| %>
-    <li class="badge <%= earned.include?(b) ? "is-earned" : "" %>" title="<%= t("badges.#{b.key}.how") %>">
-      <span class="badge-mark"><%= render "shared/badge_icon", key: b.key %></span>
-      <span class="badge-name"><%= t("badges.#{b.key}.name") %></span>
-      <span class="badge-how"><%= t("badges.#{b.key}.how") %></span>
-    </li>
+<% compact = local_assigns.fetch(:compact, false) %>
+<% if compact %>
+  <div class="chips">
+    <% if earned.empty? %>
+      <p class="hint"><%= t("badges.none_yet") %></p>
+    <% else %>
+      <% earned.each do |b| %>
+        <span class="chip" title="<%= t("badges.#{b.key}.how") %>"><%= render "shared/badge_icon", key: b.key %><%= t("badges.#{b.key}.name") %></span>
+      <% end %>
+    <% end %>
+  </div>
+  <% if (nxt = Badges.next(stats)) %>
+    <p class="hint"><%= t("badges.next", count: nxt[1], name: t("badges.#{nxt[0].key}.name")) %> <%= t("badges.#{nxt[0].key}.how") %></p>
   <% end %>
-</ul>
-<% if (nxt = Badges.next(stats)) %>
-  <p class="hint"><%= t("badges.next", count: nxt[1], name: t("badges.#{nxt[0].key}.name")) %> <%= t("badges.#{nxt[0].key}.how") %></p>
+  <details class="badges-all">
+    <summary><%= t("badges.all", count: Badges::ALL.size) %></summary>
+    <%= render "shared/badges", stats: stats %>
+  </details>
+<% else %>
+  <ul class="badges">
+    <% Badges::ALL.each do |b| %>
+      <li class="badge <%= earned.include?(b) ? "is-earned" : "" %>" title="<%= t("badges.#{b.key}.how") %>">
+        <span class="badge-mark"><%= render "shared/badge_icon", key: b.key %></span>
+        <span class="badge-name"><%= t("badges.#{b.key}.name") %></span>
+        <span class="badge-how"><%= t("badges.#{b.key}.how") %></span>
+      </li>
+    <% end %>
+  </ul>
+  <% if (nxt = Badges.next(stats)) && !compact %>
+    <p class="hint"><%= t("badges.next", count: nxt[1], name: t("badges.#{nxt[0].key}.name")) %> <%= t("badges.#{nxt[0].key}.how") %></p>
+  <% end %>
 <% end %>
