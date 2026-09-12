@@ -73,6 +73,18 @@ class ContributionTest < ActiveSupport::TestCase
     assert dup.valid?, "a rejected contribution may be said again"
   end
 
+  test "a new I-live-here replaces the person's previous one" do
+    first = contributions(:phone_confirms_one)
+    second = Contribution.new(kind: :confirm_address, target_kind: :building, building: buildings(:two),
+                              gazetteer_version: gazetteer_versions(:current), device: devices(:phone))
+    assert_equal first, second.previous_home
+    second.save!
+    assert first.reload.status_superseded?
+    assert_equal "Moved to LS1 1CC 2", first.review_note
+    assert second.status_pending?
+    assert_nil second.reload.previous_home
+  end
+
   test "the same mutation from the same device is not stored twice" do
     existing = contributions(:phone_confirms_one)
     dup = Contribution.new(kind: :confirm_address, target_kind: :building, building: buildings(:one),

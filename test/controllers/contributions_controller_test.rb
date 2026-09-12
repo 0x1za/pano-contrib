@@ -82,4 +82,15 @@ class ContributionsControllerTest < ActionDispatch::IntegrationTest
       post contributions_path, params: { contribution: { kind: "confirm_district", target_code: "LS1" } }
     end
   end
+
+  test "the form warns that a second I-live-here moves the home, and sending it does" do
+    post contributions_path, params: { contribution: { kind: "confirm_address", building_id: buildings(:one).ingest_id } }
+    first = Contribution.recent.first
+    get new_contribution_path(kind: "confirm_address", building_id: buildings(:two).ingest_id)
+    assert_response :success
+    assert_select ".flash.is-warning", /You said you live at LS1 1CC 1/
+    post contributions_path, params: { contribution: { kind: "confirm_address", building_id: buildings(:two).ingest_id } }
+    assert first.reload.status_superseded?
+    assert_equal 1, Contribution.kept.open.kind_confirm_address.where(device: first.device).count
+  end
 end

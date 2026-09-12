@@ -47,6 +47,9 @@
       <%= text_field_tag "contribution[payload][labelling]", @contribution.payload["labelling"], id: "contribution_payload_labelling", maxlength: 80, class: "field", placeholder: t(".labelling_placeholder") %>
       <p class="hint"><%= t(".multi_hint") %></p>
     <% when "confirm_address" %>
+      <% if (previous = @contribution.previous_home) %>
+        <div class="flash is-inline is-warning"><%= t(".moving_from_html", label: previous.target_label) %></div>
+      <% end %>
       <p class="sub"><%= t(".confirm_hint") %></p>
       <label class="label" for="contribution_payload_sub"><%= t(".sub") %></label>
       <%= text_field_tag "contribution[payload][sub]", @contribution.sub_address, id: "contribution_payload_sub", maxlength: 12, class: "field field--short", placeholder: t(".sub_placeholder"), autocomplete: "off" %>

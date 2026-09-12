@@ -193,6 +193,7 @@ en:
       note: "What should a courier know?"
       note_hint: "A gate colour, a landmark, who to ask for. Nothing private."
       confirm_hint: "Nobody has this address yet; it exists once people say they live there. Saying so tells us this dot is a home, that it sits where you would put it, and who to ask when it changes. Three people make it real; five accept a district."
+      moving_from_html: "You said you live at <b>%{label}</b>. Sending this moves your home here and that one stops counting. One person, one home."
       sub: "Which home is yours, if the building is shared?"
       sub_placeholder: "e.g. 3, B, Block C 12"
       sub_hint: "Leave it empty for one home. Write the flat, door or room the way people already say it; your address becomes LS33 9XX 17/3."

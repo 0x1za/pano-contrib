@@ -76,6 +76,7 @@ a:hover { text-decoration: underline; text-underline-offset: .2em; }
 .flash.is-error { background: var(--error); }
 .flash.is-inline { position: static; transform: none; max-width: none; margin: 0 0 1.6rem; }
 .flash.is-success { background: #0F7A32; }
+.flash.is-warning { background: var(--amber); color: var(--ink); }
 
 /* Map page */
 .map { position: fixed; inset: 0; background: #F4F4F4; }

@@ -46,6 +46,7 @@ class Contribution < ApplicationRecord
 
   before_validation { self.mutation_id ||= SecureRandom.uuid }
   before_validation :normalise_sub_address
+  after_create :move_home
 
   validates :mutation_id, presence: true, uniqueness: { scope: :device_id }
   validate :one_open_contribution_per_target
@@ -62,6 +63,15 @@ class Contribution < ApplicationRecord
     scope = kept.open.where(kind: kind, building_id: building_id, target_code: target_code)
     by_device = scope.where(device: device)
     user ? by_device.or(scope.where(user: user)).first : by_device.first
+  end
+
+  # Where this device or account last said it lives, if somewhere else:
+  # one person lives in one place, so a new "I live here" replaces it.
+  def previous_home
+    return nil unless kind_confirm_address?
+    scope = Contribution.kept.open.kind_confirm_address.where.not(building_id: building_id)
+    by_device = scope.where(device: device)
+    (user ? by_device.or(scope.where(user: user)) : by_device).where.not(id: id).recent.first
   end
 
   def duplicate_of
@@ -144,6 +154,14 @@ class Contribution < ApplicationRecord
   end
 
   private
+    # A new "I live here" supersedes the last one from the same person: they
+    # moved, or tapped the wrong roof. Either way the earlier claim stops
+    # counting, and the review note says where it went.
+    def move_home
+      previous = previous_home or return
+      previous.update!(status: :superseded, review_note: "Moved to #{target_label}", reviewed_at: Time.current)
+    end
+
     def one_open_contribution_per_target
       return if device.nil? || kind.blank?
       errors.add(:base, "You have already said this about #{target_label}") if duplicate_of
