@@ -224,9 +224,9 @@ export default class extends Controller {
     const b = body.building
     this.#card("Address", b.address, [
       this.#link("I live here", `/contributions/new?kind=confirm_address&building_id=${b.id}`, "btn"),
+      this.#link("Several homes in this building", `/contributions/new?kind=multi_occupancy&building_id=${b.id}`, "btn"),
       this.#link("Something is wrong", `/contributions/new?kind=dispute_address&building_id=${b.id}`, "btn btn--ghost"),
-      this.#link("Add a delivery note", `/contributions/new?kind=delivery_note&building_id=${b.id}`, "btn btn--ghost"),
-      this.#link("Several homes here", `/contributions/new?kind=multi_occupancy&building_id=${b.id}`, "btn btn--ghost")
+      this.#link("Add a delivery note", `/contributions/new?kind=delivery_note&building_id=${b.id}`, "btn btn--ghost")
     ], b.subs?.length ? `Unit ${body.code} · ${body.parents.district} · homes: ${b.subs.join(", ")}` : `Unit ${body.code} · ${body.parents.district}`)
   }
 
@@ -239,9 +239,8 @@ export default class extends Controller {
   #showDistrict(p) {
     const name = (p.name || "").split("\n")[0] || p.code
     this.#card("District", name, [
-      this.#link(`Yes, this is ${name}`, `/contributions/new?kind=confirm_district&target_code=${encodeURIComponent(p.code)}`, "btn"),
-      this.#link("No, it is called…", `/contributions/new?kind=dispute_district&target_code=${encodeURIComponent(p.code)}`, "btn btn--ghost")
-    ], p.code)
+      this.#link(`Yes, this is ${name}`, `/contributions/new?kind=confirm_district&target_code=${encodeURIComponent(p.code)}`, "btn")
+    ], `${p.code} · Zoom in to tap a building`)
   }
 
   #showMine(p) {

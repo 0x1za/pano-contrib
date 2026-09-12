@@ -14,7 +14,8 @@ class ChangesetTest < ActiveSupport::TestCase
 
   test "a draft gathers accepted, unassigned contributions and builds the export" do
     accept(:name_place, target_kind: :unit, target_code: "LS1 1CC", payload: { "name" => "Sable Road side" })
-    accept(:dispute_district, target_kind: :district, target_code: "LS1", payload: { "name" => "Ibex Hill" })
+    accept(:name_place, target_kind: :sector, target_code: "LS1 1", payload: { "name" => "Kabulonga West" })
+    contributions(:other_disputes_district).accept!(by: @mod)
     accept(:confirm_address, target_kind: :building, building: buildings(:one), payload: { "sub" => "3" })
     accept(:confirm_address, target_kind: :building, building: buildings(:one), payload: { "sub" => "B" })
     accept(:confirm_address, target_kind: :building, building: buildings(:two))
@@ -23,12 +24,12 @@ class ChangesetTest < ActiveSupport::TestCase
 
     draft = Changeset.draft!(@version)
     assert draft.status_draft?
-    assert_equal 6, draft.summary["contributions"]
+    assert_equal 7, draft.summary["contributions"]
     assert_nil pending.reload.changeset, "pending contributions are not gathered"
     changes = draft.export
     assert_equal "0.1.0", changes["gazetteer"]
     assert_equal @version.sha256, changes["generated_by"]
-    assert_equal({ "LS1 1CC" => "Sable Road side", "LS1" => "Ibex Hill" }, changes["names"])
+    assert_equal({ "LS1 1CC" => "Sable Road side", "LS1 1" => "Kabulonga West" }, changes["names"], "a retired district rename is kept for the record but never exported")
     assert_equal({ "LS1 1CC 1" => %w[3 B] }, changes["sub_addresses"], "homes accumulate per delivery point; a plain confirmation adds none")
     assert_equal [ { "lat" => -15.41, "lng" => 28.34, "note" => "new house" } ], changes["buildings"]
     assert_equal [], changes["disputed_cells"]
@@ -44,7 +45,7 @@ class ChangesetTest < ActiveSupport::TestCase
   end
 
   test "export freezes the file and applied stores the churn" do
-    accept(:dispute_district, target_kind: :district, target_code: "LS1", payload: { "name" => "Ibex Hill" })
+    accept(:name_place, target_kind: :unit, target_code: "LS1 1CC", payload: { "name" => "Ibex Hill" })
     changeset = Changeset.draft!(@version)
     changeset.export!(by: @mod)
     assert changeset.status_exported?
@@ -52,7 +53,7 @@ class ChangesetTest < ActiveSupport::TestCase
     frozen = changeset.to_json_file
     assert_includes frozen, "\"Ibex Hill\""
 
-    accept(:dispute_district, target_kind: :district, target_code: "LS1", payload: { "name" => "Later name" })
+    accept(:name_place, target_kind: :unit, target_code: "LS1 1CC", payload: { "name" => "Later name" })
     assert_equal frozen, changeset.reload.to_json_file, "an exported changeset no longer changes"
     assert_raises(ArgumentError) { changeset.export!(by: @mod) }
 

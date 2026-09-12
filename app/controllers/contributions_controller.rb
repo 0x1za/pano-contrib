@@ -29,6 +29,7 @@ class ContributionsController < ApplicationController
   # ingest id (the id the pano API and buildings.csv use) for address
   # kinds, a place code for the rest.
   def new
+    return redirect_to root_path, alert: t("contributions.retired") if Contribution::RETIRED_KINDS.include?(params[:kind])
     @contribution = build_contribution(kind: params[:kind], building_id: params[:building_id], target_code: params[:target_code])
     if (existing = @contribution.duplicate_of)
       return redirect_to contribution_path(existing), notice: t("contributions.create.already", label: existing.target_label)
@@ -38,6 +39,7 @@ class ContributionsController < ApplicationController
   end
 
   def create
+    return redirect_to root_path, alert: t("contributions.retired") if Contribution::RETIRED_KINDS.include?(contribution_params[:kind])
     @contribution = build_contribution(**contribution_params.to_h.symbolize_keys)
     if (existing = @contribution.duplicate_of)
       redirect_to contribution_path(existing), notice: t(".already", label: existing.target_label)

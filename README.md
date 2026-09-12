@@ -1,7 +1,8 @@
 # pano-contrib
 
 Where people improve [pano](https://github.com/0x1za/pano), the addressing
-scheme for Lusaka: confirm or dispute an address, name a place, leave a
+scheme for Lusaka: say you live somewhere, describe the homes inside a
+shared building, dispute an address, name a unit, leave a
 delivery note. Contributions are reviewed, batched into changesets, and
 consumed by the next gazetteer cut. The plan is in the pano repo under
 `docs/contributions-plan.md`; this is phase 1.
@@ -19,7 +20,8 @@ PANO_API_URL=http://127.0.0.1:8080 bin/dev         # the pano API must be runnin
 
 Then open http://localhost:3000. Tap a building: "This is my address",
 "Something is wrong", or a delivery note. Tap a district at city zoom to
-confirm or rename it. Nobody has to sign in; each browser gets a device
+confirm it. District names are set with the map, not voted on
+here. Nobody has to sign in; each browser gets a device
 token in a signed cookie and rack-attack throttles by device and by
 address.
 

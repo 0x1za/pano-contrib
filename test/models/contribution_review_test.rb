@@ -32,10 +32,11 @@ class ContributionReviewTest < ActiveSupport::TestCase
   end
 
   test "accepting a later name supersedes the earlier accepted one" do
-    earlier = contributions(:other_disputes_district)
+    earlier = Contribution.create!(kind: :name_place, target_kind: :unit, target_code: "LS1 1CC", payload: { "name" => "Sable" },
+                                   gazetteer_version: gazetteer_versions(:current), device: devices(:other))
     earlier.accept!(by: users(:moderator))
     accepted_version = earlier.reload.version
-    later = Contribution.create!(kind: :dispute_district, target_kind: :district, target_code: "LS1", payload: { "name" => "Kabulonga East" },
+    later = Contribution.create!(kind: :name_place, target_kind: :unit, target_code: "LS1 1CC", payload: { "name" => "Sable Road side" },
                                  gazetteer_version: gazetteer_versions(:current), device: devices(:phone))
     later.accept!(by: users(:moderator))
     assert earlier.reload.status_superseded?

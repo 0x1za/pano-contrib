@@ -14,6 +14,11 @@ class Contribution < ApplicationRecord
 
   DISPUTE_REASONS = %w[not_here not_a_building two_buildings wrong_number].freeze
 
+  # Kinds no longer accepted from contributors. District names are a
+  # curated input to the map (the seeds), not something to vote on from a
+  # phone; existing rows stay for the record.
+  RETIRED_KINDS = %w[dispute_district].freeze
+
   # A home inside a shared building, as residents label it: `3`, `B`,
   # `BLOCK C 12`. Free text, normalised like the Rust core's SubAddress:
   # upper case, single spaces, 1 to 12 letters, digits and spaces.
@@ -50,6 +55,7 @@ class Contribution < ApplicationRecord
 
   validates :mutation_id, presence: true, uniqueness: { scope: :device_id }
   validate :one_open_contribution_per_target
+  validates :kind, exclusion: { in: RETIRED_KINDS, message: "is no longer accepted" }, on: :create
   validates :building, presence: true, if: :target_kind_building?
   validates :target_code, presence: true, unless: -> { target_kind_building? || target_kind_point? }
   validates :lat, :lng, presence: true, if: :target_kind_point?

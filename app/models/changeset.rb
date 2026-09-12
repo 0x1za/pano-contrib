@@ -80,7 +80,7 @@ class Changeset < ApplicationRecord
       end
 
       def names
-        @contributions.select { |c| c.kind_dispute_district? || c.kind_name_place? }
+        @contributions.select(&:kind_name_place?)
           .to_h { |c| [ c.target_code, c.name ] }
       end
 

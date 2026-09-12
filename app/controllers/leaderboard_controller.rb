@@ -13,7 +13,7 @@ class LeaderboardController < ApplicationController
       contributions: Contribution.kept.count,
       accepted: Contribution.kept.status_accepted.count,
       contributors: Contribution.kept.distinct.count(:device_id),
-      districts_named: Contribution.kept.status_accepted.where(kind: :dispute_district).distinct.count(:target_code)
+      homes_described: Contribution.kept.status_accepted.where(kind: :multi_occupancy).distinct.count(:building_id)
     }
     @mine = current_user&.stats || Current.device&.stats
   end

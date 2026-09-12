@@ -85,6 +85,15 @@ class ContributionTest < ActiveSupport::TestCase
     assert_nil second.reload.previous_home
   end
 
+  test "a retired kind cannot be created but an old row can still be reviewed" do
+    c = Contribution.new(kind: :dispute_district, target_kind: :district, target_code: "LS1", payload: { "name" => "Ibex Hill" },
+                         gazetteer_version: gazetteer_versions(:current), device: devices(:phone))
+    assert_not c.valid?
+    assert_includes c.errors[:kind], "is no longer accepted"
+    contributions(:other_disputes_district).reject!(by: users(:moderator))
+    assert contributions(:other_disputes_district).reload.status_rejected?
+  end
+
   test "the same mutation from the same device is not stored twice" do
     existing = contributions(:phone_confirms_one)
     dup = Contribution.new(kind: :confirm_address, target_kind: :building, building: buildings(:one),

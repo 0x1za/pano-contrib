@@ -29,12 +29,21 @@ class ContributionsControllerTest < ActionDispatch::IntegrationTest
     assert_select ".flash.is-error", /needs a reason/
   end
 
-  test "a district can be disputed with a name" do
-    assert_difference -> { Contribution.count }, 1 do
+  test "district renaming is retired: the form and the submit both bounce" do
+    get new_contribution_path(kind: "dispute_district", target_code: "LS1")
+    assert_redirected_to root_path
+    assert_no_difference -> { Contribution.count } do
       post contributions_path, params: { contribution: { kind: "dispute_district", target_code: "LS1", payload: { name: "Ibex Hill" } } }
     end
+    assert_redirected_to root_path
+    assert_match(/District names are set with the map/, flash[:alert])
+  end
+
+  test "a district can still be confirmed" do
+    assert_difference -> { Contribution.count }, 1 do
+      post contributions_path, params: { contribution: { kind: "confirm_district", target_code: "LS1" } }
+    end
     assert_equal "district", Contribution.recent.first.target_kind
-    assert_equal "Ibex Hill", Contribution.recent.first.name
   end
 
   test "my contributions lists only this device's" do
@@ -75,7 +84,7 @@ class ContributionsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to contribution_path(first), "the form itself sends a repeat to what was said"
 
     assert_difference -> { Contribution.count }, 1 do
-      post contributions_path, params: { contribution: { kind: "dispute_district", target_code: "LS1", payload: { name: "Ibex Hill" } } }
+      post contributions_path, params: { contribution: { kind: "name_place", target_code: "LS1 1CC", payload: { name: "Sable Road side" } } }
     end
     first.reject!(by: users(:moderator))
     assert_difference -> { Contribution.count }, 1 do

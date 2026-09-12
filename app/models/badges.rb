@@ -50,7 +50,7 @@ module Badges
     {
       accepted: accepted.count,
       homes_confirmed: accepted.where(kind: :confirm_address).count,
-      names_accepted: accepted.where(kind: %i[name_place dispute_district]).count,
+      names_accepted: accepted.where(kind: :name_place).count,
       reports_accepted: accepted.where(kind: %i[dispute_address missing_building boundary_move]).count,
       blocks_accepted: accepted.where(kind: :multi_occupancy).count,
       notes_accepted: accepted.where(kind: :delivery_note).count,

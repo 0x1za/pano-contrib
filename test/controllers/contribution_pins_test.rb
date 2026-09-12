@@ -3,7 +3,7 @@ require "test_helper"
 class ContributionPinsTest < ActionDispatch::IntegrationTest
   test "pins are this device's contributions with a point and a status" do
     post contributions_path, params: { contribution: { kind: "confirm_address", building_id: buildings(:two).ingest_id } }
-    post contributions_path, params: { contribution: { kind: "dispute_district", target_code: "LS1", payload: { name: "Ibex Hill" } } }
+    post contributions_path, params: { contribution: { kind: "confirm_district", target_code: "LS1" } }
 
     get pins_contributions_path, headers: { "Accept" => "application/json" }
     assert_response :success
@@ -19,7 +19,8 @@ class ContributionPinsTest < ActionDispatch::IntegrationTest
 
     district = by_label["LS1"]
     assert_equal [ places(:kabulonga).centroid_lng, places(:kabulonga).centroid_lat ], district["geometry"]["coordinates"], "a district pin sits on its centroid"
-    assert_equal "Ibex Hill", district["properties"]["name"]
+    assert_nil district["properties"]["name"]
+    assert_equal "confirm_district", district["properties"]["kind"]
   end
 
   test "a contribution on an unknown place has no pin" do
