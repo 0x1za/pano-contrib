@@ -6,7 +6,7 @@ const maplibregl = window.maplibregl
 // questions. A tap on a building or the ground calls /encode and fills the
 // card; the card's buttons are plain links into the contribution forms.
 export default class extends Controller {
-  static targets = ["canvas", "welcome"]
+  static targets = ["canvas", "welcome", "query", "suggest"]
   static values = {
     api: String,
     center: { type: Array, default: [28.32, -15.42] },
@@ -28,6 +28,8 @@ export default class extends Controller {
     this.#maybeWelcome()
     this.onModalClosed = () => this.#loadMine()
     document.addEventListener("pano:modal-closed", this.onModalClosed)
+    this.onDocClick = (e) => { if (!e.target.closest(".bar .search") && !e.target.closest(".suggest")) this.#closeSuggest() }
+    document.addEventListener("click", this.onDocClick)
     this.map.on("load", () => this.#addLayers())
     this.map.on("moveend", () => this.#refresh())
     this.map.on("click", (e) => this.#click(e))
@@ -35,6 +37,7 @@ export default class extends Controller {
 
   disconnect() {
     document.removeEventListener("pano:modal-closed", this.onModalClosed)
+    document.removeEventListener("click", this.onDocClick)
     this.map?.remove()
   }
 
@@ -68,6 +71,95 @@ export default class extends Controller {
     const outlines = await this.#get("/districts")
     if (outlines) this.map.addLayer({ id: "districts-fill", type: "fill", source: { type: "geojson", data: outlines }, maxzoom: 13, paint: { "fill-color": "#022EAC", "fill-opacity": 0.05 } }, "districts-line")
     this.#refresh()
+  }
+
+  // ---------- search: the pano API's /search suggests, /resolve lands ----------
+  suggest() {
+    const q = this.queryTarget.value.trim()
+    clearTimeout(this.suggestTimer)
+    if (!q) return this.#closeSuggest()
+    const seq = (this.suggestSeq = (this.suggestSeq || 0) + 1)
+    this.suggestTimer = setTimeout(async () => {
+      const list = await this.#get(`/search?q=${encodeURIComponent(q)}`)
+      if (seq !== this.suggestSeq || !list) return
+      this.suggestions = list
+      this.active = list.length ? 0 : -1
+      this.#renderSuggest()
+    }, 120)
+  }
+
+  searchKey(e) {
+    if (!this.suggestions?.length) return
+    if (e.key === "ArrowDown") { this.active = (this.active + 1) % this.suggestions.length; this.#renderSuggest(); e.preventDefault() }
+    else if (e.key === "ArrowUp") { this.active = (this.active - 1 + this.suggestions.length) % this.suggestions.length; this.#renderSuggest(); e.preventDefault() }
+    else if (e.key === "Escape") this.#closeSuggest()
+  }
+
+  pick(e) {
+    const li = e.target.closest("li[data-i]")
+    if (li) this.#choose(this.suggestions[Number(li.dataset.i)])
+  }
+
+  search(e) {
+    e.preventDefault()
+    if (this.suggestions?.length && this.active >= 0) return this.#choose(this.suggestions[this.active])
+    const q = this.queryTarget.value.trim()
+    if (q) this.#resolve(q)
+  }
+
+  #choose(x) {
+    if (!x) return
+    this.#closeSuggest()
+    this.queryTarget.value = x.name && x.tier === "district" ? x.name : x.code
+    this.queryTarget.blur()
+    this.#resolve(x.code, x.name)
+  }
+
+  async #resolve(text, name) {
+    const res = await fetch(`${this.apiValue}/resolve/${encodeURIComponent(text)}`)
+    const body = await res.json().catch(() => ({}))
+    if (!res.ok) { this.at = this.map.getCenter(); return this.#showMessage(body.detail || `${text} is not in this gazetteer.`) }
+    if (body.building) {
+      const b = body.building
+      this.at = { lng: b.lng, lat: b.lat }
+      this.map.easeTo({ center: [b.lng, b.lat], zoom: 18, duration: 600 })
+      this.map.once("moveend", () => this.#showBuilding({ building: b, code: body.units?.[0] || body.code.split(" ").slice(0, 2).join(" "), parents: body.parents }))
+      return
+    }
+    this.map.getSource("selected").setData({ type: "Feature", geometry: body.boundary, properties: {} })
+    this.#fitTo(body.boundary)
+    this.at = { lng: body.centroid.lng, lat: body.centroid.lat }
+    if (body.tier === "district") this.#showDistrict({ code: body.code, name: name || "" })
+    else this.#card(body.tier === "sector" ? "Sector" : "Unit", body.code, body.tier === "unit" ? [ this.#link("Name this place", `/contributions/new?kind=name_place&target_code=${encodeURIComponent(body.code)}`, "btn btn--ghost") ] : [], body.tier === "unit" ? "Tap a building for its address." : `${body.units?.length || 0} units`)
+  }
+
+  #fitTo(geometry) {
+    const b = [Infinity, Infinity, -Infinity, -Infinity]
+    const visit = (c) => { if (typeof c[0] === "number") { b[0] = Math.min(b[0], c[0]); b[1] = Math.min(b[1], c[1]); b[2] = Math.max(b[2], c[0]); b[3] = Math.max(b[3], c[1]) } else c.forEach(visit) }
+    visit(geometry.coordinates)
+    if (isFinite(b[0])) this.map.fitBounds([[b[0], b[1]], [b[2], b[3]]], { padding: 60, duration: 600, maxZoom: 17 })
+  }
+
+  #renderSuggest() {
+    const ul = this.suggestTarget
+    if (!this.suggestions?.length) return this.#closeSuggest()
+    ul.replaceChildren(...this.suggestions.map((x, i) => {
+      const li = document.createElement("li"); li.role = "option"; li.dataset.i = i; li.className = i === this.active ? "is-active" : ""
+      const left = document.createElement("span")
+      const name = document.createElement("span"); name.className = "name"; name.textContent = x.name || x.code
+      left.append(name)
+      if (x.name) { const code = document.createElement("span"); code.className = "code"; code.textContent = x.code; left.append(code) }
+      const tier = document.createElement("span"); tier.className = "tier"; tier.textContent = x.tier
+      li.append(left, tier); return li
+    }))
+    ul.classList.add("is-open")
+    this.queryTarget.setAttribute("aria-expanded", "true")
+  }
+
+  #closeSuggest() {
+    this.suggestions = []; this.active = -1
+    this.suggestTarget.classList.remove("is-open")
+    this.queryTarget.setAttribute("aria-expanded", "false")
   }
 
   // The welcome card explains the site until dismissed once; the About

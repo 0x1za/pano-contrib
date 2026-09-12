@@ -9,6 +9,8 @@ class MapControllerTest < ActionDispatch::IntegrationTest
     assert_select "dialog.welcome", /Help check Lusaka's new addresses/
     assert_select "dialog.welcome a[href='/about']", "How it works"
     assert_select "dialog.modal turbo-frame#modal", 1, "the frame contribution forms load into"
+    assert_select ".bar form.search input[name=q][data-map-target=query]", 1
+    assert_select "ul.suggest[data-map-target=suggest]", 1
     assert_select ".bar nav a[href='/about']", "About"
     assert_select ".bar nav button.help"
   end
