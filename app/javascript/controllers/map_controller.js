@@ -132,6 +132,11 @@ export default class extends Controller {
     // Lines that read on a grey map vanish on imagery: switch them to white there.
     const line = sat ? "#FFFFFF" : "#022EAC"
     for (const id of ["districts-line", "units-line"]) if (this.map.getLayer(id)) this.map.setPaintProperty(id, "line-color", line)
+    // Faint lines read on the grey map and vanish over roofs: stronger on imagery.
+    if (this.map.getLayer("units-line")) {
+      this.map.setPaintProperty("units-line", "line-opacity", sat ? 0.9 : 0.55)
+      this.map.setPaintProperty("units-line", "line-width", sat ? 1.6 : 1)
+    }
     if (this.map.getLayer("district-labels")) this.map.setPaintProperty("district-labels", "text-color", sat ? "#FFFFFF" : "#022EAC")
     if (this.map.getLayer("district-labels")) this.map.setPaintProperty("district-labels", "text-halo-color", sat ? "rgba(0,0,0,.6)" : "#fff")
     this.#paintBasemapButton()
