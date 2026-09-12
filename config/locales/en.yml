@@ -127,7 +127,9 @@ en:
       welcome_more: "How it works"
       bemba: "pano is Bemba for here."
   badges:
-    next: "%{count} more %{what} to %{name}."
+    next:
+      one: "One more and you are a %{name}."
+      other: "%{count} more to %{name}."
     stats:
       accepted: "accepted contributions"
       names_accepted: "accepted names"
