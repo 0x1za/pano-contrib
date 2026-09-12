@@ -32,7 +32,7 @@ gem "flipper-ui"
 gem "csv"
 # json 3.0 made JSON.parse options keyword-only; ActiveSupport 8.1 still passes a hash, which breaks
 # schema dumps of json columns. Drop once Rails passes keywords.
-gem "json", "~> 2.21"
+gem "json", "~> 3.0"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
