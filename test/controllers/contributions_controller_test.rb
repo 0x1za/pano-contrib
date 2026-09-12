@@ -61,4 +61,25 @@ class ContributionsControllerTest < ActionDispatch::IntegrationTest
     get new_contribution_path(kind: "confirm_address")
     assert_redirected_to root_path
   end
+
+  test "saying the same thing about the same place twice keeps the first" do
+    post contributions_path, params: { contribution: { kind: "confirm_district", target_code: "LS1" } }
+    first = Contribution.recent.first
+    assert_no_difference -> { Contribution.count } do
+      post contributions_path, params: { contribution: { kind: "confirm_district", target_code: "LS1" } }
+    end
+    assert_redirected_to contribution_path(first)
+    assert_equal "You have already said this about LS1. Here it is.", flash[:notice]
+
+    get new_contribution_path(kind: "confirm_district", target_code: "LS1")
+    assert_redirected_to contribution_path(first), "the form itself sends a repeat to what was said"
+
+    assert_difference -> { Contribution.count }, 1 do
+      post contributions_path, params: { contribution: { kind: "dispute_district", target_code: "LS1", payload: { name: "Ibex Hill" } } }
+    end
+    first.reject!(by: users(:moderator))
+    assert_difference -> { Contribution.count }, 1 do
+      post contributions_path, params: { contribution: { kind: "confirm_district", target_code: "LS1" } }
+    end
+  end
 end

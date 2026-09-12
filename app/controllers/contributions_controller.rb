@@ -30,13 +30,18 @@ class ContributionsController < ApplicationController
   # kinds, a place code for the rest.
   def new
     @contribution = build_contribution(kind: params[:kind], building_id: params[:building_id], target_code: params[:target_code])
+    if (existing = @contribution.duplicate_of)
+      return redirect_to contribution_path(existing), notice: t("contributions.create.already", label: existing.target_label)
+    end
     @building = @contribution.building
     @place = @contribution.target_code && current_gazetteer.places.find_by(code: @contribution.target_code)
   end
 
   def create
     @contribution = build_contribution(**contribution_params.to_h.symbolize_keys)
-    if @contribution.save
+    if (existing = @contribution.duplicate_of)
+      redirect_to contribution_path(existing), notice: t(".already", label: existing.target_label)
+    elsif @contribution.save
       redirect_to contribution_path(@contribution), notice: t(".saved")
     else
       @building = @contribution.building

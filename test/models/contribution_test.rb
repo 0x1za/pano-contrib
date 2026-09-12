@@ -3,7 +3,7 @@ require "test_helper"
 class ContributionTest < ActiveSupport::TestCase
   test "a confirmation needs a building and nothing else" do
     c = Contribution.new(kind: :confirm_address, target_kind: :building, building: buildings(:one),
-                         gazetteer_version: gazetteer_versions(:current), device: devices(:phone))
+                         gazetteer_version: gazetteer_versions(:current), device: devices(:other))
     assert c.valid?, c.errors.full_messages.to_sentence
     assert c.mutation_id.present?, "a mutation id is minted when the client sends none"
   end
@@ -34,7 +34,7 @@ class ContributionTest < ActiveSupport::TestCase
 
   test "a confirmation may name the home inside a shared building, normalised" do
     c = Contribution.new(kind: :confirm_address, target_kind: :building, building: buildings(:one),
-                         gazetteer_version: gazetteer_versions(:current), device: devices(:phone), payload: { "sub" => " flat  3b " })
+                         gazetteer_version: gazetteer_versions(:current), device: devices(:other), payload: { "sub" => " flat  3b " })
     assert c.valid?, c.errors.full_messages.to_sentence
     assert_equal "FLAT 3B", c.sub_address
     assert_equal "LS1 1CC 1/FLAT 3B", c.target_label
@@ -54,6 +54,23 @@ class ContributionTest < ActiveSupport::TestCase
     c.payload = { "homes" => "20", "labelling" => "Numbers 1 to 20" }
     assert c.valid?, c.errors.full_messages.to_sentence
     assert c.moderator_only?
+  end
+
+  test "one open contribution per device, kind and place; an account counts across its devices" do
+    existing = contributions(:phone_confirms_one)
+    dup = Contribution.new(kind: :confirm_address, target_kind: :building, building: buildings(:one),
+                           gazetteer_version: gazetteer_versions(:current), device: devices(:phone))
+    assert_not dup.valid?
+    assert_includes dup.errors[:base], "You have already said this about LS1 1CC 1"
+    assert_equal existing, dup.duplicate_of
+
+    existing.update!(user: users(:one))
+    other_phone = Contribution.new(kind: :confirm_address, target_kind: :building, building: buildings(:one),
+                                   gazetteer_version: gazetteer_versions(:current), device: Device.issue!.first, user: users(:one))
+    assert_not other_phone.valid?, "the same account from another phone is the same voice"
+
+    existing.reject!(by: users(:moderator))
+    assert dup.valid?, "a rejected contribution may be said again"
   end
 
   test "the same mutation from the same device is not stored twice" do

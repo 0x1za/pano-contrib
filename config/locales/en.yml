@@ -205,6 +205,7 @@ en:
       cancel: "Cancel"
     create:
       saved: "Thank you. Your contribution is in."
+      already: "You have already said this about %{label}. Here it is."
     show:
       title: "Your contribution"
       sub: "Home"

@@ -36,6 +36,8 @@ class Contribution < ApplicationRecord
   enum :target_kind, { district: 0, sector: 1, unit: 2, building: 3, point: 4 }, prefix: true
 
   scope :recent, -> { order(created_at: :desc) }
+  # Still counts: pending or accepted. A rejected or superseded one may be said again.
+  scope :open, -> { where(status: %i[pending accepted]) }
   # The review queue: moderator-only kinds first, then by age, oldest first.
   scope :queue, -> {
     first = sanitize_sql_array([ "CASE WHEN kind IN (?) THEN 0 ELSE 1 END", kinds.values_at(*Acceptance::MODERATOR_ONLY) ])
@@ -46,6 +48,7 @@ class Contribution < ApplicationRecord
   before_validation :normalise_sub_address
 
   validates :mutation_id, presence: true, uniqueness: { scope: :device_id }
+  validate :one_open_contribution_per_target
   validates :building, presence: true, if: :target_kind_building?
   validates :target_code, presence: true, unless: -> { target_kind_building? || target_kind_point? }
   validates :lat, :lng, presence: true, if: :target_kind_point?
@@ -53,6 +56,19 @@ class Contribution < ApplicationRecord
   validate :payload_matches_kind
 
   # `LS33 9XX 17`, or `LS33 9XX 17/3` when the contributor named their home.
+  # The open contribution this device or account already made of the same
+  # kind about the same place, if any. One voice, one say per question.
+  def self.existing_for(device:, user:, kind:, building_id: nil, target_code: nil)
+    scope = kept.open.where(kind: kind, building_id: building_id, target_code: target_code)
+    by_device = scope.where(device: device)
+    user ? by_device.or(scope.where(user: user)).first : by_device.first
+  end
+
+  def duplicate_of
+    Contribution.existing_for(device: device, user: user, kind: kind, building_id: building_id, target_code: target_code)
+      &.then { |c| c.id == id ? nil : c }
+  end
+
   def target_label
     return target_code unless building
     sub_address.present? ? "#{building.address}/#{sub_address}" : building.address
@@ -128,6 +144,11 @@ class Contribution < ApplicationRecord
   end
 
   private
+    def one_open_contribution_per_target
+      return if device.nil? || kind.blank?
+      errors.add(:base, "You have already said this about #{target_label}") if duplicate_of
+    end
+
     def normalise_sub_address
       return unless payload.is_a?(Hash) && payload.key?("sub")
       normalised = payload["sub"].to_s.split.join(" ").upcase
