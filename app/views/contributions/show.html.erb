@@ -12,6 +12,8 @@
     <% if @contribution.name %><div><dt><%= t(".name") %></dt><dd><%= @contribution.name %></dd></div><% end %>
     <% if @contribution.reason %><div><dt><%= t(".reason") %></dt><dd><%= t("contributions.reasons.#{@contribution.reason}") %></dd></div><% end %>
     <% if @contribution.payload["note"] %><div><dt><%= t(".note") %></dt><dd><%= @contribution.payload["note"] %></dd></div><% end %>
+    <% if @contribution.sub_address %><div><dt><%= t(".sub") %></dt><dd><%= @contribution.sub_address %></dd></div><% end %>
+    <% if @contribution.homes %><div><dt><%= t(".homes") %></dt><dd><%= @contribution.homes %><% if @contribution.payload["labelling"].present? %> · <%= @contribution.payload["labelling"] %><% end %></dd></div><% end %>
     <div><dt><%= t(".sent") %></dt><dd><%= l(@contribution.created_at, format: :short) %></dd></div>
     <div><dt><%= t(".gazetteer") %></dt><dd>v<%= @contribution.gazetteer_version.version %></dd></div>
     <% if @contribution.review_note.present? %><div><dt><%= t(".review_note") %></dt><dd><%= @contribution.review_note %></dd></div><% end %>

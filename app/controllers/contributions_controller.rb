@@ -58,7 +58,7 @@ class ContributionsController < ApplicationController
     end
 
     def contribution_params
-      params.expect(contribution: [ :kind, :building_id, :target_code, :lat, :lng, :mutation_id, payload: [ :reason, :name, :note ] ])
+      params.expect(contribution: [ :kind, :building_id, :target_code, :lat, :lng, :mutation_id, payload: [ :reason, :name, :note, :sub, :homes, :labelling ] ])
     end
 
     def build_contribution(kind:, building_id: nil, target_code: nil, lat: nil, lng: nil, mutation_id: nil, payload: {})

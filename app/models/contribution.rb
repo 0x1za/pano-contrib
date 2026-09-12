@@ -5,7 +5,7 @@ class Contribution < ApplicationRecord
   include SoftDeletable
 
   KINDS_BY_TARGET = {
-    building: %w[confirm_address dispute_address delivery_note],
+    building: %w[confirm_address dispute_address delivery_note multi_occupancy],
     district: %w[confirm_district dispute_district],
     sector: %w[name_place],
     unit: %w[name_place],
@@ -13,6 +13,12 @@ class Contribution < ApplicationRecord
   }.freeze
 
   DISPUTE_REASONS = %w[not_here not_a_building two_buildings wrong_number].freeze
+
+  # A home inside a shared building, as residents label it: `3`, `B`,
+  # `BLOCK C 12`. Free text, normalised like the Rust core's SubAddress:
+  # upper case, single spaces, 1 to 12 letters, digits and spaces.
+  SUB_ADDRESS = /\A[A-Z0-9][A-Z0-9 ]{0,11}\z/
+  MAX_HOMES = 500
 
   belongs_to :gazetteer_version
   belongs_to :device
@@ -23,7 +29,7 @@ class Contribution < ApplicationRecord
 
   enum :kind, {
     confirm_address: 0, dispute_address: 1, confirm_district: 2, dispute_district: 3,
-    name_place: 4, missing_building: 5, delivery_note: 6, boundary_move: 7
+    name_place: 4, missing_building: 5, delivery_note: 6, boundary_move: 7, multi_occupancy: 8
   }, prefix: true
   enum :status, { pending: 0, accepted: 1, rejected: 2, superseded: 3 }, prefix: true
   enum :target_kind, { district: 0, sector: 1, unit: 2, building: 3, point: 4 }, prefix: true
@@ -36,6 +42,7 @@ class Contribution < ApplicationRecord
   }
 
   before_validation { self.mutation_id ||= SecureRandom.uuid }
+  before_validation :normalise_sub_address
 
   validates :mutation_id, presence: true, uniqueness: { scope: :device_id }
   validates :building, presence: true, if: :target_kind_building?
@@ -44,8 +51,18 @@ class Contribution < ApplicationRecord
   validate :kind_matches_target
   validate :payload_matches_kind
 
+  # `LS33 9XX 17`, or `LS33 9XX 17/3` when the contributor named their home.
   def target_label
-    building ? building.address : target_code
+    return target_code unless building
+    sub_address.present? ? "#{building.address}/#{sub_address}" : building.address
+  end
+
+  def sub_address
+    payload["sub"]
+  end
+
+  def homes
+    payload["homes"]
   end
 
   # `[lng, lat]` for the map: the building, the place's centroid (looked up
@@ -110,6 +127,13 @@ class Contribution < ApplicationRecord
   end
 
   private
+    def normalise_sub_address
+      return unless payload.is_a?(Hash) && payload.key?("sub")
+      normalised = payload["sub"].to_s.split.join(" ").upcase
+      payload["sub"] = normalised.presence
+      payload.delete("sub") if normalised.empty?
+    end
+
     # Naming kinds answer one question per target; the latest accepted
     # answer wins and the earlier ones become superseded. Confirmations
     # and notes stack, so they are left alone.
@@ -133,6 +157,13 @@ class Contribution < ApplicationRecord
         errors.add(:payload, "needs a name") if name.blank? || name.length > 80
       when "delivery_note"
         errors.add(:payload, "needs a note") if payload["note"].blank? || payload["note"].length > 280
+      when "multi_occupancy"
+        homes = payload["homes"].to_i
+        errors.add(:payload, "needs how many homes, from 2 to #{MAX_HOMES}") unless homes.between?(2, MAX_HOMES)
+        errors.add(:payload, "labelling note is too long") if payload["labelling"].to_s.length > 80
+      end
+      if sub_address.present? && !SUB_ADDRESS.match?(sub_address)
+        errors.add(:payload, "home label can only be letters, digits and spaces, up to 12")
       end
     end
 end

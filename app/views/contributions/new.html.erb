@@ -40,6 +40,17 @@
       <label class="label" for="contribution_payload_note"><%= t(".note") %></label>
       <%= text_area_tag "contribution[payload][note]", @contribution.payload["note"], id: "contribution_payload_note", maxlength: 280, rows: 3, autofocus: true, class: "field" %>
       <p class="hint"><%= t(".note_hint") %></p>
+    <% when "multi_occupancy" %>
+      <label class="label" for="contribution_payload_homes"><%= t(".homes") %></label>
+      <%= number_field_tag "contribution[payload][homes]", @contribution.homes, id: "contribution_payload_homes", min: 2, max: Contribution::MAX_HOMES, class: "field", autofocus: true %>
+      <label class="label" for="contribution_payload_labelling"><%= t(".labelling") %></label>
+      <%= text_field_tag "contribution[payload][labelling]", @contribution.payload["labelling"], id: "contribution_payload_labelling", maxlength: 80, class: "field", placeholder: t(".labelling_placeholder") %>
+      <p class="hint"><%= t(".multi_hint") %></p>
+    <% when "confirm_address" %>
+      <p class="sub"><%= t(".confirm_hint") %></p>
+      <label class="label" for="contribution_payload_sub"><%= t(".sub") %></label>
+      <%= text_field_tag "contribution[payload][sub]", @contribution.sub_address, id: "contribution_payload_sub", maxlength: 12, class: "field field--short", placeholder: t(".sub_placeholder"), autocomplete: "off" %>
+      <p class="hint"><%= t(".sub_hint") %></p>
     <% else %>
       <p class="sub"><%= t(".confirm_hint") %></p>
     <% end %>

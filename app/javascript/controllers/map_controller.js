@@ -131,10 +131,11 @@ export default class extends Controller {
   #showBuilding(body) {
     const b = body.building
     this.#card("Address", b.address, [
-      this.#link("This is my address", `/contributions/new?kind=confirm_address&building_id=${b.id}`, "btn"),
+      this.#link("I live here", `/contributions/new?kind=confirm_address&building_id=${b.id}`, "btn"),
       this.#link("Something is wrong", `/contributions/new?kind=dispute_address&building_id=${b.id}`, "btn btn--ghost"),
-      this.#link("Add a delivery note", `/contributions/new?kind=delivery_note&building_id=${b.id}`, "btn btn--ghost")
-    ], `Unit ${body.code} · ${body.parents.district}`)
+      this.#link("Add a delivery note", `/contributions/new?kind=delivery_note&building_id=${b.id}`, "btn btn--ghost"),
+      this.#link("Several homes here", `/contributions/new?kind=multi_occupancy&building_id=${b.id}`, "btn btn--ghost")
+    ], b.subs?.length ? `Unit ${body.code} · ${body.parents.district} · homes: ${b.subs.join(", ")}` : `Unit ${body.code} · ${body.parents.district}`)
   }
 
   #showUnit(body) {

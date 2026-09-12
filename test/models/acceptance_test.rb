@@ -30,9 +30,10 @@ class AcceptanceTest < ActiveSupport::TestCase
     end
   end
 
-  test "moderator-only kinds are the four the plan names" do
-    assert_equal %w[dispute_district dispute_address missing_building boundary_move], Acceptance::MODERATOR_ONLY
+  test "moderator-only kinds are the four the plan names plus multi-occupancy" do
+    assert_equal %w[dispute_district dispute_address missing_building boundary_move multi_occupancy], Acceptance::MODERATOR_ONLY
     assert Acceptance.moderator_only?("boundary_move")
+    assert Acceptance.moderator_only?("multi_occupancy")
     assert_not Acceptance.moderator_only?("confirm_address")
   end
 end

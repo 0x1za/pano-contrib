@@ -13,7 +13,7 @@ class ReviewTest < ApplicationSystemTestCase
     assert_selector ".queue-item.is-current .eyebrow", text: /district is called something else/i
 
     press "j"
-    assert_selector ".queue-item.is-current .eyebrow", text: /this is my address/i
+    assert_selector ".queue-item.is-current .eyebrow", text: /i live here/i
 
     press "a"
     assert_text "Accepted LS1 1CC 1"

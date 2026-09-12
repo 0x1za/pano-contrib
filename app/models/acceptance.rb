@@ -7,7 +7,7 @@ module Acceptance
     def unopposed? = disagree.zero?
   end
 
-  MODERATOR_ONLY = %w[dispute_district dispute_address missing_building boundary_move].freeze
+  MODERATOR_ONLY = %w[dispute_district dispute_address missing_building boundary_move multi_occupancy].freeze
 
   # Returns :accept or :pending.
   def self.decide(kind, tally)

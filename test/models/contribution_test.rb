@@ -32,6 +32,30 @@ class ContributionTest < ActiveSupport::TestCase
     assert c.valid?, c.errors.full_messages.to_sentence
   end
 
+  test "a confirmation may name the home inside a shared building, normalised" do
+    c = Contribution.new(kind: :confirm_address, target_kind: :building, building: buildings(:one),
+                         gazetteer_version: gazetteer_versions(:current), device: devices(:phone), payload: { "sub" => " flat  3b " })
+    assert c.valid?, c.errors.full_messages.to_sentence
+    assert_equal "FLAT 3B", c.sub_address
+    assert_equal "LS1 1CC 1/FLAT 3B", c.target_label
+    c.payload = { "sub" => "3-B" }
+    assert_not c.valid?
+    assert_includes c.errors[:payload], "home label can only be letters, digits and spaces, up to 12"
+    c.payload = { "sub" => "   " }
+    assert c.valid?, "blank means one home"
+    assert_nil c.sub_address
+  end
+
+  test "reporting several homes needs a count between 2 and 500" do
+    c = Contribution.new(kind: :multi_occupancy, target_kind: :building, building: buildings(:one),
+                         gazetteer_version: gazetteer_versions(:current), device: devices(:phone), payload: { "homes" => "1" })
+    assert_not c.valid?
+    assert_includes c.errors[:payload], "needs how many homes, from 2 to 500"
+    c.payload = { "homes" => "20", "labelling" => "Numbers 1 to 20" }
+    assert c.valid?, c.errors.full_messages.to_sentence
+    assert c.moderator_only?
+  end
+
   test "the same mutation from the same device is not stored twice" do
     existing = contributions(:phone_confirms_one)
     dup = Contribution.new(kind: :confirm_address, target_kind: :building, building: buildings(:one),
