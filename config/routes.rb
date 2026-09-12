@@ -14,6 +14,7 @@ Rails.application.routes.draw do
 
   resources :contributions, only: %i[index new create show] do
     resource :vote, only: :create
+    get :pins, on: :collection
   end
   resources :places, only: :show, param: :code, constraints: { code: /[^\/]+/ }
 

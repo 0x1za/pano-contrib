@@ -11,6 +11,20 @@ class ContributionsController < ApplicationController
     @contribution = current_device_contributions.find(params[:id])
   end
 
+  # This visitor's contributions as GeoJSON points for the map, each with
+  # its status, so a person can see what they said and what became of it.
+  def pins
+    contributions = current_device_contributions.recent.includes(:building).limit(500)
+    places = Place.where(gazetteer_version: current_gazetteer, code: contributions.filter_map(&:target_code)).index_by(&:code)
+    features = contributions.filter_map do |c|
+      lnglat = c.coordinates(places)
+      next unless lnglat
+      { type: "Feature", geometry: { type: "Point", coordinates: lnglat },
+        properties: { id: c.id, status: c.status, kind: c.kind, label: c.target_label, name: c.name, url: contribution_path(c) } }
+    end
+    render json: { type: "FeatureCollection", features: features }
+  end
+
   # One form per kind. The target comes from the map: a building's pano
   # ingest id (the id the pano API and buildings.csv use) for address
   # kinds, a place code for the rest.

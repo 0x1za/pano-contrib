@@ -48,6 +48,18 @@ class Contribution < ApplicationRecord
     building ? building.address : target_code
   end
 
+  # `[lng, lat]` for the map: the building, the place's centroid (looked up
+  # in `places`, a code → Place hash), or the point itself.
+  def coordinates(places = {})
+    if building
+      [ building.lng, building.lat ]
+    elsif target_kind_point? && lat && lng
+      [ lng, lat ]
+    elsif (place = places[target_code])
+      [ place.centroid_lng, place.centroid_lat ]
+    end
+  end
+
   def tally
     counts = votes.group(:stance).count
     Acceptance::Tally.new(agree: counts.fetch("agree", 0), disagree: counts.fetch("disagree", 0), age: Time.current - created_at)

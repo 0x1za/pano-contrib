@@ -38,6 +38,7 @@ export default class extends Controller {
     this.map.addSource("districts", { type: "geojson", data: empty })
     this.map.addSource("units", { type: "geojson", data: empty })
     this.map.addSource("buildings", { type: "geojson", data: empty })
+    this.map.addSource("mine", { type: "geojson", data: empty })
     this.map.addSource("selected", { type: "geojson", data: empty })
     this.map.addLayer({ id: "districts-line", type: "line", source: "districts", paint: { "line-color": "#022EAC", "line-width": 1.5 } })
     this.map.addLayer({ id: "district-labels", type: "symbol", source: "districts", maxzoom: 13.5, layout: { "text-field": ["get", "name"], "text-font": ["Open Sans Bold"], "text-size": 13 }, paint: { "text-color": "#022EAC", "text-halo-color": "#fff", "text-halo-width": 1.6 } })
@@ -46,6 +47,14 @@ export default class extends Controller {
     this.map.addLayer({ id: "selected-line", type: "line", source: "selected", paint: { "line-color": "#022EAC", "line-width": 3 } })
     this.map.addLayer({ id: "buildings", type: "circle", source: "buildings", minzoom: 15.5, paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 15.5, 2, 17, 4.5, 19, 8], "circle-color": "#13E19B", "circle-stroke-color": "#022EAC", "circle-stroke-width": 0.7 } })
     this.map.addLayer({ id: "building-numbers", type: "symbol", source: "buildings", minzoom: 17, layout: { "text-field": ["to-string", ["get", "number"]], "text-font": ["Open Sans Bold"], "text-size": 11, "text-offset": [0, -1], "text-anchor": "bottom" }, paint: { "text-color": "#0B0C11", "text-halo-color": "#fff", "text-halo-width": 1.4 } })
+    // The visitor's own contributions, coloured by what became of them.
+    this.map.addLayer({ id: "mine-pins", type: "circle", source: "mine", paint: {
+      "circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 4, 15, 6, 19, 9],
+      "circle-color": ["match", ["get", "status"], "accepted", "#0F7A32", "rejected", "#C8102E", "superseded", "#8A8F98", "#FBA30C"],
+      "circle-stroke-color": "#fff", "circle-stroke-width": 2 } })
+    this.map.on("mouseenter", "mine-pins", () => { this.map.getCanvas().style.cursor = "pointer" })
+    this.map.on("mouseleave", "mine-pins", () => { this.map.getCanvas().style.cursor = "" })
+    this.#loadMine()
     const districts = await this.#get("/districts")
     if (districts) {
       districts.features.forEach(f => { f.geometry = { type: "Point", coordinates: [f.properties.centroid_lng, f.properties.centroid_lat] }; f.properties.name = `${f.properties.name || ""}\n${f.properties.code}` })
@@ -85,7 +94,16 @@ export default class extends Controller {
     }
   }
 
+  async #loadMine() {
+    try {
+      const r = await fetch("/contributions/pins", { headers: { Accept: "application/json" } })
+      if (r.ok) this.map.getSource("mine").setData(await r.json())
+    } catch {}
+  }
+
   async #click(e) {
+    const mine = this.map.queryRenderedFeatures(e.point, { layers: ["mine-pins"] })
+    if (mine.length) return this.#showMine(mine[0].properties)
     const hit = this.map.queryRenderedFeatures(e.point, { layers: ["buildings"] })
     const p = hit.length ? { lng: hit[0].geometry.coordinates[0], lat: hit[0].geometry.coordinates[1] } : e.lngLat
     if (this.map.getZoom() < 13 && !hit.length) {
@@ -120,6 +138,12 @@ export default class extends Controller {
       this.#link(`Yes, this is ${name}`, `/contributions/new?kind=confirm_district&target_code=${encodeURIComponent(p.code)}`, "btn"),
       this.#link("No, it is called…", `/contributions/new?kind=dispute_district&target_code=${encodeURIComponent(p.code)}`, "btn btn--ghost")
     ], p.code)
+  }
+
+  #showMine(p) {
+    const status = { pending: "Pending", accepted: "Accepted", rejected: "Rejected", superseded: "Superseded" }[p.status] || p.status
+    const kind = p.kind.replaceAll("_", " ")
+    this.#card(`Your contribution · ${status}`, p.label, [ this.#link("See it", p.url, "btn") ], p.name ? `${kind}: ${p.name}` : kind)
   }
 
   #showMessage(text) { this.#card("", "", [], text) }
