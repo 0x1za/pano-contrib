@@ -58,6 +58,14 @@ aspect diff -- gazetteer/v0.1.0 gazetteer/v0.2.0 --json > churn.json
 and back here `bin/rails "pano:applied[CHANGESET_ID,0.2.0,churn.json]"`
 stores the churn against the changeset, which its page then shows.
 
+## Leaderboard and badges
+
+`/leaderboard` shows who is fixing the map: this week by acceptances,
+all time by reputation, and the totals. Only accounts with a display name
+are listed; everyone counts in the totals. Badges are computed from what a
+person had accepted, in one pure module with a table test, and appear on
+"My contributions". Nothing earned changes what anyone may do.
+
 To make the first admin: `bin/rails runner 'User.find_by!(email_address: "you@example.com").role_admin!'`.
 
 ## Contract with pano

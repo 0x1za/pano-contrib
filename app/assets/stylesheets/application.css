@@ -184,3 +184,23 @@ a:hover { text-decoration: underline; text-underline-offset: .2em; }
   .queue-item { border-top: 1px solid var(--hairline); }
 }
 .field--short { max-width: 20rem; }
+
+/* Leaderboard and badges */
+.facts--row { display: flex; flex-wrap: wrap; gap: 0 3.2rem; margin: 0 0 1.6rem; max-width: none; }
+.facts--row div { flex-direction: column; align-items: flex-start; gap: 0; border: 0; padding: .6rem 0; }
+.facts--row dd { font-size: 2.6rem; font-weight: 900; color: var(--accent); text-align: left; }
+.boards { display: grid; gap: 2.4rem 4rem; margin: 1.6rem 0; }
+@media (min-width: 880px) { .boards { grid-template-columns: 1fr 1fr; } }
+.board { list-style: none; margin: 0; padding: 0; counter-reset: rank; }
+.board li { display: flex; align-items: baseline; gap: 1rem; padding: .8rem 0; border-top: 1px solid var(--hairline); counter-increment: rank; }
+.board li::before { content: counter(rank); flex: 0 0 2.4rem; color: var(--subtle); font-variant-numeric: tabular-nums; }
+.board .who { flex: 1; font-weight: 700; }
+.board .marks { margin-left: .6rem; color: var(--amber); font-weight: 900; letter-spacing: .1em; }
+.board .score { font-variant-numeric: tabular-nums; color: var(--accent); font-weight: 700; }
+.badges { list-style: none; margin: 0; padding: 0; display: grid; gap: .8rem; grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); }
+.badge { display: grid; grid-template-columns: 3.2rem 1fr; grid-template-rows: auto auto; column-gap: .8rem; padding: .8rem 1rem; border: 1px solid var(--hairline); border-radius: var(--radius); color: var(--subtle); }
+.badge.is-earned { border-color: var(--amber); color: var(--ink); background: rgba(251, 163, 12, .08); }
+.badge-mark { grid-row: 1 / 3; align-self: center; text-align: center; font-size: 2rem; font-weight: 900; color: var(--amber); }
+.badge:not(.is-earned) .badge-mark { color: var(--hairline); }
+.badge-name { font-weight: 700; }
+.badge-how { font-size: 1.2rem; }

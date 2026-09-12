@@ -3,6 +3,14 @@
   <%= render "shared/header" %>
   <p class="eyebrow"><%= t(".eyebrow") %></p>
   <h1 class="display"><%= t(".title") %></h1>
+  <% if (stats = current_user&.stats || Current.device&.stats) && @contributions.any? %>
+    <dl class="facts facts--row">
+      <div><dt><%= t(".accepted") %></dt><dd><%= stats[:accepted] %></dd></div>
+      <div><dt><%= t(".votes_cast") %></dt><dd><%= stats[:votes] %></dd></div>
+      <% if current_user %><div><dt><%= t(".reputation") %></dt><dd><%= current_user.reputation %></dd></div><% end %>
+    </dl>
+    <%= render "shared/badges", stats: stats %>
+  <% end %>
   <% if @contributions.empty? %>
     <p class="sub"><%= t(".empty") %></p>
   <% else %>

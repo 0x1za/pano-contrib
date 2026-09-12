@@ -1,0 +1,48 @@
+<% content_for :title, t(".title") %>
+<main class="wrap">
+  <%= render "shared/header" %>
+  <p class="eyebrow"><%= t(".eyebrow") %></p>
+  <h1 class="display"><%= t(".title") %></h1>
+  <p class="lede"><%= t(".lede") %></p>
+
+  <dl class="facts facts--row">
+    <div><dt><%= t(".contributions") %></dt><dd><%= number_with_delimiter @totals[:contributions] %></dd></div>
+    <div><dt><%= t(".accepted") %></dt><dd><%= number_with_delimiter @totals[:accepted] %></dd></div>
+    <div><dt><%= t(".contributors") %></dt><dd><%= number_with_delimiter @totals[:contributors] %></dd></div>
+    <div><dt><%= t(".districts_named") %></dt><dd><%= @totals[:districts_named] %></dd></div>
+  </dl>
+
+  <div class="boards">
+    <section>
+      <p class="eyebrow"><%= t(".this_week") %></p>
+      <% if @this_week.empty? %>
+        <p class="sub"><%= t(".nobody_yet") %></p>
+      <% else %>
+        <ol class="board">
+          <% @this_week.each do |user, n| %>
+            <li><span class="who"><%= user.public_name %></span><span class="score"><%= t(".accepted_n", count: n) %></span></li>
+          <% end %>
+        </ol>
+      <% end %>
+    </section>
+    <section>
+      <p class="eyebrow"><%= t(".all_time") %></p>
+      <% if @all_time.empty? %>
+        <p class="sub"><%= t(".nobody_yet") %></p>
+      <% else %>
+        <ol class="board">
+          <% @all_time.each do |user| %>
+            <li><span class="who"><%= user.public_name %> <span class="marks"><% user.badges.each do |b| %><span title="<%= t("badges.#{b.key}.name") %>"><%= t("badges.#{b.key}.mark") %></span><% end %></span></span><span class="score"><%= user.reputation %></span></li>
+          <% end %>
+        </ol>
+      <% end %>
+    </section>
+  </div>
+
+  <% if @mine %>
+    <p class="eyebrow"><%= t(".yours") %></p>
+    <%= render "shared/badges", stats: @mine %>
+    <% unless current_user %><p class="hint"><%= t(".sign_up_html", link: link_to(t(".sign_up"), new_registration_path)) %></p><% end %>
+  <% end %>
+  <p class="hint"><%= t(".how_it_counts") %></p>
+</main>

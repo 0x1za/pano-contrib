@@ -1,0 +1,14 @@
+<%# stats: the counters; shows earned badges and the next one to reach. %>
+<% earned = Badges.earned(stats) %>
+<ul class="badges">
+  <% Badges::ALL.each do |b| %>
+    <li class="badge <%= earned.include?(b) ? "is-earned" : "" %>" title="<%= t("badges.#{b.key}.how") %>">
+      <span class="badge-mark" aria-hidden="true"><%= t("badges.#{b.key}.mark") %></span>
+      <span class="badge-name"><%= t("badges.#{b.key}.name") %></span>
+      <span class="badge-how"><%= t("badges.#{b.key}.how") %></span>
+    </li>
+  <% end %>
+</ul>
+<% if (nxt = Badges.next(stats)) %>
+  <p class="hint"><%= t("badges.next", count: nxt[1], name: t("badges.#{nxt[0].key}.name"), what: t("badges.stats.#{nxt[0].stat}")) %></p>
+<% end %>

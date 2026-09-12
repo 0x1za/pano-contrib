@@ -31,6 +31,7 @@ Rails.application.routes.draw do
   patch "review/:id", to: "reviews#update", as: :review_decision
 
   get "about", to: "pages#about"
+  get "leaderboard", to: "leaderboard#show"
   get "styleguide", to: "pages#styleguide"
 
   get "up" => "rails/health#show", as: :rails_health_check

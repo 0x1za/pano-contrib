@@ -7,6 +7,7 @@ en:
     header:
       mine: "My contributions"
       about: "About"
+      leaderboard: "Leaderboard"
       review: "Review"
       changesets: "Changesets"
       sign_in: "Sign in"
@@ -111,6 +112,7 @@ en:
       map_label: "Map of Lusaka with pano addresses"
       mine: "My contributions"
       about: "About"
+      leaderboard: "Leaderboard"
       help: "What do I do here?"
       search_placeholder: "Address, code or area name"
       search_go: "Find"
@@ -124,6 +126,41 @@ en:
       welcome_go: "Got it, show me the map"
       welcome_more: "How it works"
       bemba: "pano is Bemba for here."
+  badges:
+    next: "%{count} more %{what} to %{name}."
+    stats:
+      accepted: "accepted contributions"
+      names_accepted: "accepted names"
+      disputes_accepted: "accepted reports"
+      homes_accepted: "accepted shared buildings"
+      votes: "votes"
+    first_step: { name: "First step", mark: "•", how: "One contribution accepted" }
+    neighbour: { name: "Neighbour", mark: "••", how: "Ten accepted" }
+    streetwise: { name: "Streetwise", mark: "•••", how: "Fifty accepted" }
+    cartographer: { name: "Cartographer", mark: "✎", how: "Named a place the map now uses" }
+    watchman: { name: "Watchman", mark: "!", how: "Reported a problem a moderator confirmed" }
+    landlord: { name: "Landlord", mark: "⌂", how: "Described a shared building" }
+    voter: { name: "Voter", mark: "✓", how: "Twenty-five votes cast" }
+  leaderboard:
+    anonymous: "Anonymous contributor"
+    show:
+      title: "Leaderboard"
+      eyebrow: "Who is fixing the map"
+      lede: "Reputation goes up when something you said is accepted and down when it is rejected. Only people who chose a name to show appear here; everyone counts in the totals."
+      contributions: "Contributions"
+      accepted: "Accepted"
+      contributors: "Contributors"
+      districts_named: "Districts renamed"
+      this_week: "This week"
+      all_time: "All time"
+      nobody_yet: "Nobody yet. Be first."
+      accepted_n:
+        one: "1 accepted"
+        other: "%{count} accepted"
+      yours: "Your badges"
+      sign_up_html: "Badges stay with this phone until you %{link}; then they follow you, and your name can appear above."
+      sign_up: "sign up"
+      how_it_counts: "A confirmation counts once it has three agreeing votes; a report or a name once a moderator accepts it. Nothing here changes what you are allowed to do."
   pages:
     about:
       title: "What pano is"
@@ -224,5 +261,8 @@ en:
     index:
       title: "My contributions"
       eyebrow: "From this device"
+      accepted: "Accepted"
+      votes_cast: "Votes cast"
+      reputation: "Reputation"
       empty: "Nothing yet. Tap a building on the map to start."
       back_to_map: "Back to the map"

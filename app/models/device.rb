@@ -24,6 +24,18 @@ class Device < ApplicationRecord
     Digest::SHA256.hexdigest(raw)
   end
 
+  # The same counters as User#stats, for a device that never signed up.
+  def stats
+    accepted = contributions.kept.status_accepted
+    {
+      accepted: accepted.count,
+      names_accepted: accepted.where(kind: %i[name_place dispute_district]).count,
+      disputes_accepted: accepted.where(kind: %i[dispute_address missing_building boundary_move]).count,
+      homes_accepted: accepted.where(kind: :multi_occupancy).count,
+      votes: votes.count
+    }
+  end
+
   def touch_seen!
     update_column(:last_seen_at, Time.current) if last_seen_at < 1.minute.ago
   end
