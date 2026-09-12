@@ -16,7 +16,7 @@
       <div class="flash is-error is-inline"><%= @contribution.errors.full_messages.to_sentence %></div>
     <% end %>
     <%= f.hidden_field :kind %>
-    <%= f.hidden_field :building_id %>
+    <%= hidden_field_tag "contribution[building_id]", @building&.ingest_id %>
     <%= f.hidden_field :target_code %>
     <%= f.hidden_field :mutation_id, value: @contribution.mutation_id || SecureRandom.uuid %>
 

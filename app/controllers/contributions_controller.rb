@@ -11,8 +11,9 @@ class ContributionsController < ApplicationController
     @contribution = current_device_contributions.find(params[:id])
   end
 
-  # One form per kind. The target comes from the map: a building id for
-  # address kinds, a place code for the rest.
+  # One form per kind. The target comes from the map: a building's pano
+  # ingest id (the id the pano API and buildings.csv use) for address
+  # kinds, a place code for the rest.
   def new
     @contribution = build_contribution(kind: params[:kind], building_id: params[:building_id], target_code: params[:target_code])
     @building = @contribution.building
@@ -44,7 +45,7 @@ class ContributionsController < ApplicationController
     end
 
     def build_contribution(kind:, building_id: nil, target_code: nil, lat: nil, lng: nil, mutation_id: nil, payload: {})
-      building = building_id.present? ? current_gazetteer.buildings.find(building_id) : nil
+      building = building_id.present? ? current_gazetteer.buildings.find_by!(ingest_id: building_id) : nil
       target_kind = if building then :building
       elsif lat.present? then :point
       else Place.find_by(gazetteer_version: current_gazetteer, code: target_code)&.tier || :district

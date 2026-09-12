@@ -2,12 +2,12 @@ require "test_helper"
 
 class ContributionsControllerTest < ActionDispatch::IntegrationTest
   test "a first visit gets a device cookie and can confirm an address" do
-    get new_contribution_path(kind: "confirm_address", building_id: buildings(:one).id)
+    get new_contribution_path(kind: "confirm_address", building_id: buildings(:one).ingest_id)
     assert_response :success
     assert_select "h1", "LS1 1CC 1"
 
     assert_difference -> { Contribution.count }, 1 do
-      post contributions_path, params: { contribution: { kind: "confirm_address", building_id: buildings(:one).id, mutation_id: SecureRandom.uuid } }
+      post contributions_path, params: { contribution: { kind: "confirm_address", building_id: buildings(:one).ingest_id, mutation_id: SecureRandom.uuid } }
     end
     contribution = Contribution.recent.first
     assert_redirected_to contribution_path(contribution)
@@ -16,14 +16,14 @@ class ContributionsControllerTest < ActionDispatch::IntegrationTest
     assert cookies[:pano_device].present?, "the device cookie is set on the first contribution"
 
     assert_no_difference -> { Device.count }, "the cookie resumes the same device" do
-      post contributions_path, params: { contribution: { kind: "confirm_address", building_id: buildings(:two).id } }
+      post contributions_path, params: { contribution: { kind: "confirm_address", building_id: buildings(:two).ingest_id } }
     end
     mine = Contribution.where.not(device: [ devices(:phone), devices(:other) ])
     assert_equal [ contribution.device_id ], mine.distinct.pluck(:device_id)
   end
 
   test "a dispute without a reason re-renders the form" do
-    post contributions_path, params: { contribution: { kind: "dispute_address", building_id: buildings(:one).id, payload: { reason: "" } } }
+    post contributions_path, params: { contribution: { kind: "dispute_address", building_id: buildings(:one).ingest_id, payload: { reason: "" } } }
     assert_response :unprocessable_content
     assert_select ".flash.is-error", /needs a reason/
   end
@@ -37,7 +37,7 @@ class ContributionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "my contributions lists only this device's" do
-    post contributions_path, params: { contribution: { kind: "confirm_address", building_id: buildings(:two).id } }
+    post contributions_path, params: { contribution: { kind: "confirm_address", building_id: buildings(:two).ingest_id } }
     get contributions_path
     assert_response :success
     assert_select ".list li", 1
@@ -45,7 +45,7 @@ class ContributionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "another device cannot open my contribution" do
-    post contributions_path, params: { contribution: { kind: "confirm_address", building_id: buildings(:two).id } }
+    post contributions_path, params: { contribution: { kind: "confirm_address", building_id: buildings(:two).ingest_id } }
     mine = Contribution.recent.first
     cookies.delete("pano_device")
     get contribution_path(mine)
