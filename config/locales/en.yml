@@ -130,19 +130,19 @@ en:
     next:
       one: "One more and you are a %{name}."
       other: "%{count} more to %{name}."
-    stats:
-      accepted: "accepted contributions"
-      names_accepted: "accepted names"
-      disputes_accepted: "accepted reports"
-      homes_accepted: "accepted shared buildings"
-      votes: "votes"
-    first_step: { name: "First step", mark: "•", how: "One contribution accepted" }
-    neighbour: { name: "Neighbour", mark: "••", how: "Ten accepted" }
-    streetwise: { name: "Streetwise", mark: "•••", how: "Fifty accepted" }
-    cartographer: { name: "Cartographer", mark: "✎", how: "Named a place the map now uses" }
-    watchman: { name: "Watchman", mark: "!", how: "Reported a problem a moderator confirmed" }
-    landlord: { name: "Landlord", mark: "⌂", how: "Described a shared building" }
-    voter: { name: "Voter", mark: "✓", how: "Twenty-five votes cast" }
+    pano: { name: "Pano", mark: "•", how: "You said “I live here” and three people agreed. Pano is Bemba for here." }
+    street: { name: "Street", mark: "••", how: "Ten things you said are on the map: about a street's worth." }
+    block: { name: "Block", mark: "•••", how: "Fifty accepted: a block of about forty buildings, and change." }
+    compound: { name: "Compound", mark: "••••", how: "Two hundred accepted. Whole compounds have been fixed by you." }
+    signwriter: { name: "Signwriter", mark: "✎", how: "A name you gave a place is the one the map now uses." }
+    sharp_eyes: { name: "Sharp eyes", mark: "!", how: "You reported a wrong address and a moderator agreed." }
+    caretaker: { name: "Caretaker", mark: "⌂", how: "You described a shared building: how many homes and how they are labelled." }
+    courier: { name: "Courier", mark: "→", how: "Five delivery notes accepted: a gate colour, a landmark, who to ask for." }
+    explorer: { name: "Explorer", mark: "◇", how: "Accepted contributions in five different districts." }
+    regular: { name: "Regular", mark: "↻", how: "You contributed in four different weeks. The map needs people who come back." }
+    second_opinion: { name: "Second opinion", mark: "✓", how: "Twenty-five votes on what other people said." }
+    referee: { name: "Referee", mark: "✓✓", how: "A hundred votes. You have settled more than you started." }
+    founder: { name: "Founder", mark: "★", how: "You contributed against the first cut of the map, v0.1.0, before anyone had checked it." }
   leaderboard:
     anonymous: "Anonymous contributor"
     show:

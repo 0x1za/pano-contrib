@@ -27,7 +27,8 @@ class LeaderboardControllerTest < ActionDispatch::IntegrationTest
     post contributions_path, params: { contribution: { kind: "confirm_address", building_id: buildings(:two).ingest_id } }
     get leaderboard_path
     assert_select ".badges .badge", Badges::ALL.size
-    assert_select ".badge.is-earned", 0
+    assert_select ".badge.is-earned", 1, "founder: any contribution against v0.1.0 counts, accepted or not"
+    assert_select ".badge.is-earned .badge-name", "Founder"
     assert_select "a[href='/registration/new']", "sign up"
   end
 end

@@ -62,9 +62,13 @@ stores the churn against the changeset, which its page then shows.
 
 `/leaderboard` shows who is fixing the map: this week by acceptances,
 all time by reputation, and the totals. Only accounts with a display name
-are listed; everyone counts in the totals. Badges are computed from what a
-person had accepted, in one pure module with a table test, and appear on
-"My contributions". Nothing earned changes what anyone may do.
+are listed; everyone counts in the totals. Badges come from one pure module
+with a table test and appear on "My contributions": a ladder in the map's
+own scale (Pano for an accepted "I live here", then Street, Block and
+Compound at ten, fifty and two hundred acceptances) and marks for what the
+map needs people for (Signwriter, Sharp eyes, Caretaker, Courier, Explorer,
+Regular, Second opinion, Referee, Founder). Nothing earned changes what
+anyone may do.
 
 To make the first admin: `bin/rails runner 'User.find_by!(email_address: "you@example.com").role_admin!'`.
 

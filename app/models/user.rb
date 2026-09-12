@@ -42,16 +42,8 @@ class User < ApplicationRecord
     display_name.presence || I18n.t("leaderboard.anonymous")
   end
 
-  # Counters the badges are computed from.
   def stats
-    accepted = contributions.kept.status_accepted
-    {
-      accepted: accepted.count,
-      names_accepted: accepted.where(kind: %i[name_place dispute_district]).count,
-      disputes_accepted: accepted.where(kind: %i[dispute_address missing_building boundary_move]).count,
-      homes_accepted: accepted.where(kind: :multi_occupancy).count,
-      votes: votes.count
-    }
+    Badges.stats(contributions: contributions, votes: votes)
   end
 
   def badges
