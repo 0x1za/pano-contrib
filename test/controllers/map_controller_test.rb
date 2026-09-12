@@ -9,6 +9,8 @@ class MapControllerTest < ActionDispatch::IntegrationTest
     assert_select ".card.welcome", /Help check Lusaka's new addresses/
     assert_select ".card.welcome a[href='/about']", "How it works"
     assert_select "[data-map-target=card][hidden]"
+    assert_select ".bar nav a[href='/about']", "About"
+    assert_select ".bar nav button.help"
   end
 
   test "styleguide renders" do

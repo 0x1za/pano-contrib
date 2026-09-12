@@ -7,8 +7,9 @@
       <%= render "shared/mark" %>pano
     <% end %>
     <nav>
-      <button type="button" class="linklike" data-action="map#welcome" aria-label="<%= t(".about") %>"><%= t(".about") %></button>
+      <%= link_to t(".about"), about_path %>
       <%= link_to t(".mine"), contributions_path %>
+      <button type="button" class="help" data-action="map#welcome" title="<%= t(".help") %>" aria-label="<%= t(".help") %>">?</button>
     </nav>
   </header>
 

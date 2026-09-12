@@ -64,6 +64,7 @@ en:
       map_label: "Map of Lusaka with pano addresses"
       mine: "My contributions"
       about: "About"
+      help: "What do I do here?"
       welcome_eyebrow: "pano · Lusaka"
       welcome_title: "Help check Lusaka's new addresses"
       welcome_body_html: "Every building in Lusaka now has a short address, like <b>LS33 9XX 17</b>. It was drawn by a computer. Nobody has asked the people who live there whether it fits. That is what this site is for."

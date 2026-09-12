@@ -79,6 +79,7 @@ a:hover { text-decoration: underline; text-underline-offset: .2em; }
 .bar { position: fixed; top: 1.2rem; left: 1.2rem; right: 1.2rem; z-index: 5; display: flex; align-items: center; justify-content: space-between; padding: .8rem 1.2rem; background: var(--paper); border: 1px solid var(--ink); border-radius: var(--radius); }
 .bar nav { display: flex; gap: 1.4rem; align-items: center; }
 .bar nav a { color: var(--subtle); font-size: 1.4rem; }
+.bar .help { width: 2.8rem; height: 2.8rem; border: 1px solid var(--accent); border-radius: 50%; background: none; color: var(--accent); font: inherit; font-weight: 700; cursor: pointer; }
 .card { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; background: var(--paper); border-top: 1px solid var(--ink); padding: 1.6rem 1.6rem calc(1.6rem + env(safe-area-inset-bottom)); }
 .card .address { font-size: 3.4rem; font-weight: 900; line-height: 1.02; color: var(--accent); margin: 0 0 .6rem; font-variant-numeric: tabular-nums; }
 .card .note { color: var(--subtle); font-size: 1.3rem; margin: 1rem 0 0; }
