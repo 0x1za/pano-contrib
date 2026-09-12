@@ -4,7 +4,10 @@
     <%= link_to t("shared.header.about"), about_path %>
     <%= link_to t("shared.header.mine"), contributions_path %>
     <% if current_user %>
-      <%= link_to t("shared.header.review"), review_path if current_user.reviewer? %>
+      <% if current_user.reviewer? %>
+        <%= link_to t("shared.header.review"), review_path %>
+        <%= link_to t("shared.header.changesets"), changesets_path %>
+      <% end %>
       <%= button_to t("shared.header.sign_out"), session_path, method: :delete, class: "linklike" %>
     <% else %>
       <%= link_to t("shared.header.sign_in"), new_session_path %>

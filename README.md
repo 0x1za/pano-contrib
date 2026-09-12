@@ -42,6 +42,22 @@ and admin; reputation is a counter that only changes who is asked first.
 - `/avo` and `/flipper`, admins: the back office and the flags. Both 404
   for anyone else.
 
+## Changesets
+
+Accepted contributions reach the map through a changeset. `/changesets`
+(moderators) drafts one from everything accepted and unassigned, refreshes
+it until it is exported, and freezes it as `changes.json` on export. A
+nightly job keeps the draft current. Then, in the pano repo:
+
+```
+aspect zone -- --changes changes.json --version 0.2.0
+aspect validate -- --gazetteer gazetteer/v0.2.0
+aspect diff -- gazetteer/v0.1.0 gazetteer/v0.2.0 --json > churn.json
+```
+
+and back here `bin/rails "pano:applied[CHANGESET_ID,0.2.0,churn.json]"`
+stores the churn against the changeset, which its page then shows.
+
 To make the first admin: `bin/rails runner 'User.find_by!(email_address: "you@example.com").role_admin!'`.
 
 ## Contract with pano
@@ -51,7 +67,8 @@ To make the first admin: `bin/rails runner 'User.find_by!(email_address: "you@ex
   Places and buildings are imported per version and never edited.
 - `PanoApi` calls the pano API for lookups; the map page talks to it
   directly from the browser.
-- Changesets export `changes.json` for zoning (phase 3).
+- Changesets export `changes.json` for zoning: accepted names, reported
+  buildings, homes inside shared buildings, and disputed cells. See below.
 
 ## Development
 

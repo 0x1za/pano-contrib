@@ -1,0 +1,49 @@
+<% content_for :title, t(".title") %>
+<main class="wrap">
+  <%= render "shared/header" %>
+  <p class="eyebrow"><%= t(".title") %> · <%= t("changesets.statuses.#{@changeset.status}") %></p>
+  <h1 class="display"><%= @changeset.id.first(8) %></h1>
+  <dl class="facts">
+    <div><dt><%= t(".gazetteer") %></dt><dd>v<%= @changeset.gazetteer_version.version %> · <%= @changeset.gazetteer_version.sha256.first(12) %></dd></div>
+    <div><dt><%= t(".contributions") %></dt><dd><%= @changeset.summary["contributions"].to_i %></dd></div>
+    <div><dt><%= t(".names") %></dt><dd><%= @changeset.summary["names"].to_i %></dd></div>
+    <div><dt><%= t(".buildings") %></dt><dd><%= @changeset.summary["buildings"].to_i %></dd></div>
+    <div><dt><%= t(".sub_addresses") %></dt><dd><%= @changeset.summary["sub_addresses"].to_i %></dd></div>
+    <div><dt><%= t(".disputed_cells") %></dt><dd><%= @changeset.summary["disputed_cells"].to_i %></dd></div>
+    <% if @changeset.exported_at %><div><dt><%= t(".exported") %></dt><dd><%= l(@changeset.exported_at, format: :short) %><% if @changeset.exported_by %> · <%= t(".by", name: @changeset.exported_by.name) %><% end %></dd></div><% end %>
+    <% if @changeset.applied_in_version %><div><dt><%= t(".applied") %></dt><dd>v<%= @changeset.applied_in_version %> · <%= l(@changeset.applied_at, format: :short) %></dd></div><% end %>
+  </dl>
+
+  <div class="actions">
+    <% if @changeset.status_draft? %>
+      <%= button_to t(".refresh"), changesets_path, method: :post, class: "btn btn--ghost" %>
+      <%= button_to t(".export"), export_changeset_path(@changeset), method: :patch, class: "btn" %>
+    <% end %>
+    <%= link_to t(".download"), download_changeset_path(@changeset), class: "btn btn--ghost" unless @changeset.status_draft? %>
+  </div>
+  <% if @changeset.status_exported? %><p class="hint"><%= t(".export_hint") %></p><% end %>
+
+  <% if @changeset.churn.present? %>
+    <% total = @changeset.churn["total"] || {} %>
+    <p class="eyebrow"><%= t(".churn") %></p>
+    <p class="sub"><%= t(".churn_row", same: total["same_address"], renumbered: total["same_unit_new_number"], moved_unit: total["new_unit_same_district"], moved_district: (total["new_district"].to_i + total["renumbered_district"].to_i)) %></p>
+    <% if @changeset.churn["buildings_only_in_old"].to_i > 0 %><p class="hint"><%= t(".churn_only_old", count: @changeset.churn["buildings_only_in_old"]) %></p><% end %>
+    <% if @changeset.churn["buildings_only_in_new"].to_i > 0 %><p class="hint"><%= t(".churn_only_new", count: @changeset.churn["buildings_only_in_new"]) %></p><% end %>
+    <ul class="list">
+      <% (@changeset.churn["districts"] || {}).sort_by { |_, d| -(d["buildings"].to_i - d["same_address"].to_i) }.first(20).each do |code, d| %>
+        <li><strong><%= code %></strong> <span><%= d["name"] %></span> <span><%= d["same_address"] %> / <%= d["buildings"] %> kept</span></li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <% if @contributions.any? %>
+    <p class="eyebrow"><%= t(".contributions") %></p>
+    <ul class="list">
+      <% @contributions.each do |c| %>
+        <li><strong><%= c.target_label %></strong> <span><%= t("contributions.kinds.#{c.kind}") %><% if c.name %> → <%= c.name %><% end %></span></li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="sub"><%= t(".no_contributions") %></p>
+  <% end %>
+</main>

@@ -8,6 +8,7 @@ en:
       mine: "My contributions"
       about: "About"
       review: "Review"
+      changesets: "Changesets"
       sign_in: "Sign in"
       sign_out: "Sign out"
   sessions:
@@ -44,6 +45,50 @@ en:
     disagree: "Disagree"
     create:
       thanks: "Thanks, your vote is in."
+  changesets:
+    statuses:
+      draft: "Draft"
+      exported: "Exported"
+      applied: "Applied"
+    index:
+      title: "Changesets"
+      eyebrow: "Into the next cut"
+      lede: "Accepted contributions gathered for zoning. A draft refreshes until it is exported; an exported changeset is frozen as changes.json; an applied one carries the churn its cut caused."
+      unassigned:
+        zero: "Nothing accepted is waiting."
+        one: "1 accepted contribution is waiting for a draft."
+        other: "%{count} accepted contributions are waiting for a draft."
+      draft: "Draft the next changeset"
+      empty: "No changesets yet."
+      contributions: "contributions"
+    show:
+      title: "Changeset"
+      summary: "What it carries"
+      contributions: "Contributions"
+      names: "Names"
+      buildings: "New buildings"
+      sub_addresses: "Homes in shared buildings"
+      disputed_cells: "Disputed cells"
+      gazetteer: "Made against"
+      exported: "Exported"
+      applied: "Applied in"
+      by: "by %{name}"
+      export: "Freeze and export"
+      export_hint: "Exporting freezes the batch. Then, in the pano repo: aspect zone -- --changes changes.json --version X.Y.Z, aspect validate, aspect diff -- OLD NEW --json > churn.json, and bin/rails pano:applied[changeset,version,churn.json] here."
+      download: "Download changes.json"
+      refresh: "Refresh the draft"
+      churn: "Churn from the cut"
+      churn_row: "%{same} kept their address, %{renumbered} kept their unit with a new number, %{moved_unit} moved unit, %{moved_district} moved district."
+      churn_only_old: "%{count} buildings were only in the old cut"
+      churn_only_new: "%{count} buildings are new in this cut"
+      no_contributions: "Nothing in this changeset."
+    create:
+      drafted:
+        zero: "Drafted, but nothing accepted is waiting."
+        one: "Drafted with 1 contribution."
+        other: "Drafted with %{count} contributions."
+    export:
+      exported: "Exported. Download changes.json and run the cut."
   reviews:
     index:
       title: "Review"

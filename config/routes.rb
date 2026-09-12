@@ -18,6 +18,14 @@ Rails.application.routes.draw do
   end
   resources :places, only: :show, param: :code, constraints: { code: /[^\/]+/ }
 
+  # Moderators: accepted contributions batched for the next cut.
+  resources :changesets, only: %i[index show create] do
+    member do
+      patch :export
+      get :download, defaults: { format: :json }
+    end
+  end
+
   # Moderators: the pending queue and its accept / reject decisions.
   get "review", to: "reviews#index", as: :review
   patch "review/:id", to: "reviews#update", as: :review_decision

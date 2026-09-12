@@ -22,7 +22,10 @@
 [ ] Google OAuth (needs client credentials)
 
 ## Phase 3 — Changesets
-[ ] Export changes.json; zoning --changes; churn report back into the app
+[x] Changesets: draft gathers accepted contributions; export freezes changes.json (names, buildings, sub_addresses, disputed_cells)
+[x] zoning --changes applies names, new buildings, sub-addresses and disputed cells; diff --json
+[x] pano:applied records the churn report against the changeset; /changesets shows it
+[x] Sub-addresses: LS33 9XX 17/3 in core, the API, buildings.csv and the confirm form; multi_occupancy kind
 
 ## Phase 4 — Notes and photos
 ## Phase 5 — Offline

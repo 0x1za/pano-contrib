@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_12_213100) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_13_100000) do
   create_table "buildings", id: :string, force: :cascade do |t|
     t.string "gazetteer_version_id", null: false
     t.bigint "ingest_id", null: false
@@ -23,8 +23,26 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_12_213100) do
     t.index ["gazetteer_version_id"], name: "index_buildings_on_gazetteer_version_id"
   end
 
+  create_table "changesets", id: :string, force: :cascade do |t|
+    t.datetime "applied_at"
+    t.string "applied_in_version"
+    t.json "churn"
+    t.datetime "created_at", null: false
+    t.json "export", default: {}, null: false
+    t.datetime "exported_at"
+    t.string "exported_by_id"
+    t.string "gazetteer_version_id", null: false
+    t.integer "status", default: 0, null: false
+    t.json "summary", default: {}, null: false
+    t.datetime "updated_at", null: false
+    t.index ["exported_by_id"], name: "index_changesets_on_exported_by_id"
+    t.index ["gazetteer_version_id", "status"], name: "index_changesets_on_gazetteer_version_id_and_status"
+    t.index ["gazetteer_version_id"], name: "index_changesets_on_gazetteer_version_id"
+  end
+
   create_table "contributions", id: :string, force: :cascade do |t|
     t.string "building_id"
+    t.string "changeset_id"
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
     t.string "device_id", null: false
@@ -44,6 +62,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_12_213100) do
     t.string "user_id"
     t.integer "version", default: 1, null: false
     t.index ["building_id"], name: "index_contributions_on_building_id"
+    t.index ["changeset_id"], name: "index_contributions_on_changeset_id"
     t.index ["device_id", "mutation_id"], name: "index_contributions_on_device_id_and_mutation_id", unique: true
     t.index ["device_id"], name: "index_contributions_on_device_id"
     t.index ["gazetteer_version_id"], name: "index_contributions_on_gazetteer_version_id"
@@ -145,7 +164,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_12_213100) do
   end
 
   add_foreign_key "buildings", "gazetteer_versions"
+  add_foreign_key "changesets", "gazetteer_versions"
+  add_foreign_key "changesets", "users", column: "exported_by_id"
   add_foreign_key "contributions", "buildings"
+  add_foreign_key "contributions", "changesets"
   add_foreign_key "contributions", "devices"
   add_foreign_key "contributions", "gazetteer_versions"
   add_foreign_key "contributions", "users"

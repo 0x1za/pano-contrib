@@ -1,0 +1,26 @@
+<% content_for :title, t(".title") %>
+<main class="wrap">
+  <%= render "shared/header" %>
+  <p class="eyebrow"><%= t(".eyebrow") %></p>
+  <h1 class="display"><%= t(".title") %></h1>
+  <p class="lede"><%= t(".lede") %></p>
+  <p class="sub"><%= t(".unassigned", count: @unassigned) %></p>
+  <div class="actions">
+    <%= button_to t(".draft"), changesets_path, method: :post, class: "btn" %>
+  </div>
+  <% if @changesets.empty? %>
+    <p class="sub"><%= t(".empty") %></p>
+  <% else %>
+    <ul class="list">
+      <% @changesets.each do |c| %>
+        <li>
+          <%= link_to changeset_path(c) do %>
+            <strong>v<%= c.gazetteer_version.version %> · <%= c.id.first(8) %></strong>
+            <span><%= c.summary["contributions"].to_i %> <%= t(".contributions") %> · <%= l(c.created_at, format: :short) %><% if c.applied_in_version %> → v<%= c.applied_in_version %><% end %></span>
+            <span class="status is-<%= c.status %>"><%= t("changesets.statuses.#{c.status}") %></span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</main>

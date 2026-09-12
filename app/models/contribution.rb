@@ -25,6 +25,7 @@ class Contribution < ApplicationRecord
   belongs_to :user, optional: true
   belongs_to :building, optional: true
   belongs_to :reviewed_by, class_name: "User", optional: true
+  belongs_to :changeset, optional: true
   has_many :votes, dependent: :delete_all
 
   enum :kind, {
