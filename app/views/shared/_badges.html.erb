@@ -3,7 +3,7 @@
 <ul class="badges">
   <% Badges::ALL.each do |b| %>
     <li class="badge <%= earned.include?(b) ? "is-earned" : "" %>" title="<%= t("badges.#{b.key}.how") %>">
-      <span class="badge-mark" aria-hidden="true"><%= t("badges.#{b.key}.mark") %></span>
+      <span class="badge-mark"><%= render "shared/badge_icon", key: b.key %></span>
       <span class="badge-name"><%= t("badges.#{b.key}.name") %></span>
       <span class="badge-how"><%= t("badges.#{b.key}.how") %></span>
     </li>

@@ -32,7 +32,7 @@
       <% else %>
         <ol class="board">
           <% @all_time.each do |user| %>
-            <li><span class="who"><%= user.public_name %> <span class="marks"><% user.badges.each do |b| %><span title="<%= t("badges.#{b.key}.name") %>"><%= t("badges.#{b.key}.mark") %></span><% end %></span></span><span class="score"><%= user.reputation %></span></li>
+            <li><span class="who"><%= user.public_name %> <span class="marks"><% user.badges.each do |b| %><span class="mark" title="<%= t("badges.#{b.key}.name") %>"><%= render "shared/badge_icon", key: b.key %></span><% end %></span></span><span class="score"><%= user.reputation %></span></li>
           <% end %>
         </ol>
       <% end %>
