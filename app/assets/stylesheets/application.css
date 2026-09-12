@@ -154,7 +154,10 @@ a:hover { text-decoration: underline; text-underline-offset: .2em; }
 /* Modals: the welcome, and contribution forms over the map. A native
    dialog with a Turbo Frame inside; the modal controller opens it when the
    frame loads. */
-.modal { border: 1px solid var(--ink); border-radius: var(--radius); padding: 0; width: min(64rem, calc(100vw - 3.2rem)); max-height: calc(100vh - 3.2rem); background: var(--paper); color: var(--ink); }
+.modal { border: 1px solid var(--ink); border-radius: var(--radius); padding: 0; width: min(72rem, calc(100vw - 3.2rem)); max-height: calc(100vh - 3.2rem); overflow: auto; background: var(--paper); color: var(--ink); }
+.modal .boards { grid-template-columns: 1fr; }
+.modal .badges { grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr)); }
+.modal .prose .display { font-size: 3.2rem; }
 .modal::backdrop { background: rgba(var(--ink-rgb), .35); }
 .modal .wrap { padding: 2.4rem; }
 .modal .site-header { display: none; }

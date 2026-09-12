@@ -1,4 +1,5 @@
 <% content_for :title, t(".title") %>
+<%= turbo_frame_tag "modal" do %>
 <main class="wrap">
   <%= render "shared/header" %>
   <p class="eyebrow"><%= t(".eyebrow") %></p>
@@ -46,3 +47,4 @@
   <% end %>
   <p class="hint"><%= t(".how_it_counts") %></p>
 </main>
+<% end %>

@@ -1,4 +1,5 @@
 <% content_for :title, t(".title") %>
+<%= turbo_frame_tag "modal" do %>
 <main class="wrap">
   <%= render "shared/header" %>
   <p class="eyebrow"><%= t(".eyebrow") %></p>
@@ -26,5 +27,6 @@
       <% end %>
     </ul>
   <% end %>
-  <div class="actions"><%= link_to t(".back_to_map"), root_path, class: "btn" %></div>
+  <div class="actions"><%= link_to t(".back_to_map"), root_path, class: "btn", data: { turbo_frame: "_top" } %></div>
 </main>
+<% end %>

@@ -12,9 +12,10 @@
       <ul class="suggest" id="map-suggest" role="listbox" data-map-target="suggest" data-action="click->map#pick"></ul>
     </form>
     <nav>
-      <%= link_to t(".about"), about_path %>
-      <%= link_to t(".leaderboard"), leaderboard_path %>
-      <%= link_to t(".mine"), contributions_path %>
+      <%# These open over the map, in the same dialog as the forms, so the map stays underneath. %>
+      <%= link_to t(".about"), about_path, data: { turbo_frame: "modal" } %>
+      <%= link_to t(".leaderboard"), leaderboard_path, data: { turbo_frame: "modal" } %>
+      <%= link_to t(".mine"), contributions_path, data: { turbo_frame: "modal" } %>
       <button type="button" class="help" data-action="map#welcome" title="<%= t(".help") %>" aria-label="<%= t(".help") %>">?</button>
     </nav>
   </header>
@@ -33,7 +34,7 @@
       </ul>
       <div class="actions">
         <button type="button" class="btn" data-action="map#dismiss"><%= t(".welcome_go") %></button>
-        <%= link_to t(".welcome_more"), about_path, class: "btn btn--ghost" %>
+        <%= link_to t(".welcome_more"), about_path, class: "btn btn--ghost", data: { turbo_frame: "modal", action: "map#dismiss" } %>
       </div>
       <p class="note"><em><%= t(".bemba") %></em></p>
     </div>

@@ -8,6 +8,7 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
     assert_select ".example span", count: 3
     assert_equal "LS33 9XX 17", css_select(".example span").map(&:text).join(" ")
     assert_select "a[href='/']", "To the map"
+    assert_select "turbo-frame#modal h1", 1, "renders inside the map's dialog when opened from there, as a page otherwise"
   end
 
   test "the header links to about from every page" do

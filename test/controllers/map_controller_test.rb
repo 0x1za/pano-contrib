@@ -12,7 +12,9 @@ class MapControllerTest < ActionDispatch::IntegrationTest
     assert_select ".bar form.search input[name=q][data-map-target=query]", 1
     assert_select "ul.suggest[data-map-target=suggest]", 1
     assert_select "[data-controller=map][data-map-satellite-value*='World_Imagery']", 1
-    assert_select ".bar nav a[href='/about']", "About"
+    assert_select ".bar nav a[href='/about'][data-turbo-frame=modal]", "About"
+    assert_select ".bar nav a[href='/leaderboard'][data-turbo-frame=modal]", 1
+    assert_select ".bar nav a[href='/contributions'][data-turbo-frame=modal]", 1
     assert_select ".bar nav button.help"
   end
 
