@@ -93,6 +93,7 @@ a:hover { text-decoration: underline; text-underline-offset: .2em; }
 .suggest li:hover, .suggest li.is-active { background: rgba(var(--accent-rgb), .08); }
 .suggest .name { font-weight: 700; }
 .suggest .code { color: var(--accent); font-variant-numeric: tabular-nums; margin-left: .4rem; }
+.suggest .detail { color: var(--subtle); margin-left: .6rem; font-size: 1.3rem; }
 .suggest .tier { color: var(--subtle); font-size: 1.1rem; letter-spacing: .08em; text-transform: uppercase; align-self: center; }
 @media (max-width: 879px) {
   .bar { flex-wrap: wrap; gap: .8rem; }

@@ -16,6 +16,7 @@ style of span.
 bin/setup
 bin/rails pano:import[../pano/gazetteer/v0.1.0]   # a published gazetteer directory
 PANO_API_URL=http://127.0.0.1:8080 bin/dev         # the pano API must be running
+# optional: PANO_GEOCODER_URL=<Photon-compatible endpoint> for street search (default photon.komoot.io)
 # optional: PANO_SATELLITE_TILES=<raster tile template> for the Satellite toggle;
 # the default is Esri World Imagery, fine for a pilot with attribution, keyed for production
 ```

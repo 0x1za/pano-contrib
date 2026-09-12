@@ -30,6 +30,7 @@ Rails.application.routes.draw do
   get "review", to: "reviews#index", as: :review
   patch "review/:id", to: "reviews#update", as: :review_decision
 
+  get "geocode", to: "geocode#index"
   get "about", to: "pages#about"
   get "leaderboard", to: "leaderboard#show"
   get "styleguide", to: "pages#styleguide"

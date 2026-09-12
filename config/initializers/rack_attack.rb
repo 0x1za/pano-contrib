@@ -1,6 +1,9 @@
 # Contributions are anonymous, so the only brakes are per device and per
 # address. Generous for a person, tight for a script.
 class Rack::Attack
+  # Street lookups hit an outside provider; keep one browser from flooding it.
+  throttle("geocode/ip", limit: 120, period: 1.hour) { |req| req.ip if req.path == "/geocode" }
+
   throttle("contributions/device", limit: 60, period: 1.hour) do |req|
     req.cookies["pano_device"] if req.post? && req.path.start_with?("/contributions")
   end

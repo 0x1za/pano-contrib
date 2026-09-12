@@ -156,12 +156,17 @@ export default class extends Controller {
     if (!q) return this.#closeSuggest()
     const seq = (this.suggestSeq = (this.suggestSeq || 0) + 1)
     this.suggestTimer = setTimeout(async () => {
-      const list = await this.#get(`/search?q=${encodeURIComponent(q)}`)
-      if (seq !== this.suggestSeq || !list) return
+      // Codes and districts from the pano API; streets and places people already know from the geocoder.
+      const [codes, places] = await Promise.all([
+        this.#get(`/search?q=${encodeURIComponent(q)}`),
+        fetch(`/geocode?q=${encodeURIComponent(q)}`, { headers: { Accept: "application/json" } }).then(r => r.ok ? r.json() : []).catch(() => [])
+      ])
+      if (seq !== this.suggestSeq) return
+      const list = [...(codes || []), ...places.map(p => ({ code: null, name: p.name, detail: p.detail, tier: p.kind, lat: p.lat, lng: p.lng }))].slice(0, 8)
       this.suggestions = list
       this.active = list.length ? 0 : -1
       this.#renderSuggest()
-    }, 120)
+    }, 160)
   }
 
   searchKey(e) {
@@ -186,8 +191,16 @@ export default class extends Controller {
   #choose(x) {
     if (!x) return
     this.#closeSuggest()
-    this.queryTarget.value = x.name && x.tier === "district" ? x.name : x.code
     this.queryTarget.blur()
+    if (!x.code) {
+      // A street or place: fly there at building zoom and ask for the roof.
+      this.queryTarget.value = x.name
+      this.at = { lng: x.lng, lat: x.lat }
+      this.map.easeTo({ center: [x.lng, x.lat], zoom: 17.5, duration: 700 })
+      this.map.once("moveend", () => this.#card(x.tier === "street" ? "Street" : "Place", x.name, [], `${x.detail ? x.detail + " · " : ""}Tap your building to get its address.`))
+      return
+    }
+    this.queryTarget.value = x.name && x.tier === "district" ? x.name : x.code
     this.#resolve(x.code, x.name)
   }
 
@@ -224,7 +237,8 @@ export default class extends Controller {
       const left = document.createElement("span")
       const name = document.createElement("span"); name.className = "name"; name.textContent = x.name || x.code
       left.append(name)
-      if (x.name) { const code = document.createElement("span"); code.className = "code"; code.textContent = x.code; left.append(code) }
+      if (x.code && x.name) { const code = document.createElement("span"); code.className = "code"; code.textContent = x.code; left.append(code) }
+      if (x.detail) { const d = document.createElement("span"); d.className = "detail"; d.textContent = x.detail; left.append(d) }
       const tier = document.createElement("span"); tier.className = "tier"; tier.textContent = x.tier
       li.append(left, tier); return li
     }))
