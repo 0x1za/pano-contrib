@@ -1,0 +1,9 @@
+<%# One contribution's tally and, when this visitor may vote, the two buttons. %>
+<% tally = contribution.tally %>
+<div class="vote">
+  <span class="tally"><%= t("votes.tally", agree: tally.agree, disagree: tally.disagree) %></span>
+  <% if contribution.votable_by?(device: Current.device, user: current_user) %>
+    <%= button_to t("votes.agree"), contribution_vote_path(contribution, stance: "agree"), class: "btn btn--small" %>
+    <%= button_to t("votes.disagree"), contribution_vote_path(contribution, stance: "disagree"), class: "btn btn--small btn--ghost" %>
+  <% end %>
+</div>

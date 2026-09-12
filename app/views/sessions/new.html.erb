@@ -1,11 +1,22 @@
-<%= tag.div(flash[:alert], style: "color:red") if flash[:alert] %>
-<%= tag.div(flash[:notice], style: "color:green") if flash[:notice] %>
-
-<%= form_with url: session_path do |form| %>
-  <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "Enter your email address", value: params[:email_address] %><br>
-  <%= form.password_field :password, required: true, autocomplete: "current-password", placeholder: "Enter your password", maxlength: 72 %><br>
-  <%= form.submit "Sign in" %>
-<% end %>
-<br>
-
-<%= link_to "Forgot password?", new_password_path %>
+<% content_for :title, t(".title") %>
+<main class="wrap">
+  <%= render "shared/header" %>
+  <p class="eyebrow"><%= t(".eyebrow") %></p>
+  <h1 class="display"><%= t(".title") %></h1>
+  <p class="sub"><%= t(".why") %></p>
+  <%= form_with url: session_path, class: "stack" do |form| %>
+    <div>
+      <%= form.label :email_address, t(".email"), class: "label" %>
+      <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", value: params[:email_address], class: "field" %>
+    </div>
+    <div>
+      <%= form.label :password, t(".password"), class: "label" %>
+      <%= form.password_field :password, required: true, autocomplete: "current-password", maxlength: 72, class: "field" %>
+    </div>
+    <div class="actions">
+      <%= form.submit t(".submit"), class: "btn" %>
+      <%= link_to t(".forgot"), new_password_path, class: "btn btn--ghost" %>
+    </div>
+  <% end %>
+  <p class="hint"><% if feature?(:signups) %><%= t(".no_account_html", link: link_to(t(".sign_up"), new_registration_path)) %><% else %><%= t("registrations.closed") %><% end %></p>
+</main>

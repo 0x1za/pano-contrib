@@ -36,8 +36,11 @@ class ContributionsController < ApplicationController
       redirect_to root_path, alert: t("contributions.no_gazetteer") unless current_gazetteer
     end
 
+    # This device's, plus the account's from other devices once signed in.
     def current_device_contributions
-      Current.device ? Current.device.contributions.kept : Contribution.none
+      scope = Contribution.kept
+      return scope.where(user: current_user) if current_user
+      Current.device ? scope.where(device: Current.device) : Contribution.none
     end
 
     def contribution_params

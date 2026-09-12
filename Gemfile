@@ -20,6 +20,14 @@ gem "bcrypt", "~> 3.1.7"
 
 # Throttle anonymous contributions per device and per address
 gem "rack-attack"
+# Abilities: contributors manage their own pending contributions, moderators review, admins manage.
+gem "cancancan"
+# Admin back office at /avo, behind AdminConstraint.
+gem "avo"
+# Feature flags in the app's own database; dashboard at /flipper behind AdminConstraint.
+gem "flipper"
+gem "flipper-active_record"
+gem "flipper-ui"
 # Ruby 3.4 no longer ships csv as a default gem; GazetteerImport reads buildings.csv.
 gem "csv"
 # json 3.0 made JSON.parse options keyword-only; ActiveSupport 8.1 still passes a hash, which breaks

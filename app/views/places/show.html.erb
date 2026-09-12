@@ -7,6 +7,19 @@
     <div><dt><%= t(".buildings") %></dt><dd><%= number_with_delimiter @place.structures %></dd></div>
     <% if @children.any? %><div><dt><%= t(".contains") %></dt><dd><%= @children.size %> <%= t("places.tiers.#{@children.first.tier}").downcase.pluralize(@children.size) %></dd></div><% end %>
   </dl>
+  <% if @pending.any? %>
+    <p class="eyebrow"><%= t(".pending") %></p>
+    <ul class="list list--stacked">
+      <% @pending.each do |c| %>
+        <li>
+          <div>
+            <strong><%= t("contributions.kinds.#{c.kind}") %></strong> <span><%= c.name || c.reason || "" %></span>
+            <%= render "contributions/vote", contribution: c %>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
   <% if @contributions.any? %>
     <p class="eyebrow"><%= t(".recent") %></p>
     <ul class="list">

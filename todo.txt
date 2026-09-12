@@ -13,7 +13,13 @@
 [x] lefthook, CI, README
 
 ## Phase 2 — Review
-[ ] Accounts claim devices; votes; auto-acceptance service; review queue; Avo; Flipper
+[x] Accounts (email + password) claim the device and its history on sign-in or sign-up; :signups flag
+[x] Votes: agree / disagree once per device and once per account, never on your own
+[x] Acceptance: the plan's rules as one pure module with a table test; votes only accept
+[x] Reputation counter; supersession of earlier accepted names; nightly settle job for 30-day notes
+[x] Review queue at /review for moderators, moderator-only kinds first, j/k/a/r/n keys
+[x] cancancan abilities; Avo at /avo and Flipper at /flipper behind AdminConstraint
+[ ] Google OAuth (needs client credentials)
 
 ## Phase 3 — Changesets
 [ ] Export changes.json; zoning --changes; churn report back into the app

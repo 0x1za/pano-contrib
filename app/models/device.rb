@@ -3,6 +3,7 @@
 class Device < ApplicationRecord
   belongs_to :user, optional: true
   has_many :contributions, dependent: :restrict_with_error
+  has_many :votes, dependent: :restrict_with_error
 
   validates :token_digest, presence: true, uniqueness: true
 

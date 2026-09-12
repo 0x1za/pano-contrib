@@ -1,7 +1,63 @@
 en:
+  flash:
+    try_again_later: "Try again later."
   shared:
     header:
       mine: "My contributions"
+      review: "Review"
+      sign_in: "Sign in"
+      sign_out: "Sign out"
+  sessions:
+    new:
+      title: "Sign in"
+      eyebrow: "Account"
+      why: "You do not need an account to contribute. One lets you vote from any phone as one person and keeps your history when you change devices."
+      email: "Email"
+      password: "Password"
+      submit: "Sign in"
+      forgot: "Forgot password?"
+      no_account_html: "No account yet? %{link}."
+      sign_up: "Sign up"
+    create:
+      invalid: "That email and password do not match."
+  registrations:
+    closed: "Signups are closed for now. You can still contribute without an account."
+    new:
+      title: "Sign up"
+      eyebrow: "Account"
+      why: "Everything this device has contributed becomes yours."
+      display_name: "Name to show"
+      display_name_hint: "Optional. Shown next to what you contribute and review."
+      email: "Email"
+      password: "Password"
+      password_confirmation: "Password again"
+      submit: "Create account"
+      have_account: "I have an account"
+    create:
+      welcome: "Welcome. This device's contributions are now yours."
+  votes:
+    tally: "%{agree} agree · %{disagree} disagree"
+    agree: "Agree"
+    disagree: "Disagree"
+    create:
+      thanks: "Thanks, your vote is in."
+  reviews:
+    index:
+      title: "Review"
+      eyebrow:
+        one: "1 pending"
+        other: "%{count} pending"
+      keys: "j and k move, a accepts, r rejects, n writes a note."
+      empty: "Nothing pending. Go outside."
+      moderator_only: "needs a moderator"
+      on_map: "On the map"
+      note: "Note for the contributor (optional)"
+      accept: "Accept"
+      reject: "Reject"
+    update:
+      accepted: "Accepted %{label}."
+      rejected: "Rejected %{label}."
+      unknown_decision: "Accept or reject, nothing else."
   map:
     show:
       map_label: "Map of Lusaka with pano addresses"
@@ -15,6 +71,7 @@ en:
       buildings: "Buildings"
       contains: "Contains"
       recent: "Recent contributions"
+      pending: "Waiting for votes"
       confirm: "Yes, this is %{name}"
       name: "It is called…"
       back_to_map: "Back to the map"
@@ -54,6 +111,8 @@ en:
       saved: "Thank you. Your contribution is in."
     show:
       title: "Your contribution"
+      votes: "Votes"
+      review_note: "Reviewer's note"
       name: "Name"
       reason: "Reason"
       note: "Note"

@@ -1,0 +1,37 @@
+<% content_for :title, t(".title") %>
+<main class="wrap review" data-controller="review">
+  <%= render "shared/header" %>
+  <p class="eyebrow"><%= t(".eyebrow", count: @counts.values.sum) %></p>
+  <h1 class="display"><%= t(".title") %></h1>
+  <p class="sub"><%= t(".keys") %></p>
+  <% if @contributions.empty? %>
+    <p class="sub"><%= t(".empty") %></p>
+  <% else %>
+    <ol class="queue">
+      <% @contributions.each do |c| %>
+        <li class="queue-item" data-review-target="item" tabindex="0">
+          <div class="queue-head">
+            <span class="eyebrow"><%= t("contributions.kinds.#{c.kind}") %><% if c.moderator_only? %> · <%= t(".moderator_only") %><% end %></span>
+            <span class="age"><%= time_ago_in_words(c.created_at) %></span>
+          </div>
+          <p class="queue-target">
+            <strong><%= c.target_label %></strong>
+            <% if c.name %><span>→ <%= c.name %></span><% end %>
+            <% if c.reason %><span><%= t("contributions.reasons.#{c.reason}") %></span><% end %>
+            <% if c.payload["note"] %><span>“<%= c.payload["note"] %>”</span><% end %>
+          </p>
+          <p class="hint">
+            <% tally = c.tally %><%= t("votes.tally", agree: tally.agree, disagree: tally.disagree) %>
+            · <%= link_to t(".on_map"), "#{PanoApi.base_url}/##{ERB::Util.url_encode(c.building ? c.building.address : c.target_code.to_s)}", target: "_blank", rel: "noopener" %>
+            <% if c.target_code %>· <%= link_to c.target_code, place_path(c.target_code) %><% end %>
+          </p>
+          <%= form_with url: review_decision_path(c), method: :patch, class: "decision" do |f| %>
+            <%= f.text_field :note, placeholder: t(".note"), maxlength: 280, class: "field", data: { review_target: "note" } %>
+            <%= f.button t(".accept"), name: "decision", value: "accept", class: "btn btn--small", data: { review_target: "accept" } %>
+            <%= f.button t(".reject"), name: "decision", value: "reject", class: "btn btn--small btn--ghost", data: { review_target: "reject" } %>
+          <% end %>
+        </li>
+      <% end %>
+    </ol>
+  <% end %>
+</main>

@@ -87,3 +87,25 @@ a:hover { text-decoration: underline; text-underline-offset: .2em; }
 }
 .maplibregl-ctrl-attrib { font-family: inherit; font-size: 1.1rem; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; } }
+
+/* Accounts, votes and the review queue */
+.site-header nav { display: flex; gap: 1.4rem; align-items: center; }
+.linklike { background: none; border: 0; padding: 0; font: inherit; color: var(--subtle); font-size: 1.4rem; cursor: pointer; }
+.linklike:hover { text-decoration: underline; }
+.btn--small { min-height: 3.4rem; padding: .4rem 1.2rem; font-size: 1.4rem; }
+.vote { display: flex; align-items: center; gap: .8rem; flex-wrap: wrap; margin: 1.2rem 0 0; }
+.vote form { display: inline; }
+.tally { color: var(--subtle); font-size: 1.3rem; font-variant-numeric: tabular-nums; }
+.queue { list-style: none; margin: 0; padding: 0; counter-reset: queue; }
+.queue-item { border-top: 1px solid var(--hairline); padding: 1.6rem 0; outline: none; }
+.queue-item.is-current { box-shadow: -.6rem 0 0 var(--amber); padding-left: 1.2rem; }
+.queue-head { display: flex; justify-content: space-between; gap: 1rem; }
+.queue-head .age { color: var(--subtle); font-size: 1.2rem; }
+.queue-target { margin: .4rem 0 0; font-size: 1.8rem; }
+.queue-target strong { color: var(--accent); }
+.queue-target span { margin-left: .6rem; color: var(--subtle); }
+.decision { display: flex; gap: .8rem; align-items: center; margin-top: 1rem; }
+.decision .field { flex: 1; min-height: 3.4rem; }
+.list .status.is-superseded { color: var(--subtle); }
+.list--stacked li { display: block; }
+.list--stacked li > div { display: block; }

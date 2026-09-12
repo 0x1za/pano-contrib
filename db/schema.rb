@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_12_130400) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_12_213100) do
   create_table "buildings", id: :string, force: :cascade do |t|
     t.string "gazetteer_version_id", null: false
     t.bigint "ingest_id", null: false
@@ -64,6 +64,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_12_130400) do
     t.index ["user_id"], name: "index_devices_on_user_id"
   end
 
+  create_table "flipper_features", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "key", null: false
+    t.datetime "updated_at", null: false
+    t.index ["key"], name: "index_flipper_features_on_key", unique: true
+  end
+
+  create_table "flipper_gates", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "feature_key", null: false
+    t.string "key", null: false
+    t.datetime "updated_at", null: false
+    t.text "value"
+    t.index ["feature_key", "key", "value"], name: "index_flipper_gates_on_feature_key_and_key_and_value", unique: true
+  end
+
   create_table "gazetteer_versions", id: :string, force: :cascade do |t|
     t.string "area", null: false
     t.integer "buildings_count", default: 0, null: false
@@ -103,10 +119,29 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_12_130400) do
 
   create_table "users", id: :string, force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.string "display_name"
     t.string "email_address", null: false
+    t.datetime "last_seen_at"
     t.string "password_digest", null: false
+    t.integer "reputation", default: 0, null: false
+    t.integer "role", default: 0, null: false
     t.datetime "updated_at", null: false
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
+    t.index ["role"], name: "index_users_on_role"
+  end
+
+  create_table "votes", id: :string, force: :cascade do |t|
+    t.string "contribution_id", null: false
+    t.datetime "created_at", null: false
+    t.string "device_id", null: false
+    t.integer "stance", null: false
+    t.datetime "updated_at", null: false
+    t.string "user_id"
+    t.index ["contribution_id", "device_id"], name: "index_votes_on_contribution_id_and_device_id", unique: true
+    t.index ["contribution_id", "user_id"], name: "index_votes_on_contribution_id_and_user_id", unique: true
+    t.index ["contribution_id"], name: "index_votes_on_contribution_id"
+    t.index ["device_id"], name: "index_votes_on_device_id"
+    t.index ["user_id"], name: "index_votes_on_user_id"
   end
 
   add_foreign_key "buildings", "gazetteer_versions"
@@ -118,4 +153,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_12_130400) do
   add_foreign_key "devices", "users"
   add_foreign_key "places", "gazetteer_versions"
   add_foreign_key "sessions", "users"
+  add_foreign_key "votes", "contributions"
+  add_foreign_key "votes", "devices"
+  add_foreign_key "votes", "users"
 end
