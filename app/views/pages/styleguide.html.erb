@@ -1,0 +1,14 @@
+<% content_for :title, "styleguide" %>
+<main class="wrap stack">
+  <%= render "shared/header" %>
+  <p class="eyebrow">Eyebrow · label</p>
+  <h1 class="display">LS33 9XX 17</h1>
+  <p class="sub">Sub · secondary line under a display</p>
+  <div class="actions"><a class="btn" href="#">Primary</a><a class="btn btn--ghost" href="#">Ghost</a></div>
+  <dl class="facts"><div><dt>Fact</dt><dd>Value</dd></div><div><dt>Another</dt><dd>12,345</dd></div></dl>
+  <fieldset class="choices"><legend class="label">Choices</legend><label class="choice"><input type="radio" name="s" checked><span>One</span></label><label class="choice"><input type="radio" name="s"><span>Two</span></label></fieldset>
+  <label class="label" for="sg">Field</label><input id="sg" class="field" value="Kabanana">
+  <div class="flash is-inline">A flash message</div>
+  <div class="flash is-error is-inline">An error</div>
+  <ul class="list"><li><strong>LS1 1JJ 5</strong> <span>Confirm address</span> <span class="status is-pending">Pending</span></li><li><strong>LS33</strong> <span>Confirm district</span> <span class="status is-accepted">Accepted</span></li></ul>
+</main>

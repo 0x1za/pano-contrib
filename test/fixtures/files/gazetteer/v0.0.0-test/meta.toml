@@ -1,0 +1,8 @@
+version = "0.0.0-test"
+area = "LS"
+alphabet = "CHJKLMNQRWXYZ"
+split_threshold = 80
+
+[names]
+LS1 = "Kabulonga"
+LS3 = "Kanyama"

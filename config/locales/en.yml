@@ -1,0 +1,69 @@
+en:
+  shared:
+    header:
+      mine: "My contributions"
+  map:
+    show:
+      map_label: "Map of Lusaka with pano addresses"
+      mine: "My contributions"
+  places:
+    tiers:
+      district: "District"
+      sector: "Sector"
+      unit: "Unit"
+    show:
+      buildings: "Buildings"
+      contains: "Contains"
+      recent: "Recent contributions"
+      confirm: "Yes, this is %{name}"
+      name: "It is called…"
+      back_to_map: "Back to the map"
+  contributions:
+    no_gazetteer: "No gazetteer has been imported yet, so there is nothing to contribute to."
+    kinds:
+      confirm_address: "This is my address"
+      dispute_address: "Something is wrong with this address"
+      confirm_district: "Yes, this is the district"
+      dispute_district: "This district is called something else"
+      name_place: "Name this place"
+      missing_building: "A building is missing"
+      delivery_note: "Delivery note"
+      boundary_move: "Boundary correction"
+    statuses:
+      pending: "Pending"
+      accepted: "Accepted"
+      rejected: "Rejected"
+      superseded: "Superseded"
+    reasons:
+      not_here: "There is no building here"
+      not_a_building: "This is not a building (a shed, a wall, a tank)"
+      two_buildings: "This is two buildings, not one"
+      wrong_number: "The number is wrong"
+    new:
+      title: "Contribute"
+      building_in: "Unit %{unit} · %{district}"
+      what_is_wrong: "What is wrong?"
+      name: "What is it called?"
+      note: "What should a courier know?"
+      note_hint: "A gate colour, a landmark, who to ask for. Nothing private."
+      confirm_hint: "Tap send to confirm. Three confirmations accept an address; five accept a district."
+      licence_html: "Contributions are published under <a href=\"https://creativecommons.org/licenses/by/4.0/\">CC BY 4.0</a> as \"pano contributors\"."
+      send: "Send"
+      cancel: "Cancel"
+    create:
+      saved: "Thank you. Your contribution is in."
+    show:
+      title: "Your contribution"
+      name: "Name"
+      reason: "Reason"
+      note: "Note"
+      sent: "Sent"
+      gazetteer: "Gazetteer"
+      thanks: "Pending until enough people agree or a moderator reviews it."
+      back_to_map: "Back to the map"
+      all_mine: "All my contributions"
+    index:
+      title: "My contributions"
+      eyebrow: "From this device"
+      empty: "Nothing yet. Tap a building on the map to start."
+      back_to_map: "Back to the map"

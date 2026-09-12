@@ -1,0 +1,5 @@
+{"type":"FeatureCollection","features":[
+{"type":"Feature","id":"LS1 1CC","geometry":{"type":"MultiPolygon","coordinates":[[[[28.3425,-15.42],[28.3475,-15.42],[28.3475,-15.4175],[28.3425,-15.4175],[28.3425,-15.42]]]]},"properties":{"code":"LS1 1CC","district":"LS1","sector":"LS1 1","structures":50,"cells":2,"centroid_lat":-15.41875,"centroid_lng":28.345}},
+{"type":"Feature","id":"LS1 1CH","geometry":{"type":"MultiPolygon","coordinates":[[[[28.3425,-15.4175],[28.345,-15.4175],[28.345,-15.415],[28.3425,-15.415],[28.3425,-15.4175]]]]},"properties":{"code":"LS1 1CH","district":"LS1","sector":"LS1 1","structures":10,"cells":1,"centroid_lat":-15.41625,"centroid_lng":28.34375}},
+{"type":"Feature","id":"LS3 1CC","geometry":{"type":"MultiPolygon","coordinates":[[[[28.3425,-15.415],[28.345,-15.415],[28.345,-15.4125],[28.3425,-15.4125],[28.3425,-15.415]]]]},"properties":{"code":"LS3 1CC","district":"LS3","sector":"LS3 1","structures":5,"cells":1,"centroid_lat":-15.41375,"centroid_lng":28.34375}}
+]}

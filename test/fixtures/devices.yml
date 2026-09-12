@@ -1,0 +1,10 @@
+phone:
+  id: 44444444-4444-4444-8444-444444444441
+  token_digest: <%= Digest::SHA256.hexdigest("phone-token") %>
+  first_seen_at: <%= 2.days.ago %>
+  last_seen_at: <%= 1.hour.ago %>
+other:
+  id: 44444444-4444-4444-8444-444444444442
+  token_digest: <%= Digest::SHA256.hexdigest("other-token") %>
+  first_seen_at: <%= 2.days.ago %>
+  last_seen_at: <%= 1.hour.ago %>

@@ -1,0 +1,27 @@
+kabulonga:
+  id: 22222222-2222-4222-8222-222222222221
+  gazetteer_version_id: 11111111-1111-4111-8111-111111111111
+  tier: district
+  code: LS1
+  name: Kabulonga
+  centroid_lat: -15.4157
+  centroid_lng: 28.3426
+  structures: 60
+kabulonga_sector_1:
+  id: 22222222-2222-4222-8222-222222222222
+  gazetteer_version_id: 11111111-1111-4111-8111-111111111111
+  tier: sector
+  code: LS1 1
+  parent_code: LS1
+  centroid_lat: -15.4157
+  centroid_lng: 28.3426
+  structures: 60
+unit_cc:
+  id: 22222222-2222-4222-8222-222222222223
+  gazetteer_version_id: 11111111-1111-4111-8111-111111111111
+  tier: unit
+  code: LS1 1CC
+  parent_code: LS1 1
+  centroid_lat: -15.41875
+  centroid_lng: 28.345
+  structures: 50

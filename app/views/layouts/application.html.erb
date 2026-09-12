@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+  <head>
+    <title><%= content_for(:title) || "pano" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="theme-color" content="#022EAC">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%# One hand-written stylesheet, pano's palette; /styleguide is the reference. %>
+    <%= stylesheet_link_tag "maplibre-gl" %>
+    <%= stylesheet_link_tag :app %>
+    <%= javascript_importmap_tags %>
+  </head>
+  <body class="<%= content_for(:body_class) %>">
+    <%# Flash as a toast; the map page keeps the header out of the way. %>
+    <% if flash.any? %>
+      <div class="flash<%= " is-error" if flash[:alert] %>" role="status"><%= flash[:notice] || flash[:alert] %></div>
+    <% end %>
+    <%= yield %>
+  </body>
+</html>

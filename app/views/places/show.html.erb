@@ -1,0 +1,23 @@
+<% content_for :title, @place.display_name %>
+<main class="wrap">
+  <%= render "shared/header" %>
+  <p class="eyebrow"><%= t("places.tiers.#{@place.tier}") %> · <%= @place.code %></p>
+  <h1 class="display"><%= @place.display_name %></h1>
+  <dl class="facts">
+    <div><dt><%= t(".buildings") %></dt><dd><%= number_with_delimiter @place.structures %></dd></div>
+    <% if @children.any? %><div><dt><%= t(".contains") %></dt><dd><%= @children.size %> <%= t("places.tiers.#{@children.first.tier}").downcase.pluralize(@children.size) %></dd></div><% end %>
+  </dl>
+  <% if @contributions.any? %>
+    <p class="eyebrow"><%= t(".recent") %></p>
+    <ul class="list">
+      <% @contributions.each do |c| %>
+        <li><strong><%= t("contributions.kinds.#{c.kind}") %></strong> <span><%= c.name || c.reason || "" %></span> <span class="status is-<%= c.status %>"><%= t("contributions.statuses.#{c.status}") %></span></li>
+      <% end %>
+    </ul>
+  <% end %>
+  <div class="actions">
+    <%= link_to t(".confirm", name: @place.display_name), new_contribution_path(kind: "confirm_district", target_code: @place.code), class: "btn" if @place.tier_district? %>
+    <%= link_to t(".name"), new_contribution_path(kind: @place.tier_district? ? "dispute_district" : "name_place", target_code: @place.code), class: "btn btn--ghost" %>
+    <%= link_to t(".back_to_map"), root_path, class: "btn btn--ghost" %>
+  </div>
+</main>

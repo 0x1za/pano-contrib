@@ -1,0 +1,51 @@
+<% content_for :title, t(".title") %>
+<main class="wrap">
+  <%= render "shared/header" %>
+  <p class="eyebrow"><%= t("contributions.kinds.#{@contribution.kind}") %></p>
+  <h1 class="display">
+    <%= @building ? @building.address : (@place&.display_name || @contribution.target_code) %>
+  </h1>
+  <% if @building %>
+    <p class="sub"><%= t(".building_in", unit: @building.unit_code, district: current_gazetteer.district_name(@building.district_code)) %></p>
+  <% elsif @place %>
+    <p class="sub"><%= @place.code %> · <%= t("places.tiers.#{@place.tier}") %></p>
+  <% end %>
+
+  <%= form_with model: @contribution, class: "stack" do |f| %>
+    <% if @contribution.errors.any? %>
+      <div class="flash is-error is-inline"><%= @contribution.errors.full_messages.to_sentence %></div>
+    <% end %>
+    <%= f.hidden_field :kind %>
+    <%= f.hidden_field :building_id %>
+    <%= f.hidden_field :target_code %>
+    <%= f.hidden_field :mutation_id, value: @contribution.mutation_id || SecureRandom.uuid %>
+
+    <% case @contribution.kind %>
+    <% when "dispute_address" %>
+      <fieldset class="choices">
+        <legend class="label"><%= t(".what_is_wrong") %></legend>
+        <% Contribution::DISPUTE_REASONS.each do |reason| %>
+          <label class="choice">
+            <%= radio_button_tag "contribution[payload][reason]", reason, @contribution.reason == reason %>
+            <span><%= t("contributions.reasons.#{reason}") %></span>
+          </label>
+        <% end %>
+      </fieldset>
+    <% when "dispute_district", "name_place" %>
+      <label class="label" for="contribution_payload_name"><%= t(".name") %></label>
+      <%= text_field_tag "contribution[payload][name]", @contribution.name, id: "contribution_payload_name", maxlength: 80, autofocus: true, class: "field" %>
+    <% when "delivery_note" %>
+      <label class="label" for="contribution_payload_note"><%= t(".note") %></label>
+      <%= text_area_tag "contribution[payload][note]", @contribution.payload["note"], id: "contribution_payload_note", maxlength: 280, rows: 3, autofocus: true, class: "field" %>
+      <p class="hint"><%= t(".note_hint") %></p>
+    <% else %>
+      <p class="sub"><%= t(".confirm_hint") %></p>
+    <% end %>
+
+    <p class="hint"><%= t(".licence_html") %></p>
+    <div class="actions">
+      <%= f.submit t(".send"), class: "btn" %>
+      <%= link_to t(".cancel"), root_path, class: "btn btn--ghost" %>
+    </div>
+  <% end %>
+</main>

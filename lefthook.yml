@@ -1,0 +1,21 @@
+pre-commit:
+  parallel: true
+  commands:
+    rubocop:
+      glob: "*.rb"
+      run: bin/rubocop {staged_files}
+    js-check:
+      glob: "app/javascript/**/*.js"
+      run: for f in {staged_files}; do node --check "$f"; done
+commit-msg:
+  commands:
+    conventional:
+      run: |
+        head -1 {1} | grep -qE '^(feat|fix|chore|test|docs|refactor|revert)(\(.+\))?: ' || {
+          echo "commit message must start with feat|fix|chore|test|docs|refactor|revert:"; exit 1; }
+pre-push:
+  commands:
+    test:
+      run: bin/rails test
+    brakeman:
+      run: bin/brakeman --no-pager -q

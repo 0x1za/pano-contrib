@@ -1,0 +1,27 @@
+<% content_for :body_class, "is-map" %>
+<div data-controller="map" data-map-api-value="<%= @api_url %>">
+  <div class="map" data-map-target="canvas" role="application" aria-label="<%= t(".map_label") %>"></div>
+
+  <header class="bar">
+    <%= link_to root_path, class: "wordmark" do %>
+      <%= render "shared/mark" %>pano
+    <% end %>
+    <nav>
+      <%= link_to t(".mine"), contributions_path %>
+    </nav>
+  </header>
+
+  <aside class="card" data-map-target="card" hidden>
+    <p class="eyebrow" data-map-target="eyebrow"></p>
+    <p class="address" data-map-target="address"></p>
+    <div class="actions" data-map-target="actions"></div>
+    <p class="note" data-map-target="note"></p>
+  </aside>
+
+  <% unless @gazetteer %>
+    <aside class="card">
+      <p class="eyebrow">pano</p>
+      <p class="note"><%= t("contributions.no_gazetteer") %></p>
+    </aside>
+  <% end %>
+</div>

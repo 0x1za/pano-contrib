@@ -1,0 +1,89 @@
+/* pano-contrib: one stylesheet, the pano palette. /styleguide renders every
+   primitive here and is the reference; edit that page when you add one.
+   Flat: hairlines, no cards on content, 2px radii, cobalt for the answer,
+   amber for the selection, mint for buildings. */
+:root {
+  --paper: #FFFFFF;
+  --ink: #0B0C11;
+  --ink-rgb: 11, 12, 17;
+  --accent: #022EAC;
+  --accent-rgb: 2, 46, 172;
+  --mint: #13E19B;
+  --amber: #FBA30C;
+  --subtle: rgba(var(--ink-rgb), .55);
+  --hairline: rgba(var(--ink-rgb), .14);
+  --field-border: rgba(var(--ink-rgb), .44);
+  --error: #E54B4B;
+  --radius: 2px;
+  --measure: 44rem;
+  color-scheme: only light;
+}
+html { font-size: 62.5%; }
+@media (min-width: 880px) { html { font-size: 70%; } }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Lato", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 1.6rem; line-height: 1.45; -webkit-font-smoothing: antialiased; }
+body.is-map { overflow: hidden; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; text-underline-offset: .2em; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.wrap { max-width: var(--measure); margin: 0 auto; padding: 1.6rem 1.6rem 6.4rem; }
+.stack > * + * { margin-top: 1.6rem; }
+.site-header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 1.2rem; margin-bottom: 2.4rem; border-bottom: 1px solid var(--hairline); }
+.wordmark { display: inline-flex; align-items: center; gap: .7rem; font-weight: 900; font-size: 1.8rem; color: var(--accent); }
+.wordmark:hover { text-decoration: none; }
+.site-header nav a { color: var(--subtle); font-size: 1.4rem; }
+
+.eyebrow, .label { display: block; font-size: 1.2rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--subtle); margin: 0 0 .6rem; }
+.display { font-size: 4rem; font-weight: 900; line-height: 1.02; letter-spacing: -.01em; color: var(--accent); margin: 0 0 .8rem; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.sub { color: var(--subtle); margin: 0 0 1.6rem; }
+.hint { color: var(--subtle); font-size: 1.3rem; margin: 1.2rem 0 0; }
+.hint a { text-decoration: underline; }
+
+.btn { display: inline-flex; align-items: center; min-height: 4.4rem; padding: .8rem 1.4rem; border: 1px solid var(--accent); border-radius: var(--radius); background: var(--accent); color: #fff; font: inherit; font-size: 1.5rem; font-weight: 700; line-height: 1; cursor: pointer; white-space: nowrap; }
+.btn:hover { filter: brightness(1.1); text-decoration: none; }
+.btn--ghost { background: transparent; color: var(--accent); }
+.btn--ghost:hover { background: rgba(var(--accent-rgb), .06); filter: none; }
+.actions { display: flex; flex-wrap: wrap; gap: .8rem; margin: 1.6rem 0 0; }
+.card .actions { flex-direction: column; }
+.card .actions .btn { width: 100%; justify-content: center; }
+
+.field { width: 100%; min-height: 4.4rem; padding: .8rem 1.2rem; border: 1px solid var(--field-border); border-radius: var(--radius); background: transparent; color: var(--ink); font: inherit; font-size: 1.6rem; }
+.field:focus { border-color: var(--accent); outline: none; }
+.choices { border: 0; padding: 0; margin: 0; }
+.choice { display: flex; align-items: center; gap: 1rem; padding: 1.2rem 0; border-bottom: 1px solid var(--hairline); font-size: 1.6rem; cursor: pointer; }
+.choice:last-child { border-bottom: 0; }
+.choice input { width: 2rem; height: 2rem; accent-color: var(--accent); margin: 0; }
+
+.facts { margin: 0; }
+.facts div { display: flex; justify-content: space-between; gap: 1rem; padding: 1rem 0; border-top: 1px solid var(--hairline); font-size: 1.4rem; }
+.facts dt { color: var(--subtle); margin: 0; }
+.facts dd { margin: 0; font-variant-numeric: tabular-nums; text-align: right; }
+.list { list-style: none; margin: 0; padding: 0; }
+.list li { border-top: 1px solid var(--hairline); }
+.list li > a, .list li { display: flex; gap: 1rem; align-items: baseline; padding: 1.2rem 0; color: var(--ink); font-size: 1.4rem; }
+.list li > a { padding: 0; }
+.list li > a:hover { text-decoration: none; }
+.list li > a > *, .list li > * { flex: 1; }
+.list li strong { flex: 0 0 auto; color: var(--accent); font-variant-numeric: tabular-nums; }
+.status { flex: 0 0 auto !important; font-size: 1.1rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--subtle); }
+.status.is-accepted { color: #0F7A32; }
+.status.is-rejected { color: var(--error); }
+
+.flash { position: fixed; left: 50%; bottom: 1.6rem; transform: translateX(-50%); z-index: 6; max-width: min(48rem, calc(100vw - 3.2rem)); background: var(--ink); color: #fff; padding: 1rem 1.4rem; border-radius: var(--radius); font-size: 1.4rem; }
+.flash.is-error { background: var(--error); }
+.flash.is-inline { position: static; transform: none; max-width: none; margin: 0 0 1.6rem; }
+
+/* Map page */
+.map { position: fixed; inset: 0; background: #F4F4F4; }
+.bar { position: fixed; top: 1.2rem; left: 1.2rem; right: 1.2rem; z-index: 5; display: flex; align-items: center; justify-content: space-between; padding: .8rem 1.2rem; background: var(--paper); border: 1px solid var(--ink); border-radius: var(--radius); }
+.bar nav a { color: var(--subtle); font-size: 1.4rem; }
+.card { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; background: var(--paper); border-top: 1px solid var(--ink); padding: 1.6rem 1.6rem calc(1.6rem + env(safe-area-inset-bottom)); }
+.card .address { font-size: 3.4rem; font-weight: 900; line-height: 1.02; color: var(--accent); margin: 0 0 .6rem; font-variant-numeric: tabular-nums; }
+.card .note { color: var(--subtle); font-size: 1.3rem; margin: 1rem 0 0; }
+@media (min-width: 880px) {
+  .bar { right: auto; width: 34rem; }
+  .card { left: auto; top: 1.2rem; right: 1.2rem; bottom: auto; width: 34rem; border: 1px solid var(--ink); border-radius: var(--radius); }
+}
+.maplibregl-ctrl-attrib { font-family: inherit; font-size: 1.1rem; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; } }

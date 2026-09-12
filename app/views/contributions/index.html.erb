@@ -1,0 +1,22 @@
+<% content_for :title, t(".title") %>
+<main class="wrap">
+  <%= render "shared/header" %>
+  <p class="eyebrow"><%= t(".eyebrow") %></p>
+  <h1 class="display"><%= t(".title") %></h1>
+  <% if @contributions.empty? %>
+    <p class="sub"><%= t(".empty") %></p>
+  <% else %>
+    <ul class="list">
+      <% @contributions.each do |c| %>
+        <li>
+          <%= link_to contribution_path(c) do %>
+            <strong><%= c.target_label %></strong>
+            <span><%= t("contributions.kinds.#{c.kind}") %></span>
+            <span class="status is-<%= c.status %>"><%= t("contributions.statuses.#{c.status}") %></span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+  <div class="actions"><%= link_to t(".back_to_map"), root_path, class: "btn" %></div>
+</main>

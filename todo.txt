@@ -1,0 +1,23 @@
+# pano-contrib. Phases from ../pano/docs/contributions-plan.md.
+
+## Phase 1 — Skeleton
+[x] Rails 8.1 app: SQLite, Solid trio, importmap, Hotwire, Rails 8 auth
+[x] UUID keys, SoftDeletable, gazetteer_versions / places / buildings / devices / contributions
+[x] GazetteerImport with SHA256SUMS verification; bin/rails pano:import[DIR]
+[x] PanoApi client cached by ETag
+[x] Map page with the pano map and the address card (Stimulus + vendored MapLibre)
+[x] Anonymous devices; confirm_address, dispute_address, delivery_note, confirm_district, dispute_district, name_place
+[x] rack-attack throttles per device and per IP
+[x] Styleguide page; English copy in i18n
+[x] Tests: models, importer, controllers, one system test at a phone viewport
+[x] lefthook, CI, README
+
+## Phase 2 — Review
+[ ] Accounts claim devices; votes; auto-acceptance service; review queue; Avo; Flipper
+
+## Phase 3 — Changesets
+[ ] Export changes.json; zoning --changes; churn report back into the app
+
+## Phase 4 — Notes and photos
+## Phase 5 — Offline
+## Phase 6 — Field protocol

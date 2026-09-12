@@ -1,0 +1,18 @@
+<% content_for :title, t(".title") %>
+<main class="wrap">
+  <%= render "shared/header" %>
+  <p class="eyebrow"><%= t("contributions.kinds.#{@contribution.kind}") %> · <%= t("contributions.statuses.#{@contribution.status}") %></p>
+  <h1 class="display"><%= @contribution.target_label %></h1>
+  <dl class="facts">
+    <% if @contribution.name %><div><dt><%= t(".name") %></dt><dd><%= @contribution.name %></dd></div><% end %>
+    <% if @contribution.reason %><div><dt><%= t(".reason") %></dt><dd><%= t("contributions.reasons.#{@contribution.reason}") %></dd></div><% end %>
+    <% if @contribution.payload["note"] %><div><dt><%= t(".note") %></dt><dd><%= @contribution.payload["note"] %></dd></div><% end %>
+    <div><dt><%= t(".sent") %></dt><dd><%= l(@contribution.created_at, format: :short) %></dd></div>
+    <div><dt><%= t(".gazetteer") %></dt><dd>v<%= @contribution.gazetteer_version.version %></dd></div>
+  </dl>
+  <p class="sub"><%= t(".thanks") %></p>
+  <div class="actions">
+    <%= link_to t(".back_to_map"), root_path, class: "btn" %>
+    <%= link_to t(".all_mine"), contributions_path, class: "btn btn--ghost" %>
+  </div>
+</main>

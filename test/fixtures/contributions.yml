@@ -1,0 +1,19 @@
+phone_confirms_one:
+  id: 55555555-5555-4555-8555-555555555551
+  kind: confirm_address
+  status: pending
+  gazetteer_version_id: 11111111-1111-4111-8111-111111111111
+  target_kind: building
+  building_id: 33333333-3333-4333-8333-333333333331
+  device_id: 44444444-4444-4444-8444-444444444441
+  mutation_id: aaaaaaaa-0000-4000-8000-000000000001
+other_disputes_district:
+  id: 55555555-5555-4555-8555-555555555552
+  kind: dispute_district
+  status: pending
+  gazetteer_version_id: 11111111-1111-4111-8111-111111111111
+  target_kind: district
+  target_code: LS1
+  payload: { "name": "Ibex Hill" }
+  device_id: 44444444-4444-4444-8444-444444444442
+  mutation_id: aaaaaaaa-0000-4000-8000-000000000002
