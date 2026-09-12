@@ -81,12 +81,12 @@ a:hover { text-decoration: underline; text-underline-offset: .2em; }
 .map { position: fixed; inset: 0; background: #F4F4F4; }
 .bar { position: fixed; top: 1.2rem; left: 1.2rem; right: 1.2rem; z-index: 5; display: flex; align-items: center; justify-content: space-between; padding: .8rem 1.2rem; background: var(--paper); border: 1px solid var(--ink); border-radius: var(--radius); }
 .bar nav { display: flex; gap: 1.4rem; align-items: center; }
-.bar .search { display: flex; flex: 1; min-width: 0; margin: 0 1.6rem; border: 1px solid var(--field-border); border-radius: var(--radius); overflow: hidden; }
-.bar .search input { flex: 1; min-width: 0; border: 0; padding: .6rem 1rem; font: inherit; font-size: 1.5rem; background: var(--paper); color: var(--ink); }
+.bar .search { position: relative; display: flex; flex: 1; min-width: 12rem; margin: 0 1.6rem; }
+.bar .search input { flex: 1; min-width: 0; border: 1px solid var(--field-border); border-right: 0; border-radius: var(--radius) 0 0 var(--radius); padding: .6rem 1rem; font: inherit; font-size: 1.5rem; background: var(--paper); color: var(--ink); }
 .bar .search input::placeholder { color: var(--subtle); }
 .bar .search input:focus { outline: none; }
-.bar .search .go { border: 0; background: var(--accent); color: #fff; padding: 0 1.2rem; font: inherit; font-size: 1.6rem; cursor: pointer; }
-.suggest { position: fixed; top: 6.4rem; left: 1.2rem; z-index: 6; width: min(44rem, calc(100vw - 2.4rem)); background: var(--paper); border: 1px solid var(--ink); border-radius: var(--radius); margin: 0; padding: .4rem 0; list-style: none; display: none; }
+.bar .search .go { border: 1px solid var(--accent); border-radius: 0 var(--radius) var(--radius) 0; background: var(--accent); color: #fff; padding: 0 1.2rem; font: inherit; font-size: 1.6rem; cursor: pointer; }
+.suggest { position: absolute; top: calc(100% + .6rem); left: 0; right: 0; z-index: 6; background: var(--paper); border: 1px solid var(--ink); border-radius: var(--radius); margin: 0; padding: .4rem 0; list-style: none; display: none; }
 .suggest.is-open { display: block; }
 .suggest li { display: flex; justify-content: space-between; gap: 1rem; padding: .7rem 1.2rem; cursor: pointer; font-size: 1.4rem; }
 .suggest li:hover, .suggest li.is-active { background: rgba(var(--accent-rgb), .08); }
@@ -96,7 +96,6 @@ a:hover { text-decoration: underline; text-underline-offset: .2em; }
 @media (max-width: 879px) {
   .bar { flex-wrap: wrap; gap: .8rem; }
   .bar .search { order: 3; flex-basis: 100%; margin: 0; }
-  .suggest { top: 11rem; }
 }
 .bar nav a { color: var(--subtle); font-size: 1.4rem; }
 .bar .help { width: 2.8rem; height: 2.8rem; border: 1px solid var(--accent); border-radius: 50%; background: none; color: var(--accent); font: inherit; font-weight: 700; cursor: pointer; }
@@ -104,8 +103,7 @@ a:hover { text-decoration: underline; text-underline-offset: .2em; }
 .card .address { font-size: 3.4rem; font-weight: 900; line-height: 1.02; color: var(--accent); margin: 0 0 .6rem; font-variant-numeric: tabular-nums; }
 .card .note { color: var(--subtle); font-size: 1.3rem; margin: 1rem 0 0; }
 @media (min-width: 880px) {
-  .bar { right: auto; width: 34rem; }
-  .card { left: auto; top: 1.2rem; right: 1.2rem; bottom: auto; width: 34rem; border: 1px solid var(--ink); border-radius: var(--radius); }
+  .bar { right: auto; width: min(76rem, calc(100vw - 2.4rem)); }
 }
 .maplibregl-ctrl-attrib { font-family: inherit; font-size: 1.1rem; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; } }

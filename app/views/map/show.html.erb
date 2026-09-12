@@ -9,6 +9,7 @@
     <form class="search" role="search" autocomplete="off" data-action="submit->map#search">
       <input type="text" name="q" data-map-target="query" placeholder="<%= t(".search_placeholder") %>" aria-label="<%= t(".search_placeholder") %>" spellcheck="false" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="map-suggest" data-action="input->map#suggest keydown->map#searchKey focus->map#suggest">
       <button type="submit" class="go" aria-label="<%= t(".search_go") %>">→</button>
+      <ul class="suggest" id="map-suggest" role="listbox" data-map-target="suggest" data-action="click->map#pick"></ul>
     </form>
     <nav>
       <%= link_to t(".about"), about_path %>
@@ -16,8 +17,6 @@
       <button type="button" class="help" data-action="map#welcome" title="<%= t(".help") %>" aria-label="<%= t(".help") %>">?</button>
     </nav>
   </header>
-
-  <ul class="suggest" id="map-suggest" role="listbox" data-map-target="suggest" data-action="click->map#pick"></ul>
 
   <%# First visit: what this is and what a tap does, as a modal. Dismissal is remembered per browser. %>
   <dialog class="modal welcome" data-map-target="welcome" data-action="click->map#welcomeBackdrop">
