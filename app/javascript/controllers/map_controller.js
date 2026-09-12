@@ -6,7 +6,7 @@ const maplibregl = window.maplibregl
 // questions. A tap on a building or the ground calls /encode and fills the
 // card; the card's buttons are plain links into the contribution forms.
 export default class extends Controller {
-  static targets = ["canvas", "welcome", "query", "suggest", "basemap"]
+  static targets = ["canvas", "welcome", "query", "suggest"]
   static values = {
     api: String,
     satellite: String,
@@ -32,6 +32,7 @@ export default class extends Controller {
       center: this.centerValue, zoom: this.zoomValue, minZoom: 9, maxZoom: 20
     })
     this.map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "bottom-right")
+    this.map.addControl(this.#basemapControl(), "bottom-right")
     this.#maybeWelcome()
     this.onModalClosed = () => this.#loadMine()
     document.addEventListener("pano:modal-closed", this.onModalClosed)
@@ -83,6 +84,41 @@ export default class extends Controller {
   }
 
   // ---------- basemap: the muted street map, or aerial imagery to find your own roof ----------
+  // The switch is the thumbnail in the corner everyone knows from Google
+  // Maps: it shows the mode you would switch to, labelled, next to the zoom.
+  #basemapControl() {
+    const sat = this.satelliteValue.replace("{z}", "13").replace("{y}", "4451").replace("{x}", "4741")
+    const osm = "https://tile.openstreetmap.org/13/4741/4451.png"
+    const controller = this
+    return {
+      onAdd() {
+        const div = document.createElement("div")
+        div.className = "maplibregl-ctrl basemap-switch"
+        const btn = document.createElement("button")
+        btn.type = "button"; btn.className = "basemap-switch__btn"
+        btn.setAttribute("aria-pressed", "false")
+        btn.addEventListener("click", () => controller.toggleBasemap())
+        div.append(btn)
+        controller.basemapButton = btn
+        controller.basemapThumbs = { sat, osm }
+        controller.#paintBasemapButton()
+        return div
+      },
+      onRemove() { controller.basemapButton = null }
+    }
+  }
+
+  #paintBasemapButton() {
+    const btn = this.basemapButton
+    if (!btn) return
+    const toSat = !this.satellite
+    btn.style.backgroundImage = `url("${toSat ? this.basemapThumbs.sat : this.basemapThumbs.osm}")`
+    btn.textContent = toSat ? "Satellite" : "Map"
+    btn.title = toSat ? "Show aerial imagery" : "Show the street map"
+    btn.setAttribute("aria-label", btn.title)
+    btn.setAttribute("aria-pressed", String(this.satellite))
+  }
+
   toggleBasemap() {
     this.satellite = !this.satellite
     try { localStorage.setItem("pano.basemap", this.satellite ? "sat" : "map") } catch {}
@@ -98,8 +134,7 @@ export default class extends Controller {
     for (const id of ["districts-line", "units-line"]) if (this.map.getLayer(id)) this.map.setPaintProperty(id, "line-color", line)
     if (this.map.getLayer("district-labels")) this.map.setPaintProperty("district-labels", "text-color", sat ? "#FFFFFF" : "#022EAC")
     if (this.map.getLayer("district-labels")) this.map.setPaintProperty("district-labels", "text-halo-color", sat ? "rgba(0,0,0,.6)" : "#fff")
-    this.basemapTarget.classList.toggle("is-on", sat)
-    this.basemapTarget.setAttribute("aria-pressed", String(sat))
+    this.#paintBasemapButton()
   }
 
   // ---------- search: the pano API's /search suggests, /resolve lands ----------

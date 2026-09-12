@@ -99,8 +99,10 @@ a:hover { text-decoration: underline; text-underline-offset: .2em; }
   .bar .search { order: 3; flex-basis: 100%; margin: 0; }
 }
 .bar nav a { color: var(--subtle); font-size: 1.4rem; }
-.bar .toggle { padding: .4rem .9rem; border: 1px dashed var(--amber); border-radius: var(--radius); background: none; color: var(--amber); font: inherit; font-size: 1.3rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; cursor: pointer; }
-.bar .toggle.is-on { background: var(--amber); color: var(--ink); border-style: solid; }
+/* The basemap switch: a thumbnail of the other mode, next to the zoom buttons. */
+.maplibregl-ctrl.basemap-switch { margin: 0 10px 10px 0; }
+.basemap-switch__btn { display: flex; align-items: flex-end; justify-content: center; width: 6.8rem; height: 6.8rem; padding: 0 0 .4rem; border: 2px solid #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.35); background-size: cover; background-position: center; color: #fff; font: inherit; font-size: 1.2rem; font-weight: 700; letter-spacing: .04em; text-shadow: 0 1px 2px rgba(0,0,0,.8); cursor: pointer; }
+.basemap-switch__btn:hover { border-color: var(--amber); }
 .bar .help { width: 2.8rem; height: 2.8rem; border: 1px solid var(--accent); border-radius: 50%; background: none; color: var(--accent); font: inherit; font-weight: 700; cursor: pointer; }
 .card { background: var(--paper); padding: 1.6rem; }
 .card .address { font-size: 3.4rem; font-weight: 900; line-height: 1.02; color: var(--accent); margin: 0 0 .6rem; font-variant-numeric: tabular-nums; }
