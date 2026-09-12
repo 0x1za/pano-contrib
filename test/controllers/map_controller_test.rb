@@ -11,6 +11,8 @@ class MapControllerTest < ActionDispatch::IntegrationTest
     assert_select "dialog.modal turbo-frame#modal", 1, "the frame contribution forms load into"
     assert_select ".bar form.search input[name=q][data-map-target=query]", 1
     assert_select "ul.suggest[data-map-target=suggest]", 1
+    assert_select "[data-controller=map][data-map-satellite-value*='World_Imagery']", 1
+    assert_select ".bar nav button.toggle[data-map-target=basemap]", "Satellite"
     assert_select ".bar nav a[href='/about']", "About"
     assert_select ".bar nav button.help"
   end

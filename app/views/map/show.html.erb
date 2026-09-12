@@ -1,5 +1,5 @@
 <% content_for :body_class, "is-map" %>
-<div data-controller="map" data-map-api-value="<%= @api_url %>">
+<div data-controller="map" data-map-api-value="<%= @api_url %>" data-map-satellite-value="<%= @satellite_tiles %>">
   <div class="map" data-map-target="canvas" role="application" aria-label="<%= t(".map_label") %>"></div>
 
   <header class="bar">
@@ -15,6 +15,7 @@
       <%= link_to t(".about"), about_path %>
       <%= link_to t(".leaderboard"), leaderboard_path %>
       <%= link_to t(".mine"), contributions_path %>
+      <button type="button" class="toggle" data-map-target="basemap" data-action="map#toggleBasemap" aria-pressed="false"><%= t(".satellite") %></button>
       <button type="button" class="help" data-action="map#welcome" title="<%= t(".help") %>" aria-label="<%= t(".help") %>">?</button>
     </nav>
   </header>

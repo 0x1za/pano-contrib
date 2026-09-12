@@ -17,6 +17,16 @@ class PanoApi
     ENV.fetch("PANO_API_URL", "http://127.0.0.1:8080")
   end
 
+  # Aerial imagery for the satellite toggle: a raster tile template. The
+  # default, Esri World Imagery, is fine for a pilot with attribution; a
+  # public deployment should set PANO_SATELLITE_TILES to a keyed source
+  # (ArcGIS, MapTiler, Mapbox) under its own terms.
+  SATELLITE_DEFAULT = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}".freeze
+
+  def self.satellite_tiles
+    ENV.fetch("PANO_SATELLITE_TILES", SATELLITE_DEFAULT)
+  end
+
   def self.encode(lat:, lng:)
     get("/encode", lat: lat, lng: lng)
   end

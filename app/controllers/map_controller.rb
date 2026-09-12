@@ -4,5 +4,6 @@ class MapController < ApplicationController
   def show
     @gazetteer = current_gazetteer
     @api_url = PanoApi.base_url
+    @satellite_tiles = PanoApi.satellite_tiles
   end
 end

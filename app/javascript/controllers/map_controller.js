@@ -6,9 +6,10 @@ const maplibregl = window.maplibregl
 // questions. A tap on a building or the ground calls /encode and fills the
 // card; the card's buttons are plain links into the contribution forms.
 export default class extends Controller {
-  static targets = ["canvas", "welcome", "query", "suggest"]
+  static targets = ["canvas", "welcome", "query", "suggest", "basemap"]
   static values = {
     api: String,
+    satellite: String,
     center: { type: Array, default: [28.32, -15.42] },
     zoom: { type: Number, default: 12 }
   }
@@ -19,8 +20,14 @@ export default class extends Controller {
       style: {
         version: 8,
         glyphs: "https://fonts.openmaptiles.org/{fontstack}/{range}.pbf",
-        sources: { osm: { type: "raster", tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"], tileSize: 256, attribution: "© OpenStreetMap contributors" } },
-        layers: [{ id: "osm", type: "raster", source: "osm", paint: { "raster-saturation": -1, "raster-opacity": 0.55 } }]
+        sources: {
+          osm: { type: "raster", tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"], tileSize: 256, attribution: "© OpenStreetMap contributors" },
+          sat: { type: "raster", tiles: [this.satelliteValue], tileSize: 256, maxzoom: 19, attribution: "Imagery © Esri, Maxar, Earthstar Geographics, and the GIS User Community" }
+        },
+        layers: [
+          { id: "sat", type: "raster", source: "sat", layout: { visibility: "none" } },
+          { id: "osm", type: "raster", source: "osm", paint: { "raster-saturation": -1, "raster-opacity": 0.55 } }
+        ]
       },
       center: this.centerValue, zoom: this.zoomValue, minZoom: 9, maxZoom: 20
     })
@@ -71,6 +78,28 @@ export default class extends Controller {
     const outlines = await this.#get("/districts")
     if (outlines) this.map.addLayer({ id: "districts-fill", type: "fill", source: { type: "geojson", data: outlines }, maxzoom: 13, paint: { "fill-color": "#022EAC", "fill-opacity": 0.05 } }, "districts-line")
     this.#refresh()
+    try { this.satellite = localStorage.getItem("pano.basemap") === "sat" } catch { this.satellite = false }
+    if (this.satellite) this.#applyBasemap()
+  }
+
+  // ---------- basemap: the muted street map, or aerial imagery to find your own roof ----------
+  toggleBasemap() {
+    this.satellite = !this.satellite
+    try { localStorage.setItem("pano.basemap", this.satellite ? "sat" : "map") } catch {}
+    this.#applyBasemap()
+  }
+
+  #applyBasemap() {
+    const sat = this.satellite
+    this.map.setLayoutProperty("sat", "visibility", sat ? "visible" : "none")
+    this.map.setLayoutProperty("osm", "visibility", sat ? "none" : "visible")
+    // Lines that read on a grey map vanish on imagery: switch them to white there.
+    const line = sat ? "#FFFFFF" : "#022EAC"
+    for (const id of ["districts-line", "units-line"]) if (this.map.getLayer(id)) this.map.setPaintProperty(id, "line-color", line)
+    if (this.map.getLayer("district-labels")) this.map.setPaintProperty("district-labels", "text-color", sat ? "#FFFFFF" : "#022EAC")
+    if (this.map.getLayer("district-labels")) this.map.setPaintProperty("district-labels", "text-halo-color", sat ? "rgba(0,0,0,.6)" : "#fff")
+    this.basemapTarget.classList.toggle("is-on", sat)
+    this.basemapTarget.setAttribute("aria-pressed", String(sat))
   }
 
   // ---------- search: the pano API's /search suggests, /resolve lands ----------
