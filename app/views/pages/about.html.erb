@@ -1,0 +1,43 @@
+<% content_for :title, t(".title") %>
+<main class="wrap prose">
+  <%= render "shared/header" %>
+  <p class="eyebrow"><%= t(".eyebrow") %></p>
+  <h1 class="display"><%= t(".title") %></h1>
+  <p class="lede"><%= t(".lede") %></p>
+
+  <h2><%= t(".address_h") %></h2>
+  <p><%= t(".address_p_html") %></p>
+  <p class="example"><span>LS33</span> <span>9XX</span> <span>17</span></p>
+  <ol>
+    <li><%= t(".address_district_html") %></li>
+    <li><%= t(".address_unit_html") %></li>
+    <li><%= t(".address_number_html") %></li>
+  </ol>
+
+  <h2><%= t(".why_h") %></h2>
+  <p><%= t(".why_p") %></p>
+
+  <h2><%= t(".do_h") %></h2>
+  <ul>
+    <li><%= t(".do_confirm_html") %></li>
+    <li><%= t(".do_dispute_html") %></li>
+    <li><%= t(".do_district_html") %></li>
+    <li><%= t(".do_name_html") %></li>
+    <li><%= t(".do_note_html") %></li>
+  </ul>
+
+  <h2><%= t(".review_h") %></h2>
+  <p><%= t(".review_p") %></p>
+
+  <h2><%= t(".privacy_h") %></h2>
+  <p><%= t(".privacy_p") %></p>
+
+  <h2><%= t(".licence_h") %></h2>
+  <p><%= t(".licence_p_html") %></p>
+
+  <p class="note"><em><%= t("map.show.bemba") %></em></p>
+  <div class="actions">
+    <%= link_to t(".to_map"), root_path, class: "btn" %>
+    <%= link_to t(".source"), "https://github.com/0x1za/pano", class: "btn btn--ghost", target: "_blank", rel: "noopener" %>
+  </div>
+</main>

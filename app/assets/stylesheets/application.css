@@ -77,6 +77,7 @@ a:hover { text-decoration: underline; text-underline-offset: .2em; }
 /* Map page */
 .map { position: fixed; inset: 0; background: #F4F4F4; }
 .bar { position: fixed; top: 1.2rem; left: 1.2rem; right: 1.2rem; z-index: 5; display: flex; align-items: center; justify-content: space-between; padding: .8rem 1.2rem; background: var(--paper); border: 1px solid var(--ink); border-radius: var(--radius); }
+.bar nav { display: flex; gap: 1.4rem; align-items: center; }
 .bar nav a { color: var(--subtle); font-size: 1.4rem; }
 .card { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; background: var(--paper); border-top: 1px solid var(--ink); padding: 1.6rem 1.6rem calc(1.6rem + env(safe-area-inset-bottom)); }
 .card .address { font-size: 3.4rem; font-weight: 900; line-height: 1.02; color: var(--accent); margin: 0 0 .6rem; font-variant-numeric: tabular-nums; }
@@ -109,3 +110,18 @@ a:hover { text-decoration: underline; text-underline-offset: .2em; }
 .list .status.is-superseded { color: var(--subtle); }
 .list--stacked li { display: block; }
 .list--stacked li > div { display: block; }
+
+/* Welcome card and the About page */
+.card.welcome .address { font-size: 2.6rem; }
+.card.welcome .lede { margin: 0 0 1rem; }
+.card.welcome .how { margin: 0; padding-left: 1.8rem; color: var(--subtle); font-size: 1.4rem; }
+.card.welcome .how li + li { margin-top: .4rem; }
+.card.welcome .how b { color: var(--ink); }
+.lede { font-size: 1.8rem; line-height: 1.4; margin: 0 0 1.6rem; }
+.prose h2 { font-size: 1.2rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--subtle); margin: 2.8rem 0 .6rem; }
+.prose p { margin: 0 0 1rem; }
+.prose ul, .prose ol { margin: 0 0 1rem; padding-left: 2rem; }
+.prose li + li { margin-top: .5rem; }
+.prose a { text-decoration: underline; }
+.example { display: flex; gap: .8rem; font-size: 3.4rem; font-weight: 900; color: var(--accent); font-variant-numeric: tabular-nums; margin: .6rem 0 1.2rem; }
+.example span:last-child { color: var(--amber); }

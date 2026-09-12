@@ -1,6 +1,7 @@
 <header class="site-header">
   <%= link_to root_path, class: "wordmark" do %><%= render "shared/mark" %>pano<% end %>
   <nav>
+    <%= link_to t("shared.header.about"), about_path %>
     <%= link_to t("shared.header.mine"), contributions_path %>
     <% if current_user %>
       <%= link_to t("shared.header.review"), review_path if current_user.reviewer? %>

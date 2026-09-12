@@ -6,7 +6,7 @@ const maplibregl = window.maplibregl
 // questions. A tap on a building or the ground calls /encode and fills the
 // card; the card's buttons are plain links into the contribution forms.
 export default class extends Controller {
-  static targets = ["canvas", "card", "eyebrow", "address", "actions", "note"]
+  static targets = ["canvas", "card", "eyebrow", "address", "actions", "note", "welcome"]
   static values = {
     api: String,
     center: { type: Array, default: [28.32, -15.42] },
@@ -25,6 +25,7 @@ export default class extends Controller {
       center: this.centerValue, zoom: this.zoomValue, minZoom: 9, maxZoom: 20
     })
     this.map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "bottom-right")
+    this.#maybeWelcome()
     this.map.on("load", () => this.#addLayers())
     this.map.on("moveend", () => this.#refresh())
     this.map.on("click", (e) => this.#click(e))
@@ -53,6 +54,24 @@ export default class extends Controller {
     const outlines = await this.#get("/districts")
     if (outlines) this.map.addLayer({ id: "districts-fill", type: "fill", source: { type: "geojson", data: outlines }, maxzoom: 13, paint: { "fill-color": "#022EAC", "fill-opacity": 0.05 } }, "districts-line")
     this.#refresh()
+  }
+
+  // The welcome card explains the site until dismissed once; the About
+  // button in the bar brings it back.
+  welcome() {
+    this.cardTarget.hidden = true
+    this.welcomeTarget.hidden = false
+  }
+
+  dismiss() {
+    this.welcomeTarget.hidden = true
+    try { localStorage.setItem("pano.welcomed", "1") } catch {}
+  }
+
+  #maybeWelcome() {
+    let seen = false
+    try { seen = localStorage.getItem("pano.welcomed") === "1" } catch {}
+    if (!seen) this.welcomeTarget.hidden = false
   }
 
   async #refresh() {
@@ -110,6 +129,7 @@ export default class extends Controller {
     this.addressTarget.textContent = headline
     this.actionsTarget.replaceChildren(...actions)
     this.noteTarget.textContent = note
+    this.welcomeTarget.hidden = true
     this.cardTarget.hidden = false
   }
 
