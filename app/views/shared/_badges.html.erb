@@ -10,5 +10,5 @@
   <% end %>
 </ul>
 <% if (nxt = Badges.next(stats)) %>
-  <p class="hint"><%= t("badges.next", count: nxt[1], name: t("badges.#{nxt[0].key}.name")) %> <%= t("badges.#{nxt[0].key}.how") %>.</p>
+  <p class="hint"><%= t("badges.next", count: nxt[1], name: t("badges.#{nxt[0].key}.name")) %> <%= t("badges.#{nxt[0].key}.how") %></p>
 <% end %>
