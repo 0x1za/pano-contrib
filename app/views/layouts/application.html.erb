@@ -17,9 +17,14 @@
   </head>
   <body class="<%= content_for(:body_class) %>">
     <%# Flash as a toast; the map page keeps the header out of the way. %>
-    <% if flash.any? %>
+    <% if flash.any? && !content_for?(:flash_handled) %>
       <div class="flash<%= " is-error" if flash[:alert] %>" role="status"><%= flash[:notice] || flash[:alert] %></div>
     <% end %>
     <%= yield %>
+    <%# Contribution forms open here, over whatever page is behind, when a link targets the "modal" frame. %>
+    <dialog id="contribution-modal" class="modal" data-controller="modal" data-action="close->modal#closed click->modal#backdrop">
+      <button type="button" class="modal-close" data-action="modal#close" aria-label="<%= t("shared.modal.close") %>">×</button>
+      <%= turbo_frame_tag "modal", data: { action: "turbo:frame-load->modal#open" } %>
+    </dialog>
   </body>
 </html>

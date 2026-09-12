@@ -19,7 +19,7 @@ class ContributeTest < ApplicationSystemTestCase
     tap "Send"
     assert_selector ".flash.is-error", text: "needs a reason"
 
-    choose "The number is wrong"
+    tick "The number is wrong"
     tap "Send"
     assert_text "Thank you"
   end

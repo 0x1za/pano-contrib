@@ -5,10 +5,10 @@ class MapControllerTest < ActionDispatch::IntegrationTest
     get root_path
     assert_response :success
     assert_select "[data-controller=map][data-map-api-value]"
-    assert_select ".card.welcome[hidden]", 1, "the welcome card is in the page for the controller to reveal on a first visit"
-    assert_select ".card.welcome", /Help check Lusaka's new addresses/
-    assert_select ".card.welcome a[href='/about']", "How it works"
-    assert_select "[data-map-target=card][hidden]"
+    assert_select "dialog.welcome:not([open])", 1, "the welcome dialog is in the page for the controller to open on a first visit"
+    assert_select "dialog.welcome", /Help check Lusaka's new addresses/
+    assert_select "dialog.welcome a[href='/about']", "How it works"
+    assert_select "dialog.modal turbo-frame#modal", 1, "the frame contribution forms load into"
     assert_select ".bar nav a[href='/about']", "About"
     assert_select ".bar nav button.help"
   end

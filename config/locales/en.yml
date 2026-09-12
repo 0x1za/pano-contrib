@@ -2,6 +2,8 @@ en:
   flash:
     try_again_later: "Try again later."
   shared:
+    modal:
+      close: "Close"
     header:
       mine: "My contributions"
       about: "About"

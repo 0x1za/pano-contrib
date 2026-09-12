@@ -1,4 +1,6 @@
 <% content_for :title, t(".title") %>
+<%# Also rendered inside the map's modal frame; the frame tag is harmless on a full page. %>
+<%= turbo_frame_tag "modal" do %>
 <main class="wrap">
   <%= render "shared/header" %>
   <p class="eyebrow"><%= t("contributions.kinds.#{@contribution.kind}") %></p>
@@ -45,7 +47,8 @@
     <p class="hint"><%= t(".licence_html") %></p>
     <div class="actions">
       <%= f.submit t(".send"), class: "btn" %>
-      <%= link_to t(".cancel"), root_path, class: "btn btn--ghost" %>
+      <%= link_to t(".cancel"), root_path, class: "btn btn--ghost", data: { turbo_frame: "_top" } %>
     </div>
   <% end %>
 </main>
+<% end %>

@@ -5,6 +5,7 @@ class ContributionsControllerTest < ActionDispatch::IntegrationTest
     get new_contribution_path(kind: "confirm_address", building_id: buildings(:one).ingest_id)
     assert_response :success
     assert_select "h1", "LS1 1CC 1"
+    assert_select "turbo-frame#modal h1", 1, "the form renders inside the modal frame so the map can open it in place"
 
     assert_difference -> { Contribution.count }, 1 do
       post contributions_path, params: { contribution: { kind: "confirm_address", building_id: buildings(:one).ingest_id, mutation_id: SecureRandom.uuid } }

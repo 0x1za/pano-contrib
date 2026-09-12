@@ -6,7 +6,7 @@ const maplibregl = window.maplibregl
 // questions. A tap on a building or the ground calls /encode and fills the
 // card; the card's buttons are plain links into the contribution forms.
 export default class extends Controller {
-  static targets = ["canvas", "card", "eyebrow", "address", "actions", "note", "welcome"]
+  static targets = ["canvas", "welcome"]
   static values = {
     api: String,
     center: { type: Array, default: [28.32, -15.42] },
@@ -26,12 +26,17 @@ export default class extends Controller {
     })
     this.map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "bottom-right")
     this.#maybeWelcome()
+    this.onModalClosed = () => this.#loadMine()
+    document.addEventListener("pano:modal-closed", this.onModalClosed)
     this.map.on("load", () => this.#addLayers())
     this.map.on("moveend", () => this.#refresh())
     this.map.on("click", (e) => this.#click(e))
   }
 
-  disconnect() { this.map?.remove() }
+  disconnect() {
+    document.removeEventListener("pano:modal-closed", this.onModalClosed)
+    this.map?.remove()
+  }
 
   async #addLayers() {
     const empty = { type: "FeatureCollection", features: [] }
@@ -68,19 +73,23 @@ export default class extends Controller {
   // The welcome card explains the site until dismissed once; the About
   // button in the bar brings it back.
   welcome() {
-    this.cardTarget.hidden = true
-    this.welcomeTarget.hidden = false
+    this.popup?.remove()
+    if (!this.welcomeTarget.open) this.welcomeTarget.showModal()
+  }
+
+  welcomeBackdrop(e) {
+    if (e.target === this.welcomeTarget) this.dismiss()
   }
 
   dismiss() {
-    this.welcomeTarget.hidden = true
+    this.welcomeTarget.close()
     try { localStorage.setItem("pano.welcomed", "1") } catch {}
   }
 
   #maybeWelcome() {
     let seen = false
     try { seen = localStorage.getItem("pano.welcomed") === "1" } catch {}
-    if (!seen) this.welcomeTarget.hidden = false
+    if (!seen) this.welcome()
   }
 
   async #refresh() {
@@ -102,10 +111,12 @@ export default class extends Controller {
   }
 
   async #click(e) {
+    this.at = e.lngLat
     const mine = this.map.queryRenderedFeatures(e.point, { layers: ["mine-pins"] })
-    if (mine.length) return this.#showMine(mine[0].properties)
+    if (mine.length) { this.at = { lng: mine[0].geometry.coordinates[0], lat: mine[0].geometry.coordinates[1] }; return this.#showMine(mine[0].properties) }
     const hit = this.map.queryRenderedFeatures(e.point, { layers: ["buildings"] })
     const p = hit.length ? { lng: hit[0].geometry.coordinates[0], lat: hit[0].geometry.coordinates[1] } : e.lngLat
+    this.at = p
     if (this.map.getZoom() < 13 && !hit.length) {
       const d = this.map.queryRenderedFeatures(e.point, { layers: ["districts-fill"] })
       if (d.length) return this.#showDistrict(d[0].properties)
@@ -148,16 +159,26 @@ export default class extends Controller {
 
   #showMessage(text) { this.#card("", "", [], text) }
 
+  // A popup anchored where the person tapped, in place of a bottom sheet.
   #card(eyebrow, headline, actions, note) {
-    this.eyebrowTarget.textContent = eyebrow
-    this.addressTarget.textContent = headline
-    this.actionsTarget.replaceChildren(...actions)
-    this.noteTarget.textContent = note
-    this.welcomeTarget.hidden = true
-    this.cardTarget.hidden = false
+    const el = document.createElement("div")
+    const add = (tag, cls, text) => { const n = document.createElement(tag); n.className = cls; n.textContent = text; el.append(n); return n }
+    if (eyebrow) add("p", "eyebrow", eyebrow)
+    if (headline) add("p", "address", headline)
+    if (actions.length) { const a = add("div", "actions", ""); a.replaceChildren(...actions) }
+    if (note) add("p", "note", note)
+    this.popup?.remove()
+    this.popup = new maplibregl.Popup({ closeButton: true, closeOnClick: true, maxWidth: "34rem", offset: 10 })
+      .setLngLat(this.at).setDOMContent(el).addTo(this.map)
   }
 
-  #link(text, href, cls) { const a = document.createElement("a"); a.href = href; a.className = cls; a.textContent = text; return a }
+  // Contribution forms open in the page's modal frame over the map.
+  #link(text, href, cls) {
+    const a = document.createElement("a")
+    a.href = href; a.className = cls; a.textContent = text
+    if (href.startsWith("/contributions/")) a.dataset.turboFrame = "modal"
+    return a
+  }
 
   async #get(path) {
     try { const r = await fetch(this.apiValue + path); return r.ok ? await r.json() : null } catch { return null }

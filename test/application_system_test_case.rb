@@ -15,6 +15,11 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
       execute_script("arguments[0].click()", find_button(locator))
     end
 
+    # And for radios and checkboxes.
+    def tick(locator)
+      execute_script("arguments[0].click()", find_field(locator))
+    end
+
     # Same rationale for keys: the pair drops real key events too, so the
     # keydown the review controller listens for is dispatched directly.
     def press(key)

@@ -1,6 +1,11 @@
 <% content_for :title, t(".title") %>
+<%# Also rendered inside the map's modal frame; the frame tag is harmless on a full page. %>
+<%= turbo_frame_tag "modal" do %>
 <main class="wrap">
   <%= render "shared/header" %>
+  <%# The confirmation lives inside the frame so it shows in the modal too; the layout's toast is skipped. %>
+  <% content_for :flash_handled, "1" %>
+  <% if flash[:notice] %><div class="flash is-inline is-success" role="status"><%= flash[:notice] %></div><% end %>
   <p class="eyebrow"><%= t("contributions.kinds.#{@contribution.kind}") %> · <%= t("contributions.statuses.#{@contribution.status}") %></p>
   <h1 class="display"><%= @contribution.target_label %></h1>
   <dl class="facts">
@@ -16,7 +21,8 @@
     <%= render "contributions/vote", contribution: @contribution %>
   <% end %>
   <div class="actions">
-    <%= link_to t(".back_to_map"), root_path, class: "btn" %>
-    <%= link_to t(".all_mine"), contributions_path, class: "btn btn--ghost" %>
+    <%= link_to t(".back_to_map"), root_path, class: "btn", data: { turbo_frame: "_top" } %>
+    <%= link_to t(".all_mine"), contributions_path, class: "btn btn--ghost", data: { turbo_frame: "_top" } %>
   </div>
 </main>
+<% end %>
