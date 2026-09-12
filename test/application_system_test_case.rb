@@ -14,4 +14,10 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     def tap(locator)
       execute_script("arguments[0].click()", find_button(locator))
     end
+
+    # Same rationale for keys: the pair drops real key events too, so the
+    # keydown the review controller listens for is dispatched directly.
+    def press(key)
+      execute_script("document.dispatchEvent(new KeyboardEvent('keydown', { key: arguments[0], bubbles: true }))", key)
+    end
 end

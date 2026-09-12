@@ -12,10 +12,10 @@ class ReviewTest < ApplicationSystemTestCase
     assert_selector ".queue-item", count: 2
     assert_selector ".queue-item.is-current .eyebrow", text: /district is called something else/i
 
-    find("body").send_keys("j")
+    press "j"
     assert_selector ".queue-item.is-current .eyebrow", text: /this is my address/i
 
-    find("body").send_keys("a")
+    press "a"
     assert_text "Accepted LS1 1CC 1"
     assert_selector ".queue-item", count: 1
     assert contributions(:phone_confirms_one).reload.status_accepted?

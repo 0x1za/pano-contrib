@@ -18,7 +18,7 @@ export default class extends Controller {
 
   key(e) {
     if (e.metaKey || e.ctrlKey || e.altKey) return
-    const typing = e.target.matches("input, textarea")
+    const typing = e.target instanceof Element && e.target.matches("input, textarea")
     if (typing && e.key !== "Escape") return
     switch (e.key) {
       case "j": this.move(1); break
