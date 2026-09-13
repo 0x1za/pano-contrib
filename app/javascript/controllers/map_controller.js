@@ -484,7 +484,7 @@ export default class extends Controller {
     }
     if (note) add("p", "note", note)
     this.popup?.remove()
-    this.popup = new maplibregl.Popup({ closeButton: true, closeOnClick: true, maxWidth: "34rem", offset: 10, focusAfterOpen: false })
+    this.popup = new maplibregl.Popup({ closeButton: true, closeOnClick: true, maxWidth: "42rem", offset: 10, focusAfterOpen: false })
       .setLngLat(this.at).setDOMContent(el).addTo(this.map)
     // On a phone the card takes the width; the corner controls step aside.
     this.canvasTarget.classList.add("has-card")

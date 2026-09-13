@@ -190,7 +190,7 @@ a:hover { text-decoration: underline; text-underline-offset: .2em; }
 }
 
 /* Map popups in pano's style */
-.maplibregl-popup { max-width: 34rem !important; font-family: inherit; }
+.maplibregl-popup { max-width: min(42rem, calc(100vw - 2.4rem)) !important; font-family: inherit; }
 .maplibregl-popup-content { border: 1px solid var(--ink); border-radius: var(--radius); box-shadow: none; padding: 1.4rem 1.6rem 1.6rem; font-size: 1.4rem; }
 .maplibregl-popup-content .eyebrow { margin: 0 0 .2rem; padding-right: 2.4rem; }
 .maplibregl-popup-content .address { font-size: 2.6rem; font-weight: 900; line-height: 1.05; color: var(--accent); margin: 0 0 .8rem; font-variant-numeric: tabular-nums; }
