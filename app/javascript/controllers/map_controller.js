@@ -212,10 +212,48 @@ export default class extends Controller {
     }
     this.#refresh()
     // The NSDI ward lines shaped the partition; the card names the ward a
-    // point falls in when the server has the layer. Not part of the scheme.
+    // point falls in when the server has the layer, and a switch draws
+    // them. Reference only, pre-2016 delimitation: not part of the scheme.
     this.wards = await this.#get("/overlays/wards")
+    if (this.wards) this.#offerWards()
     try { this.satellite = localStorage.getItem("pano.basemap") === "sat" } catch { this.satellite = false }
     if (this.satellite) this.#applyBasemap()
+  }
+
+  // ---------- wards: the NSDI lines as a reference overlay, off until asked ----------
+  #offerWards() {
+    this.map.addSource("wards", { type: "geojson", data: this.wards })
+    this.map.addLayer({ id: "wards-line", type: "line", source: "wards", layout: { visibility: "none" }, paint: { "line-color": "#FBA30C", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.4, 15, 3], "line-dasharray": [1.5, 1.5], "line-opacity": 0.95 } }, "selected-fill")
+    this.map.addLayer({ id: "ward-labels", type: "symbol", source: "wards", minzoom: 11.5, layout: { visibility: "none", "symbol-placement": "line", "text-field": ["concat", ["coalesce", ["get", "name"], ["get", "constituency"]], " ward"], "text-font": ["Open Sans Bold"], "text-size": 11, "text-letter-spacing": 0.05 }, paint: { "text-color": "#FBA30C", "text-halo-color": "#fff", "text-halo-width": 1.6 } })
+    const controller = this
+    this.map.addControl({
+      onAdd() {
+        const div = document.createElement("div")
+        div.className = "maplibregl-ctrl wards-switch"
+        const btn = document.createElement("button")
+        btn.type = "button"; btn.className = "wards-switch__btn"; btn.textContent = "Wards"
+        btn.title = "NSDI ward lines, pre-2016 delimitation: a reference overlay that shaped the partition, not part of the addressing scheme"
+        btn.addEventListener("click", () => controller.toggleWards())
+        div.append(btn)
+        controller.wardsButton = btn
+        return div
+      },
+      onRemove() { controller.wardsButton = null }
+    }, "bottom-right")
+    try { this.wardsOn = localStorage.getItem("pano.wards") === "1" } catch { this.wardsOn = false }
+    this.#applyWards()
+  }
+
+  toggleWards() {
+    this.wardsOn = !this.wardsOn
+    try { localStorage.setItem("pano.wards", this.wardsOn ? "1" : "0") } catch {}
+    this.#applyWards()
+  }
+
+  #applyWards() {
+    for (const id of ["wards-line", "ward-labels"]) if (this.map.getLayer(id)) this.map.setLayoutProperty(id, "visibility", this.wardsOn ? "visible" : "none")
+    this.wardsButton?.setAttribute("aria-pressed", String(!!this.wardsOn))
+    this.wardsButton?.classList.toggle("is-on", !!this.wardsOn)
   }
 
   // ---------- basemap: the muted street map, or aerial imagery to find your own roof ----------
@@ -466,7 +504,7 @@ export default class extends Controller {
     const facts = []
     if (b.subs?.length) facts.push(["Homes", b.subs.join(", ")])
     facts.push(["Plus code", plusCode(b.lat, b.lng)])
-    const ward = this.#wardAt(b.lng, b.lat); if (ward) facts.push(["Ward", ward])
+    const ward = this.#wardAt(b.lng, b.lat); if (ward) facts.push(["NSDI ward, pre-2016", ward])
     facts.push(["Coordinates", `${b.lat.toFixed(5)}, ${b.lng.toFixed(5)}`])
     this.#card({
       eyebrow: "Address", headline: b.address, sub: name ? `${name} · ${district}` : district,
@@ -495,7 +533,7 @@ export default class extends Controller {
     const facts = []
     if (structures !== undefined) facts.push(["Buildings", String(structures)])
     if (body.cell10) facts.push(["Plus code", body.cell10])
-    const ward = this.#wardAt(this.at.lng, this.at.lat); if (ward) facts.push(["Ward", ward])
+    const ward = this.#wardAt(this.at.lng, this.at.lat); if (ward) facts.push(["NSDI ward, pre-2016", ward])
     facts.push(["Coordinates", `${this.at.lat.toFixed(5)}, ${this.at.lng.toFixed(5)}`])
     this.#card({
       eyebrow: "Unit · about forty buildings", headline: body.code, sub: name ? `${name} · ${district}` : district,

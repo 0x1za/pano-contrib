@@ -323,3 +323,8 @@ select.field { appearance: auto; }
 
 /* Town chooser in the bar */
 .bar .town { flex: none; font: inherit; font-size: 1.4rem; font-weight: 700; color: var(--accent); background: var(--paper); border: 1px solid var(--hairline); border-radius: var(--radius); padding: .3rem .6rem; margin-left: 1rem; max-width: 16rem; }
+
+/* Wards switch: the NSDI reference lines, next to the satellite thumbnail */
+.maplibregl-ctrl.wards-switch { margin: 0 10px 10px 0; }
+.wards-switch__btn { padding: .4rem 1rem; border: 1.5px dashed var(--amber); border-radius: 999px; background: var(--paper); color: var(--ink); font: inherit; font-size: 1.2rem; font-weight: 700; letter-spacing: .04em; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,.2); }
+.wards-switch__btn.is-on { background: var(--amber); border-style: solid; }
