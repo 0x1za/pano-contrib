@@ -1,6 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 import { syncClient } from "sync/client"
-import { savedMap, saveMap, removeMap, formatBytes } from "offline/map_store"
+import { savedMap, saveMap, removeMap, currentGazetteer, formatBytes } from "offline/map_store"
 
 // The offline form: an address the person already knows plus what they
 // want to say. Nothing is posted here; the entry goes to the outbox and
@@ -32,10 +32,15 @@ export default class extends Controller {
   async renderMap() {
     if (!this.hasMapStatusTarget) return
     const saved = await savedMap(this.apiValue)
-    this.mapStatusTarget.textContent = saved
-      ? `Saved: ${formatBytes(saved.size)}, ${new Date(saved.savedAt).toLocaleDateString()}. Districts, units, buildings and numbers open without a network.`
-      : "The map is not saved on this phone. Saved, the districts, units, buildings and numbers open without a network; the street map behind them and search still need one."
-    this.saveMapTarget.textContent = saved ? "Save it again" : "Save the map on this phone"
+    const now = saved ? await currentGazetteer(this.apiValue) : null
+    const stale = saved && now && saved.hash && saved.hash !== now.hash
+    this.mapStatusTarget.textContent = !saved
+      ? "The map is not saved on this phone. Saved, the districts, units, buildings and numbers open without a network; the street map behind them and search still need one."
+      : stale
+        ? `Saved: ${formatBytes(saved.size)} of map v${saved.version}, ${new Date(saved.savedAt).toLocaleDateString()}. The map is now v${now.version}; save it again to take the new one with you.`
+        : `Saved: ${formatBytes(saved.size)}${saved.version ? ` of map v${saved.version}` : ""}, ${new Date(saved.savedAt).toLocaleDateString()}. Districts, units, buildings and numbers open without a network.`
+    this.mapStatusTarget.classList.toggle("is-offline", !!stale)
+    this.saveMapTarget.textContent = saved ? (stale ? "Save the new map" : "Save it again") : "Save the map on this phone"
     this.removeMapTarget.hidden = !saved
   }
 

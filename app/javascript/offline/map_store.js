@@ -48,10 +48,21 @@ export async function saveMap(apiUrl, onProgress = () => {}) {
     onProgress(done, size)
   }
   if (buffer.length) await flush(buffer)
-  const meta = { size: done, chunk: CHUNK, chunks: index, savedAt: new Date().toISOString() }
+  const gazetteer = await currentGazetteer(apiUrl)
+  const meta = { size: done, chunk: CHUNK, chunks: index, savedAt: new Date().toISOString(), version: gazetteer?.version || null, hash: gazetteer?.hash || null }
   await cache.put(metaKey(url), new Response(JSON.stringify(meta), { headers: { "Content-Type": "application/json" } }))
   await warmPage()
   return meta
+}
+
+// Which gazetteer the API serves right now, or null without a network.
+export async function currentGazetteer(apiUrl) {
+  try {
+    const r = await fetch(apiUrl + "/meta")
+    if (!r.ok) return null
+    const m = await r.json()
+    return { version: m.version, hash: m.hash }
+  } catch { return null }
 }
 
 export async function removeMap(apiUrl) {

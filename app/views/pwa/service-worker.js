@@ -60,9 +60,11 @@ self.addEventListener("fetch", (event) => {
   if (request.method !== "GET") return
   const url = new URL(request.url)
 
-  // The tiles archive: the saved copy first, whichever origin serves it.
+  // The tiles archive, whichever origin serves it: the network first, so
+  // a new gazetteer is never masked by an old saved copy; the saved copy
+  // when the network fails.
   if (url.pathname.endsWith(TILES_PATH) && !url.search) {
-    event.respondWith(savedRange(request).then((hit) => hit || fetch(request)))
+    event.respondWith(fetch(request).catch(() => savedRange(request).then((hit) => hit || Response.error())))
     return
   }
 

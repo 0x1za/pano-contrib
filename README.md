@@ -171,9 +171,12 @@ the `pmtiles://` protocol; tapping a building answers from the tile's
 own properties, so the card opens with no request at all. "Save the map
 on this phone" on `/offline` streams the whole archive (21 MB for
 Lusaka) into the Cache API in one-megabyte chunks, along with the map
-page, its assets and the label glyphs; the service worker then answers
-range requests for the archive from those chunks, and serves the map
-page when the network is gone. Offline, the bar says so, the card's
+page, its assets and the label glyphs; the service worker answers range
+requests for the archive from the network first and from those chunks
+when the network fails, so a saved copy never masks a newer gazetteer,
+and it serves the map page when the network is gone. The saved copy
+remembers which gazetteer it came from, and the offline page says when
+the map has moved on. Offline, the bar says so, the card's
 buttons lead to the offline form with the address filled in, and only
 the street map behind the units and search still need a signal. When
 the API has no archive the map falls back to fetching GeoJSON per
