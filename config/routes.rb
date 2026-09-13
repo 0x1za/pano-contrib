@@ -26,6 +26,9 @@ Rails.application.routes.draw do
     end
   end
 
+  # The pano API on this origin, for the map in the browser.
+  get "api/*path", to: "api#show", format: false, as: :api_proxy
+
   # Moderators: the field protocol, ten residents per district.
   resources :surveys, only: %i[index new create show] do
     member do

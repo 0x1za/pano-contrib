@@ -2,6 +2,9 @@
 # address. Generous for a person, tight for a script.
 class Rack::Attack
   # Street lookups hit an outside provider; keep one browser from flooding it.
+  # The API proxy: generous, a map pans a lot; the API itself is faster than this.
+  throttle("api/ip", limit: 3000, period: 1.hour) { |req| req.ip if req.path.start_with?("/api/") }
+
   throttle("geocode/ip", limit: 120, period: 1.hour) { |req| req.ip if req.path == "/geocode" }
 
   throttle("contributions/device", limit: 60, period: 1.hour) do |req|

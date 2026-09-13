@@ -229,7 +229,11 @@ bin/rails "pano:import[../pano/gazetteer/v0.2.0]"    # a published gazetteer dir
 PANO_API_URL=http://127.0.0.1:8080 bin/dev            # the pano API must be running
 ```
 
-Then open http://localhost:3000. Optional: `PANO_GEOCODER_URL` for a
+Then open http://localhost:3000. The map in the browser reaches the API
+through the app's own origin (`/api/...` is proxied to `PANO_API_URL`), so
+a phone on the same Wi-Fi sees the map too: start the app with
+`bin/rails s -b 0.0.0.0` and open `http://<your machine's IP>:3000`.
+Optional: `PANO_GEOCODER_URL` for a
 Photon-compatible endpoint (default `photon.komoot.io`) and
 `PANO_SATELLITE_TILES` for a raster tile template (default Esri World
 Imagery, fine for a pilot with attribution, keyed for production).

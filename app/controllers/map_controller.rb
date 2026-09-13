@@ -3,7 +3,7 @@ class MapController < ApplicationController
   allow_unauthenticated_access
   def show
     @gazetteer = current_gazetteer
-    @api_url = PanoApi.base_url
+    @api_url = "/api"
     @satellite_tiles = PanoApi.satellite_tiles
   end
 end

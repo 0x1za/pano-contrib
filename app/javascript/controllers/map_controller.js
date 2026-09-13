@@ -96,7 +96,10 @@ export default class extends Controller {
     this.element.classList.toggle("is-offline", offline)
     if (!this.hasOfflineTarget) return
     this.offlineTarget.hidden = !offline
-    if (offline) this.offlineTarget.textContent = (await savedMap(this.apiValue)) ? "Offline · the saved map" : "Offline · no map saved on this phone"
+    if (!offline) return
+    if (navigator.onLine) { this.offlineTarget.textContent = "No connection to the address server"; return }
+    const saved = this.tilesValue && await savedMap(this.apiValue)
+    this.offlineTarget.textContent = this.tilesValue ? (saved ? "Offline · the saved map" : "Offline · no map saved on this phone") : "Offline"
   }
 
   // ---------- towns: a gazetteer can hold several; the bar flies between them ----------
