@@ -2,6 +2,26 @@ import { Controller } from "@hotwired/stimulus"
 import "maplibre-gl"
 const maplibregl = window.maplibregl
 
+// Plus code of a point at 10 characters, for the courier line. Same
+// arithmetic as the pano page; the API's cell10 is preferred when it has one.
+function plusCode(lat, lng) {
+  const A = "23456789CFGHJMPQRVWX"
+  let row = Math.floor((lat + 90) / 0.000125), col = Math.floor((lng + 180) / 0.000125)
+  const d = []
+  for (let i = 4; i >= 0; i--) { d.unshift(A[col % 20]); d.unshift(A[row % 20]); row = Math.floor(row / 20); col = Math.floor(col / 20) }
+  return d.slice(0, 8).join("") + "+" + d.slice(8).join("")
+}
+
+// Point in a linear ring, by crossing count.
+function inRing(ring, x, y) {
+  let inside = false
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const [xi, yi] = ring[i], [xj, yj] = ring[j]
+    if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) inside = !inside
+  }
+  return inside
+}
+
 // The map: the pano API draws the picture, this controller only asks it
 // questions. A tap on a building or the ground calls /encode and fills the
 // card; the card's buttons are plain links into the contribution forms.
@@ -79,11 +99,15 @@ export default class extends Controller {
     this.#loadMine()
     const districts = await this.#get("/districts")
     if (districts) {
+      this.names = Object.fromEntries(districts.features.map(f => [f.properties.code, f.properties.name || ""]))
       this.map.getSource("district-outlines").setData(districts)
       const labels = { type: "FeatureCollection", features: districts.features.map(f => ({ type: "Feature", geometry: { type: "Point", coordinates: [f.properties.centroid_lng, f.properties.centroid_lat] }, properties: { ...f.properties, name: `${f.properties.name || ""}\n${f.properties.code}` } })) }
       this.map.getSource("districts").setData(labels)
     }
     this.#refresh()
+    // The NSDI ward lines shaped the partition; the card names the ward a
+    // point falls in when the server has the layer. Not part of the scheme.
+    this.wards = await this.#get("/overlays/wards")
     try { this.satellite = localStorage.getItem("pano.basemap") === "sat" } catch { this.satellite = false }
     if (this.satellite) this.#applyBasemap()
   }
@@ -218,8 +242,9 @@ export default class extends Controller {
     this.map.getSource("selected").setData({ type: "Feature", geometry: body.boundary, properties: {} })
     this.#fitTo(body.boundary)
     this.at = { lng: body.centroid.lng, lat: body.centroid.lat }
-    if (body.tier === "district") this.#showDistrict({ code: body.code, name: name || "" })
-    else this.#card(body.tier === "sector" ? "Sector" : "Unit", body.code, [], body.tier === "unit" ? "Tap a building for its address." : `${body.units?.length || 0} units`)
+    if (body.tier === "district") this.#showDistrict({ code: body.code, name: name || "" }, body)
+    else if (body.tier === "sector") this.#showSector(body)
+    else this.#showUnit(body)
   }
 
   #fitTo(geometry) {
@@ -312,44 +337,171 @@ export default class extends Controller {
 
   #showBuilding(body) {
     const b = body.building
-    this.#card("Address", b.address, [
-      this.#link("I live here", `/contributions/new?kind=confirm_address&building_id=${b.id}`, "btn"),
-      this.#link("Several homes in this building", `/contributions/new?kind=multi_occupancy&building_id=${b.id}`, "btn"),
-      this.#link("Something is wrong", `/contributions/new?kind=dispute_address&building_id=${b.id}`, "btn btn--ghost"),
-      this.#link("Add a delivery note", `/contributions/new?kind=delivery_note&building_id=${b.id}`, "btn btn--ghost")
-    ], b.subs?.length ? `Unit ${body.code} · ${body.parents.district} · homes: ${b.subs.join(", ")}` : `Unit ${body.code} · ${body.parents.district}`)
+    const unit = body.code
+    const district = body.parents.district
+    const name = this.names?.[district] || ""
+    const facts = []
+    if (b.subs?.length) facts.push(["Homes", b.subs.join(", ")])
+    facts.push(["Plus code", plusCode(b.lat, b.lng)])
+    const ward = this.#wardAt(b.lng, b.lat); if (ward) facts.push(["Ward", ward])
+    facts.push(["Coordinates", `${b.lat.toFixed(5)}, ${b.lng.toFixed(5)}`])
+    this.#card({
+      eyebrow: "Address", headline: b.address, sub: name ? `${name} · ${district}` : district,
+      crumbs: this.#crumbs(district, body.parents.sector, unit, b.number),
+      actions: [
+        this.#link("I live here", `/contributions/new?kind=confirm_address&building_id=${b.id}`, "btn"),
+        this.#link("Several homes in this building", `/contributions/new?kind=multi_occupancy&building_id=${b.id}`, "btn"),
+        this.#link("Something is wrong", `/contributions/new?kind=dispute_address&building_id=${b.id}`, "btn btn--ghost"),
+        this.#link("Add a delivery note", `/contributions/new?kind=delivery_note&building_id=${b.id}`, "btn btn--ghost")
+      ],
+      tools: [ this.#copy("Copy address", b.address), this.#directions(b.lat, b.lng) ],
+      facts, note: "Say the unit code, then the number. Couriers can use the plus code or the directions."
+    })
   }
 
-  #showUnit(body) {
-    this.#card("Unit", body.code, [], "Tap a building for its address.")
+  // From a tap, /encode has no structure count; /resolve does.
+  async #showUnit(body) {
+    const full = body.structures === undefined ? await this.#get(`/resolve/${encodeURIComponent(body.code)}`) : null
+    const structures = body.structures ?? full?.structures
+    const district = body.parents.district
+    const name = this.names?.[district] || ""
+    const facts = []
+    if (structures !== undefined) facts.push(["Buildings", String(structures)])
+    if (body.cell10) facts.push(["Plus code", body.cell10])
+    const ward = this.#wardAt(this.at.lng, this.at.lat); if (ward) facts.push(["Ward", ward])
+    facts.push(["Coordinates", `${this.at.lat.toFixed(5)}, ${this.at.lng.toFixed(5)}`])
+    this.#card({
+      eyebrow: "Unit · about forty buildings", headline: body.code, sub: name ? `${name} · ${district}` : district,
+      crumbs: this.#crumbs(district, body.parents.sector, body.code),
+      tools: [ this.#copy("Copy code", body.code), this.#directions(this.at.lat, this.at.lng) ],
+      facts, note: "Tap a building for its address."
+    })
   }
 
-  #showDistrict(p) {
-    const name = (p.name || "").split("\n")[0] || p.code
-    this.#card("District", name, [
-      this.#link(`Yes, this is ${name}`, `/contributions/new?kind=confirm_district&target_code=${encodeURIComponent(p.code)}`, "btn")
-    ], `${p.code} · Zoom in to tap a building`)
+  #showSector(body) {
+    const district = body.parents.district
+    const name = this.names?.[district] || ""
+    this.#card({
+      eyebrow: "Sector", headline: body.code, sub: name ? `${name} · ${district}` : district,
+      crumbs: this.#crumbs(district, body.code),
+      tools: [ this.#copy("Copy code", body.code) ],
+      facts: [ ["Buildings", String(body.structures)], ["Units", String(body.units?.length || 0)] ],
+      note: "Tap inside to go down a level."
+    })
+  }
+
+  // From a tap at city zoom only the outline's properties are known; the
+  // counts come from /resolve.
+  async #showDistrict(p, body) {
+    const name = (p.name || "").split("\n")[0] || this.names?.[p.code] || p.code
+    const full = body || await this.#get(`/resolve/${encodeURIComponent(p.code)}`)
+    const facts = []
+    if (full?.structures !== undefined) facts.push(["Buildings", String(full.structures)])
+    if (full?.units) {
+      facts.push(["Sectors", String(new Set(full.units.map(u => u.split(" ")[1][0])).size)])
+      facts.push(["Units", String(full.units.length)])
+    }
+    this.#card({
+      eyebrow: "District", headline: name, sub: p.code,
+      crumbs: this.#crumbs(p.code),
+      actions: [ this.#link(`Yes, this is ${name}`, `/contributions/new?kind=confirm_district&target_code=${encodeURIComponent(p.code)}`, "btn") ],
+      facts, note: "Zoom in to tap a building."
+    })
   }
 
   #showMine(p) {
     const status = { pending: "Pending", accepted: "Accepted", rejected: "Rejected", superseded: "Superseded" }[p.status] || p.status
     const kind = p.kind.replaceAll("_", " ")
-    this.#card(`Your contribution · ${status}`, p.label, [ this.#link("See it", p.url, "btn") ], p.name ? `${kind}: ${p.name}` : kind)
+    this.#card({ eyebrow: `Your contribution · ${status}`, headline: p.label, actions: [ this.#link("See it", p.url, "btn") ], note: p.name ? `${kind}: ${p.name}` : kind })
   }
 
-  #showMessage(text) { this.#card("", "", [], text) }
+  // District › Sector › Unit › No., each a step back up the hierarchy.
+  #crumbs(district, sector, unit, number) {
+    const crumb = (code, label, current) => {
+      const a = document.createElement("a")
+      a.textContent = label; a.className = current ? "is-current" : ""
+      if (!current) { a.href = "#"; a.addEventListener("click", (e) => { e.preventDefault(); this.#resolve(code, code === district ? this.names?.[district] : undefined) }) }
+      return a
+    }
+    const current = number !== undefined ? "number" : unit ? "unit" : sector ? "sector" : "district"
+    const parts = [ crumb(district, this.names?.[district] || district, current === "district") ]
+    if (sector) parts.push(crumb(sector, `Sector ${sector.split(" ")[1]}`, current === "sector"))
+    if (unit) parts.push(crumb(unit, `Unit ${unit.split(" ")[1]}`, current === "unit"))
+    if (number !== undefined) parts.push(crumb(null, `No. ${number}`, true))
+    return parts
+  }
 
-  // A popup anchored where the person tapped, in place of a bottom sheet.
-  #card(eyebrow, headline, actions, note) {
+  // Which NSDI ward a point falls in, by ray casting over the overlay.
+  #wardAt(lng, lat) {
+    for (const f of this.wards?.features || []) {
+      const polys = f.geometry.type === "Polygon" ? [f.geometry.coordinates] : f.geometry.coordinates
+      for (const rings of polys) {
+        if (inRing(rings[0], lng, lat) && !rings.slice(1).some(h => inRing(h, lng, lat))) return f.properties.name || f.properties.constituency || null
+      }
+    }
+    return null
+  }
+
+  #copy(label, text) {
+    const b = document.createElement("button")
+    b.type = "button"; b.className = "btn btn--ghost btn--small"; b.textContent = label
+    b.addEventListener("click", async () => {
+      try { await navigator.clipboard.writeText(text); b.textContent = "Copied" } catch { b.textContent = text }
+      setTimeout(() => { b.textContent = label }, 1500)
+    })
+    return b
+  }
+
+  #directions(lat, lng) {
+    const a = document.createElement("a")
+    a.className = "btn btn--ghost btn--small"; a.textContent = "Directions ↗"
+    a.href = `https://www.google.com/maps/dir/?api=1&destination=${lat.toFixed(6)},${lng.toFixed(6)}`; a.target = "_blank"; a.rel = "noopener"
+    return a
+  }
+
+  #showMessage(text) { this.#card({ note: text }) }
+
+  // A popup anchored where the person tapped, in place of a bottom sheet:
+  // what the place is, where it sits in the hierarchy, what you can say
+  // about it, and the facts a courier wants.
+  #card({ eyebrow, headline, sub, crumbs = [], actions = [], tools = [], facts = [], note }) {
     const el = document.createElement("div")
     const add = (tag, cls, text) => { const n = document.createElement(tag); n.className = cls; n.textContent = text; el.append(n); return n }
     if (eyebrow) add("p", "eyebrow", eyebrow)
-    if (headline) add("p", "address", headline)
+    if (headline) {
+      const h = add("p", "address", headline)
+      if (sub) { const sm = document.createElement("small"); sm.textContent = sub; h.append(sm) }
+    }
+    if (crumbs.length) {
+      const c = add("div", "crumbs", "")
+      crumbs.forEach((a, i) => { if (i) { const sep = document.createElement("span"); sep.className = "sep"; sep.textContent = "›"; c.append(sep) } c.append(a) })
+    }
     if (actions.length) { const a = add("div", "actions", ""); a.replaceChildren(...actions) }
+    if (tools.length) { const t = add("div", "actions actions--row", ""); t.replaceChildren(...tools) }
+    if (facts.length) {
+      const dl = add("dl", "facts", "")
+      for (const [k, v] of facts) { const d = document.createElement("div"); const dt = document.createElement("dt"); dt.textContent = k; const dd = document.createElement("dd"); dd.textContent = v; d.append(dt, dd); dl.append(d) }
+    }
     if (note) add("p", "note", note)
     this.popup?.remove()
-    this.popup = new maplibregl.Popup({ closeButton: true, closeOnClick: true, maxWidth: "34rem", offset: 10 })
+    this.popup = new maplibregl.Popup({ closeButton: true, closeOnClick: true, maxWidth: "34rem", offset: 10, focusAfterOpen: false })
       .setLngLat(this.at).setDOMContent(el).addTo(this.map)
+    // On a phone the card takes the width; the corner controls step aside.
+    this.canvasTarget.classList.add("has-card")
+    this.popup.on("close", () => this.canvasTarget.classList.remove("has-card"))
+    this.#fitPopup()
+  }
+
+  // A card with facts is taller than the tap point allows for; pan the
+  // map so the whole card is on screen, under the bar.
+  #fitPopup() {
+    const el = this.popup?.getElement(); if (!el) return
+    const rect = el.getBoundingClientRect(), box = this.canvasTarget.getBoundingClientRect()
+    const bar = this.element.querySelector(".bar")?.getBoundingClientRect().bottom ?? box.top
+    let dy = 0
+    if (rect.bottom > box.bottom - 12) dy = rect.bottom - (box.bottom - 12)
+    if (rect.top - dy < bar + 12) dy = rect.top - (bar + 12)
+    if (dy) this.map.panBy([0, dy], { duration: 250 })
   }
 
   // Contribution forms open in the page's modal frame over the map.

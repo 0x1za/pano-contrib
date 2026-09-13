@@ -299,3 +299,21 @@ select.field { appearance: auto; }
 .resident .choices { margin: 0; }
 .resident { margin-bottom: 3.2rem; }
 .resident .choices { margin-top: .4rem; }
+
+/* The map card: hierarchy crumbs and courier facts, as on the pano page */
+.maplibregl-popup-content .address small { display: block; font-size: 1.3rem; font-weight: 400; color: var(--subtle); margin-top: .2rem; letter-spacing: 0; }
+.maplibregl-popup-content .crumbs { display: flex; flex-wrap: wrap; gap: .3rem; align-items: center; margin: 0 0 .8rem; font-size: 1.2rem; }
+.maplibregl-popup-content .crumbs a { padding: .2rem .6rem; border: 1px solid var(--hairline); border-radius: var(--radius); color: var(--ink); text-decoration: none; }
+.maplibregl-popup-content .crumbs a[href]:hover { border-color: var(--accent); color: var(--accent); }
+.maplibregl-popup-content .crumbs a.is-current { background: var(--amber); border-color: var(--amber); }
+.maplibregl-popup-content .crumbs .sep { color: var(--subtle); }
+.maplibregl-popup-content .actions--row { flex-direction: row; margin-top: .6rem; }
+.maplibregl-popup-content .actions--row .btn { width: auto; flex: 1; }
+.maplibregl-popup-content .facts { margin: 1rem 0 0; }
+.maplibregl-popup-content .facts div { padding: .5rem 0; font-size: 1.25rem; }
+@media (max-width: 880px) {
+  .maplibregl-popup-content { max-height: 62vh; overflow-y: auto; }
+}
+@media (max-width: 880px) {
+  .map.has-card .maplibregl-ctrl-bottom-right { display: none; }
+}

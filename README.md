@@ -6,7 +6,7 @@ calls Kabulonga "Kabulonga", whether the dot at `LS1 1JC 2` is a home or a
 shed, or that the block behind the green gate holds four families. Only
 people can. This is where they say so.
 
-![Tap a building: its address, and the four things you can say about it](docs/screenshots/address.png)
+![Tap a building: its address, where it sits, what you can say about it, and what a courier needs](docs/screenshots/address.png)
 
 Anyone with the map open can say they live at an address, describe the
 homes inside a shared building, report that something is wrong, or leave
