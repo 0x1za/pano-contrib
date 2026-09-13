@@ -317,3 +317,6 @@ select.field { appearance: auto; }
 @media (max-width: 880px) {
   .map.has-card .maplibregl-ctrl-bottom-right { display: none; }
 }
+
+/* Offline: the bar says so */
+.offline-pill { position: absolute; left: 50%; bottom: -1.6rem; transform: translate(-50%, 100%); padding: .3rem 1rem; background: var(--ink); color: var(--paper); border-radius: 999px; font-size: 1.2rem; font-weight: 700; letter-spacing: .04em; white-space: nowrap; }

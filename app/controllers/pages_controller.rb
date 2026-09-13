@@ -7,6 +7,7 @@ class PagesController < ApplicationController
   # Text-only contributions without a network; the service worker keeps
   # this page reachable and the outbox sends what is saved here later.
   def offline
+    @api_url = PanoApi.base_url
   end
 
   def styleguide

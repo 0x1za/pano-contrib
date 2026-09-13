@@ -1,5 +1,5 @@
 <% content_for :title, t(".title") %>
-<main class="wrap" data-controller="offline">
+<main class="wrap" data-controller="offline" data-offline-api-value="<%= @api_url %>">
   <%= render "shared/header" %>
   <p class="eyebrow"><%= t(".eyebrow") %></p>
   <h1 class="display"><%= t(".title") %></h1>
@@ -43,4 +43,13 @@
 
   <p class="eyebrow"><%= t(".queued") %></p>
   <ul class="entries" data-offline-target="list"></ul>
+
+  <p class="eyebrow"><%= t(".map_h") %></p>
+  <p class="sub" data-offline-target="mapStatus"><%= t(".map_checking") %></p>
+  <progress class="progress" data-offline-target="mapProgress" hidden></progress>
+  <div class="actions">
+    <button type="button" class="btn" data-offline-target="saveMap" data-action="offline#saveMap"><%= t(".map_save") %></button>
+    <button type="button" class="btn btn--ghost" data-offline-target="removeMap" data-action="offline#removeMap" hidden><%= t(".map_remove") %></button>
+  </div>
+  <p class="hint"><%= t(".map_hint") %></p>
 </main>

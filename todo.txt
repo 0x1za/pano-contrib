@@ -37,7 +37,7 @@
 [x] Outbox in IndexedDB with client-minted mutation ids; replays through POST /sync/push on reconnect and every 30 s
 [x] SyncApplier applies idempotently on (device, mutation id); rejected entries stay on the phone with the reason
 [x] Outbox badge in the map bar
-[ ] Offline map tiles (PMTiles), deferred with the Rust side
+[x] Offline map tiles: the map reads the pano PMTiles archive; "Save the map on this phone" keeps it, the page and the glyphs in the Cache API and the service worker answers range requests from the chunks
 ## Phase 6 — Field protocol
 [x] Surveys: a moderator opens one per district, goal ten residents
 [x] Two questions per resident, in person: recognise the name? what do you call it?

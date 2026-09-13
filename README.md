@@ -158,8 +158,22 @@ IndexedDB outbox with a client-minted mutation id and replay through
 `POST /sync/push` when the phone is back online, and every thirty
 seconds after that. `SyncApplier` applies each once on (device,
 mutation id) and answers per mutation; what it refuses stays on the
-phone with the reason. The map bar shows how many are waiting. Offline
-map tiles wait on the Rust side's PMTiles work.
+phone with the reason. The map bar shows how many are waiting.
+
+The map itself works without a network too. Districts, sectors, units
+and delivery points come from the pano API's PMTiles archive
+(`aspect tiles` on the Rust side), which MapLibre range-reads through
+the `pmtiles://` protocol; tapping a building answers from the tile's
+own properties, so the card opens with no request at all. "Save the map
+on this phone" on `/offline` streams the whole archive (21 MB for
+Lusaka) into the Cache API in one-megabyte chunks, along with the map
+page, its assets and the label glyphs; the service worker then answers
+range requests for the archive from those chunks, and serves the map
+page when the network is gone. Offline, the bar says so, the card's
+buttons lead to the offline form with the address filled in, and only
+the street map behind the units and search still need a signal. When
+the API has no archive the map falls back to fetching GeoJSON per
+viewport, as before.
 
 ## Identity, abuse, privacy
 

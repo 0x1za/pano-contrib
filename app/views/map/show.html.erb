@@ -3,6 +3,7 @@
   <div class="map" data-map-target="canvas" role="application" aria-label="<%= t(".map_label") %>"></div>
 
   <header class="bar">
+    <span class="offline-pill" data-map-target="offline" hidden></span>
     <%= link_to root_path, class: "wordmark" do %>
       <%= render "shared/mark" %>pano
     <% end %>

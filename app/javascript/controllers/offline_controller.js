@@ -1,19 +1,65 @@
 import { Controller } from "@hotwired/stimulus"
 import { syncClient } from "sync/client"
+import { savedMap, saveMap, removeMap, formatBytes } from "offline/map_store"
 
 // The offline form: an address the person already knows plus what they
 // want to say. Nothing is posted here; the entry goes to the outbox and
 // the client sends it when the phone is back online. The list below the
 // form is the outbox itself, including what the server refused and why.
 export default class extends Controller {
-  static targets = ["form", "address", "kind", "note", "sub", "reason", "list", "status", "noteField", "subField", "reasonField"]
+  static targets = ["form", "address", "kind", "note", "sub", "reason", "list", "status", "noteField", "subField", "reasonField", "mapStatus", "mapProgress", "saveMap", "removeMap"]
+  static values = { api: String }
 
   connect() {
     this.client = syncClient()
     this.unsubscribe = this.client.subscribe((entries) => this.render(entries))
     this.onLine = () => this.render(this.client.entries)
     addEventListener("online", this.onLine); addEventListener("offline", this.onLine)
+    this.prefill()
     this.kindChanged()
+    this.renderMap()
+  }
+
+  // The map's card sends people here with the address and what they tapped.
+  prefill() {
+    const params = new URLSearchParams(location.search)
+    const address = params.get("address"), kind = params.get("kind")
+    if (address) this.addressTarget.value = address.toUpperCase()
+    if (kind && [...this.kindTarget.options].some((o) => o.value === kind)) this.kindTarget.value = kind
+  }
+
+  // ---------- the saved map ----------
+  async renderMap() {
+    if (!this.hasMapStatusTarget) return
+    const saved = await savedMap(this.apiValue)
+    this.mapStatusTarget.textContent = saved
+      ? `Saved: ${formatBytes(saved.size)}, ${new Date(saved.savedAt).toLocaleDateString()}. Districts, units, buildings and numbers open without a network.`
+      : "The map is not saved on this phone. Saved, the districts, units, buildings and numbers open without a network; the street map behind them and search still need one."
+    this.saveMapTarget.textContent = saved ? "Save it again" : "Save the map on this phone"
+    this.removeMapTarget.hidden = !saved
+  }
+
+  async saveMap() {
+    this.saveMapTarget.disabled = true
+    this.mapProgressTarget.hidden = false
+    this.mapProgressTarget.removeAttribute("value")
+    try {
+      await saveMap(this.apiValue, (done, total) => {
+        if (total) { this.mapProgressTarget.max = total; this.mapProgressTarget.value = done }
+        this.mapStatusTarget.textContent = `Saving… ${formatBytes(done)}${total ? ` of ${formatBytes(total)}` : ""}`
+      })
+    } catch (e) {
+      this.mapStatusTarget.textContent = `Could not save the map: ${e.message}`
+    } finally {
+      this.mapProgressTarget.hidden = true
+      this.saveMapTarget.disabled = false
+    }
+    await this.renderMap()
+  }
+
+  async removeMap() {
+    await removeMap(this.apiValue)
+    await this.renderMap()
   }
 
   disconnect() {

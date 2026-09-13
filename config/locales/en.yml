@@ -232,6 +232,11 @@ en:
       save: "Save on this phone"
       to_map: "To the map"
       queued: "Saved on this phone"
+      map_h: "The map on this phone"
+      map_checking: "Checking what is saved…"
+      map_save: "Save the map on this phone"
+      map_remove: "Remove the saved map"
+      map_hint: "About 21 MB for all of Lusaka, once. Tap a building offline and its card still opens; what you say goes to the outbox above."
     about:
       title: "What pano is"
       eyebrow: "About"
