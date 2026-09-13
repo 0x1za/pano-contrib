@@ -31,6 +31,10 @@ Rails.application.routes.draw do
   patch "review/:id", to: "reviews#update", as: :review_decision
 
   get "geocode", to: "geocode#index"
+  post "sync/push", to: "sync#push", as: :sync_push
+  get "offline", to: "pages#offline"
+  get "manifest", to: "rails/pwa#manifest", as: :pwa_manifest
+  get "service-worker", to: "rails/pwa#service_worker", as: :pwa_service_worker
   get "about", to: "pages#about"
   get "leaderboard", to: "leaderboard#show"
   get "styleguide", to: "pages#styleguide"

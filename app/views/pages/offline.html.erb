@@ -1,0 +1,46 @@
+<% content_for :title, t(".title") %>
+<main class="wrap" data-controller="offline">
+  <%= render "shared/header" %>
+  <p class="eyebrow"><%= t(".eyebrow") %></p>
+  <h1 class="display"><%= t(".title") %></h1>
+  <p class="lede"><%= t(".lede") %></p>
+  <p class="sub sync-status" data-offline-target="status"></p>
+
+  <form class="stack" data-offline-target="form" data-action="submit->offline#save">
+    <div>
+      <label class="label" for="offline_address"><%= t(".address") %></label>
+      <input id="offline_address" class="field" type="text" data-offline-target="address" placeholder="LS33 9XX 17" autocapitalize="characters" autocomplete="off" spellcheck="false" required>
+      <p class="hint"><%= t(".address_hint") %></p>
+    </div>
+    <div>
+      <label class="label" for="offline_kind"><%= t(".kind") %></label>
+      <select id="offline_kind" class="field" data-offline-target="kind" data-action="change->offline#kindChanged">
+        <option value="confirm_address"><%= t("contributions.kinds.confirm_address") %></option>
+        <option value="delivery_note"><%= t("contributions.kinds.delivery_note") %></option>
+        <option value="dispute_address"><%= t("contributions.kinds.dispute_address") %></option>
+      </select>
+    </div>
+    <div data-offline-target="subField">
+      <label class="label" for="offline_sub"><%= t("contributions.new.sub") %></label>
+      <input id="offline_sub" class="field field--short" type="text" data-offline-target="sub" maxlength="12" placeholder="<%= t("contributions.new.sub_placeholder") %>">
+    </div>
+    <div data-offline-target="noteField" hidden>
+      <label class="label" for="offline_note"><%= t("contributions.new.note") %></label>
+      <textarea id="offline_note" class="field" data-offline-target="note" maxlength="280" rows="3"></textarea>
+    </div>
+    <div data-offline-target="reasonField" hidden>
+      <label class="label" for="offline_reason"><%= t("contributions.new.what_is_wrong") %></label>
+      <select id="offline_reason" class="field" data-offline-target="reason">
+        <% Contribution::DISPUTE_REASONS.each do |r| %><option value="<%= r %>"><%= t("contributions.reasons.#{r}") %></option><% end %>
+      </select>
+    </div>
+    <p class="hint"><%= t("contributions.new.licence_html") %></p>
+    <div class="actions">
+      <button type="submit" class="btn"><%= t(".save") %></button>
+      <%= link_to t(".to_map"), root_path, class: "btn btn--ghost" %>
+    </div>
+  </form>
+
+  <p class="eyebrow"><%= t(".queued") %></p>
+  <ul class="entries" data-offline-target="list"></ul>
+</main>

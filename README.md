@@ -60,6 +60,18 @@ the rest (see `config/initializers/active_storage_ids.rb`). Development
 and test store on disk; production needs the object-storage block in
 `config/storage.yml` filled in.
 
+## Offline
+
+Kanyama does not have data everywhere. `/offline` is a text-only form,
+cached by the service worker, for an address the person already knows:
+say you live there, leave a note, or report a problem. Entries go to an
+IndexedDB outbox with a client-minted mutation id and replay through
+`POST /sync/push` when the phone is back online, and every thirty seconds
+after that. `SyncApplier` applies each once on (device, mutation id) and
+answers per mutation; what it refuses stays on the phone with the reason.
+The map bar shows how many are waiting. Offline map tiles are deferred
+with the Rust side's PMTiles work.
+
 ## Changesets
 
 Accepted contributions reach the map through a changeset. `/changesets`

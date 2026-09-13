@@ -281,3 +281,12 @@ a:hover { text-decoration: underline; text-underline-offset: .2em; }
 .photo { margin: 0 0 1.6rem; }
 .photo img { display: block; width: 100%; height: auto; border: 1px solid var(--hairline); border-radius: var(--radius); }
 .queue-photo { display: block; max-width: 24rem; max-height: 18rem; width: auto; margin: .8rem 0; border: 1px solid var(--hairline); border-radius: var(--radius); }
+
+/* Offline: the outbox badge in the bar and the offline form's status */
+.bar .outbox { padding: .3rem .9rem; border: 1px solid var(--amber); border-radius: 999px; background: rgba(251, 163, 12, .12); color: var(--ink); font: inherit; font-size: 1.2rem; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.bar .outbox.is-offline { border-style: dashed; }
+.sync-status { padding: .8rem 1.2rem; border-radius: var(--radius); background: rgba(15, 122, 50, .1); color: #0F7A32; }
+.sync-status.is-offline { background: rgba(251, 163, 12, .14); color: var(--ink); }
+.entry-card { display: flex; align-items: flex-start; justify-content: space-between; gap: 1.2rem; padding: 1.2rem 1.4rem 1.2rem 1.6rem; border: 1px solid var(--hairline); border-left: 4px solid var(--amber); border-radius: var(--radius); }
+.entry.is-rejected .entry-card { border-left-color: #C8102E; }
+select.field { appearance: auto; }

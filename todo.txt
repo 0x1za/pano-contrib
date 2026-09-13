@@ -33,4 +33,9 @@
 [x] Photos shown to the author and moderators; public only once the contribution is accepted
 [ ] Object storage for production (config/storage.yml amazon block)
 ## Phase 5 — Offline
+[x] /offline: a text-only form for an address the person already knows, cached by the service worker
+[x] Outbox in IndexedDB with client-minted mutation ids; replays through POST /sync/push on reconnect and every 30 s
+[x] SyncApplier applies idempotently on (device, mutation id); rejected entries stay on the phone with the reason
+[x] Outbox badge in the map bar
+[ ] Offline map tiles (PMTiles), deferred with the Rust side
 ## Phase 6 — Field protocol

@@ -25,6 +25,7 @@
         <%= link_to t(".mine"), contributions_path, data: { turbo_frame: "modal" } %>
         <%= link_to t("shared.header.sign_in"), new_session_path, class: "sign-in" %>
       <% end %>
+      <button type="button" class="outbox" data-controller="outbox" data-action="click->outbox#send" title="<%= t(".outbox_title") %>" hidden><span data-outbox-target="count"></span></button>
       <button type="button" class="help" data-action="map#welcome" title="<%= t(".help") %>" aria-label="<%= t(".help") %>">?</button>
     </nav>
   </header>

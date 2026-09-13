@@ -15,4 +15,13 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
     get contributions_path
     assert_select "header nav a[href='/about']", "About"
   end
+
+  test "the offline form is a page the service worker can cache" do
+    get offline_path
+    assert_response :success
+    assert_select "main[data-controller=offline]"
+    assert_select "input[data-offline-target=address][placeholder='LS33 9XX 17']"
+    assert_select "select[data-offline-target=kind] option", 3
+    assert_select "ul[data-offline-target=list]"
+  end
 end

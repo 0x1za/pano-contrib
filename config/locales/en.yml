@@ -7,6 +7,7 @@ en:
     header:
       mine: "My contributions"
       about: "About"
+      offline: "Offline"
       leaderboard: "Leaderboard"
       review: "Review"
       changesets: "Changesets"
@@ -114,6 +115,7 @@ en:
       about: "About"
       leaderboard: "Leaderboard"
       help: "What do I do here?"
+      outbox_title: "Contributions saved on this phone, waiting to be sent. Tap to send now."
       satellite: "Satellite"
       search_placeholder: "Address, code or area name"
       search_go: "Find"
@@ -168,6 +170,16 @@ en:
       sign_up: "sign up"
       how_it_counts: "A confirmation counts once it has three agreeing votes; a report or a name once a moderator accepts it. Nothing here changes what you are allowed to do."
   pages:
+    offline:
+      title: "Without a network"
+      eyebrow: "Offline"
+      lede: "Kanyama does not have data everywhere. If you already know an address, say what you need to about it here; it is kept on this phone and sent the moment you are back online."
+      address: "The address"
+      address_hint: "As written on the wall or the card: LS33 9XX 17, or LS33 9XX 17/3 for a flat."
+      kind: "What do you want to say?"
+      save: "Save on this phone"
+      to_map: "To the map"
+      queued: "Saved on this phone"
     about:
       title: "What pano is"
       eyebrow: "About"

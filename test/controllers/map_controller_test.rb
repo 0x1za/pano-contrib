@@ -14,6 +14,7 @@ class MapControllerTest < ActionDispatch::IntegrationTest
     assert_select "[data-controller=map][data-map-satellite-value*='World_Imagery']", 1
     assert_select ".bar nav a[href='/about'][data-turbo-frame=modal]", "About"
     assert_select ".bar nav a.sign-in[href='/session/new']", "Sign in"
+    assert_select ".bar nav button.outbox[data-controller=outbox][hidden]", 1, "the outbox badge, hidden until something is waiting"
     assert_select ".bar nav a[href='/leaderboard'][data-turbo-frame=modal]", 1
     assert_select ".bar nav a[href='/contributions'][data-turbo-frame=modal]", 1
     assert_select ".bar nav button.help"

@@ -4,6 +4,11 @@ class PagesController < ApplicationController
   def about
   end
 
+  # Text-only contributions without a network; the service worker keeps
+  # this page reachable and the outbox sends what is saved here later.
+  def offline
+  end
+
   def styleguide
   end
 end
