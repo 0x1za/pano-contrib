@@ -225,7 +225,7 @@ scripts/                       diagrams.sh, screenshots.sh
 
 ```
 bin/setup
-bin/rails "pano:import[../pano/gazetteer/v0.4.0]"    # a published gazetteer directory
+bin/rails "pano:import[../pano/gazetteer/v0.3.0]"    # a published gazetteer directory
 PANO_API_URL=http://127.0.0.1:8080 bin/dev            # the pano API must be running
 ```
 
