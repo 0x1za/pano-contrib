@@ -48,7 +48,7 @@
         <button type="button" class="btn" data-action="map#dismiss"><%= t(".welcome_go") %></button>
         <%= link_to t(".welcome_more"), about_path, class: "btn btn--ghost", data: { turbo_frame: "modal", action: "map#dismiss" } %>
       </div>
-      <p class="note"><em><%= t(".bemba") %></em></p>
+      <p class="note"><em><%= t(".bemba") %></em><% if @gazetteer %> · <%= t(".version", version: @gazetteer.version, districts: @gazetteer.places.tier_district.count) %><% end %></p>
     </div>
   </dialog>
 

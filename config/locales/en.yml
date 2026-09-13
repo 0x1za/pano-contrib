@@ -181,6 +181,7 @@ en:
       how_pins_html: "What you contribute shows as a pin: <b style=\"color:#FBA30C\">amber</b> while pending, <b style=\"color:#0F7A32\">green</b> once accepted, <b style=\"color:#C8102E\">red</b> if rejected."
       welcome_go: "Got it, show me the map"
       welcome_more: "How it works"
+      version: "map v%{version}, %{districts} districts"
       bemba: "pano is Bemba for here."
   badges:
     none_yet: "No badges yet. Your first accepted contribution earns one."
