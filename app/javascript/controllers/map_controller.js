@@ -50,6 +50,8 @@ export default class extends Controller {
     if (!window.__panoPmtiles) { window.__panoPmtiles = new Protocol(); maplibregl.addProtocol("pmtiles", window.__panoPmtiles.tile) }
     this.map = new maplibregl.Map({
       container: this.canvasTarget,
+      // North stays up: no drag, touch or keyboard rotation, no pitch.
+      dragRotate: false, pitchWithRotate: false, touchPitch: false, maxPitch: 0,
       style: {
         version: 8,
         glyphs: "https://fonts.openmaptiles.org/{fontstack}/{range}.pbf",
@@ -71,6 +73,8 @@ export default class extends Controller {
     document.addEventListener("pano:modal-closed", this.onModalClosed)
     this.onDocClick = (e) => { if (!e.target.closest(".bar .search") && !e.target.closest(".suggest")) this.#closeSuggest() }
     document.addEventListener("click", this.onDocClick)
+    this.map.touchZoomRotate.disableRotation()
+    this.map.keyboard.disableRotation()
     this.map.on("load", () => this.#addLayers())
     this.map.on("moveend", () => this.#refresh())
     this.map.on("click", (e) => this.#click(e))
