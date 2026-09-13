@@ -1,0 +1,20 @@
+---
+title: The loop
+---
+flowchart LR
+  classDef people fill:#FFF3D6,stroke:#FBA30C,color:#0B0C11
+  classDef rails fill:#FFFFFF,stroke:#022EAC,stroke-width:2px,color:#0B0C11
+  classDef rust fill:#E6FBF3,stroke:#13E19B,color:#0B0C11
+  classDef file fill:#F3F4F8,stroke:#9AA3B5,color:#0B0C11
+
+  resident(["a resident<br/>taps their building"]):::people
+  c["contribution<br/>I live here · homes inside<br/>note · dispute"]:::rails
+  review["votes · review<br/>Acceptance rules"]:::rails
+  cs["changeset<br/>frozen on export"]:::rails
+  changes["changes.json"]:::file
+  zone["aspect zone --changes<br/>gazetteer/v0.2.0/"]:::rust
+  diff["aspect diff --json<br/>churn.json"]:::rust
+
+  resident --> c --> review --> cs --> changes --> zone --> diff
+  diff -. "pano:applied · churn on the changeset page" .-> cs
+  zone -. "pano:import · new places and buildings" .-> resident

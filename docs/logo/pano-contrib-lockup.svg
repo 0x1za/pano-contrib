@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 64" width="420" height="64" role="img" aria-label="pano contrib">
+  <title>pano contrib</title>
+  <g fill="#022EAC" fill-opacity="0.12">
+    <rect x="3"  y="3"  width="18" height="18" rx="3"/>
+    <rect x="23" y="3"  width="18" height="18" rx="3"/>
+    <rect x="43" y="3"  width="18" height="18" rx="3"/>
+    <rect x="3"  y="23" width="18" height="18" rx="3"/>
+    <rect x="43" y="43" width="18" height="18" rx="3"/>
+    <rect x="3"  y="43" width="18" height="18" rx="3"/>
+  </g>
+  <g fill="#022EAC">
+    <rect x="23" y="23" width="18" height="18" rx="3"/>
+    <rect x="43" y="23" width="18" height="18" rx="3"/>
+    <rect x="23" y="43" width="18" height="18" rx="3"/>
+    <rect x="23" y="23" width="38" height="18" rx="3"/>
+    <rect x="23" y="23" width="18" height="38" rx="3"/>
+  </g>
+  <circle cx="32" cy="32" r="4.5" fill="#FBA30C"/>
+  <!-- A second building, added by a resident: the amber dot in the cell the map did not have. -->
+  <circle cx="52" cy="52" r="4.5" fill="#FBA30C"/>
+  <text x="80" y="47" font-family="Lato, 'Helvetica Neue', Arial, sans-serif" font-weight="900" font-size="46" letter-spacing="-1.5" fill="#022EAC">pano</text>
+  <text x="206" y="47" font-family="Lato, 'Helvetica Neue', Arial, sans-serif" font-weight="400" font-size="46" letter-spacing="-1" fill="#FBA30C">contrib</text>
+</svg>

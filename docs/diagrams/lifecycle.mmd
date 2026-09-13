@@ -1,0 +1,19 @@
+---
+title: A contribution's life
+---
+stateDiagram-v2
+  direction LR
+  classDef open fill:#FFF3D6,stroke:#FBA30C,color:#0B0C11
+  classDef good fill:#E6FBF3,stroke:#13E19B,color:#0B0C11
+  classDef bad fill:#FDE8EC,stroke:#C8102E,color:#0B0C11
+  classDef old fill:#F3F4F8,stroke:#9AA3B5,color:#0B0C11
+  class pending open
+  class accepted good
+  class rejected bad
+  class superseded old
+  [*] --> pending: sent from a phone,<br/>online or from the outbox
+  pending --> accepted: enough agreeing votes,<br/>or a moderator
+  pending --> rejected: a moderator, with a note
+  pending --> accepted: 30 days unopposed<br/>(delivery notes)
+  accepted --> superseded: a later contribution<br/>contradicts it
+  accepted --> [*]: gathered into a changeset
