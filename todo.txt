@@ -37,7 +37,7 @@
 [x] Outbox in IndexedDB with client-minted mutation ids; replays through POST /sync/push on reconnect and every 30 s
 [x] SyncApplier applies idempotently on (device, mutation id); rejected entries stay on the phone with the reason
 [x] Outbox badge in the map bar
-[x] Offline map tiles: the map reads the pano PMTiles archive; "Save the map on this phone" keeps it, the page and the glyphs in the Cache API and the service worker answers range requests from the chunks
+[x] Offline map tiles, behind the :offline_map flag (off until it settles on real phones): the map reads the pano PMTiles archive; "Save the map on this phone" keeps it, the page and the glyphs in the Cache API and the service worker answers range requests from the chunks
 ## Towns
 [x] A gazetteer with several towns: chooser in the bar, geocoder bounded to the town in view, survey districts grouped by town, copy that does not assume Lusaka
 

@@ -164,7 +164,11 @@ seconds after that. `SyncApplier` applies each once on (device,
 mutation id) and answers per mutation; what it refuses stays on the
 phone with the reason. The map bar shows how many are waiting.
 
-The map itself works without a network too. Districts, sectors, units
+The map itself can work without a network too, behind the `:offline_map`
+flag in Flipper, off by default while it settles on real phones. Off,
+the map fetches GeoJSON per viewport as it always did, no service worker
+is registered, and any worker or cache a phone still carries is cleared
+on the next visit. On: districts, sectors, units
 and delivery points come from the pano API's PMTiles archive
 (`aspect tiles` on the Rust side), which MapLibre range-reads through
 the `pmtiles://` protocol; tapping a building answers from the tile's

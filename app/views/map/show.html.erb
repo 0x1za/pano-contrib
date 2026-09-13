@@ -1,5 +1,5 @@
 <% content_for :body_class, "is-map" %>
-<div data-controller="map" data-map-api-value="<%= @api_url %>" data-map-satellite-value="<%= @satellite_tiles %>">
+<div data-controller="map" data-map-api-value="<%= @api_url %>" data-map-satellite-value="<%= @satellite_tiles %>" data-map-tiles-value="<%= feature?(:offline_map) %>">
   <div class="map" data-map-target="canvas" role="application" aria-label="<%= t(".map_label") %>"></div>
 
   <header class="bar">

@@ -38,6 +38,7 @@ export default class extends Controller {
   static values = {
     api: String,
     satellite: String,
+    tiles: { type: Boolean, default: false },
     center: { type: Array, default: [28.32, -15.42] },
     zoom: { type: Number, default: 12 }
   }
@@ -146,6 +147,7 @@ export default class extends Controller {
   // The archive answers, live or from the saved copy, when its first bytes
   // spell its own name.
   async #tilesAvailable() {
+    if (!this.tilesValue) return false
     try {
       const r = await fetch(this.apiValue + TILES_PATH, { headers: { Range: "bytes=0-6" } })
       return r.ok && (await r.text()).startsWith("PMTiles")

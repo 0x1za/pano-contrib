@@ -44,6 +44,7 @@
   <p class="eyebrow"><%= t(".queued") %></p>
   <ul class="entries" data-offline-target="list"></ul>
 
+  <% if feature?(:offline_map) %>
   <p class="eyebrow"><%= t(".map_h") %></p>
   <p class="sub" data-offline-target="mapStatus"><%= t(".map_checking") %></p>
   <progress class="progress" data-offline-target="mapProgress" hidden></progress>
@@ -52,4 +53,5 @@
     <button type="button" class="btn btn--ghost" data-offline-target="removeMap" data-action="offline#removeMap" hidden><%= t(".map_remove") %></button>
   </div>
   <p class="hint"><%= t(".map_hint") %></p>
+  <% end %>
 </main>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="<%= I18n.locale %>">
+<html lang="<%= I18n.locale %>" data-offline="<%= feature?(:offline_map) ? 1 : 0 %>">
   <head>
     <title><%= content_for(:title) || "pano" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">

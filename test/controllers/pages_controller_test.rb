@@ -20,7 +20,12 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
     get offline_path
     assert_response :success
     assert_select "main[data-controller=offline][data-offline-api-value]"
+    assert_select "[data-offline-target=saveMap]", false, "the saved map waits behind the :offline_map flag"
+    Flipper.enable(:offline_map)
+    get offline_path
     assert_select "[data-offline-target=saveMap]", text: /Save the map/
+  ensure
+    Flipper.disable(:offline_map)
     assert_select "input[data-offline-target=address][placeholder='LS33 9XX 17']"
     assert_select "select[data-offline-target=kind] option", 3
     assert_select "ul[data-offline-target=list]"

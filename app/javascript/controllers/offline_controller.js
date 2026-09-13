@@ -30,7 +30,7 @@ export default class extends Controller {
 
   // ---------- the saved map ----------
   async renderMap() {
-    if (!this.hasMapStatusTarget) return
+    if (!this.hasMapStatusTarget) return  // the saved map is behind the :offline_map flag
     const saved = await savedMap(this.apiValue)
     const now = saved ? await currentGazetteer(this.apiValue) : null
     const stale = saved && now && saved.hash && saved.hash !== now.hash
