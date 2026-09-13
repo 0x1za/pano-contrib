@@ -28,8 +28,9 @@ class MapControllerTest < ActionDispatch::IntegrationTest
   test "signed in, the bar shows the name and a way out" do
     sign_in_as(users(:moderator))
     get root_path
-    assert_select ".bar nav a.who", "Mwila"
-    assert_select ".bar nav form[action='/session'] button", "Sign out"
+    assert_select ".bar nav a.who[href='/contributions']", "Mwila"
+    assert_select ".bar nav form[action='/session'] button.icon-btn[aria-label='Sign out'] svg", 1
     assert_select ".bar nav a.sign-in", 0
+    assert_select ".bar nav a[href='/contributions']", 1, "the name is the only link to contributions"
   end
 end
