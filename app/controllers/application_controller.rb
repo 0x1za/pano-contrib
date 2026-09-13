@@ -4,6 +4,12 @@ class ApplicationController < ActionController::Base
 
   allow_browser versions: :modern
 
+  # Pages open to everyone still need to know who is signed in: the map
+  # bar shows the account, and "My contributions" spans its devices.
+  # require_authentication only runs where it is not skipped, so resume
+  # the session everywhere first. It never redirects.
+  before_action :resume_session
+
   helper_method :current_gazetteer, :current_user, :feature?
 
   # A denied ability reads as a missing page, never as a hint.

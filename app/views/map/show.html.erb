@@ -16,6 +16,12 @@
       <%= link_to t(".about"), about_path, data: { turbo_frame: "modal" } %>
       <%= link_to t(".leaderboard"), leaderboard_path, data: { turbo_frame: "modal" } %>
       <%= link_to t(".mine"), contributions_path, data: { turbo_frame: "modal" } %>
+      <% if current_user %>
+        <%= link_to current_user.name, contributions_path, class: "who", data: { turbo_frame: "modal" }, title: current_user.email_address %>
+        <%= button_to t("shared.header.sign_out"), session_path, method: :delete, class: "linklike" %>
+      <% else %>
+        <%= link_to t("shared.header.sign_in"), new_session_path, class: "sign-in" %>
+      <% end %>
       <button type="button" class="help" data-action="map#welcome" title="<%= t(".help") %>" aria-label="<%= t(".help") %>">?</button>
     </nav>
   </header>

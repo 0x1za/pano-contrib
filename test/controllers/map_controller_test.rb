@@ -13,6 +13,7 @@ class MapControllerTest < ActionDispatch::IntegrationTest
     assert_select "ul.suggest[data-map-target=suggest]", 1
     assert_select "[data-controller=map][data-map-satellite-value*='World_Imagery']", 1
     assert_select ".bar nav a[href='/about'][data-turbo-frame=modal]", "About"
+    assert_select ".bar nav a.sign-in[href='/session/new']", "Sign in"
     assert_select ".bar nav a[href='/leaderboard'][data-turbo-frame=modal]", 1
     assert_select ".bar nav a[href='/contributions'][data-turbo-frame=modal]", 1
     assert_select ".bar nav button.help"
@@ -22,5 +23,13 @@ class MapControllerTest < ActionDispatch::IntegrationTest
     get styleguide_path
     assert_response :success
     assert_select ".display", "LS33 9XX 17"
+  end
+
+  test "signed in, the bar shows the name and a way out" do
+    sign_in_as(users(:moderator))
+    get root_path
+    assert_select ".bar nav a.who", "Mwila"
+    assert_select ".bar nav form[action='/session'] button", "Sign out"
+    assert_select ".bar nav a.sign-in", 0
   end
 end
