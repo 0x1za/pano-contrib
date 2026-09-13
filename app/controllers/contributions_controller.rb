@@ -65,10 +65,10 @@ class ContributionsController < ApplicationController
     end
 
     def contribution_params
-      params.expect(contribution: [ :kind, :building_id, :target_code, :lat, :lng, :mutation_id, payload: [ :reason, :name, :note, :sub, :homes, :labelling ] ])
+      params.expect(contribution: [ :kind, :building_id, :target_code, :lat, :lng, :mutation_id, :photo, payload: [ :reason, :name, :note, :sub, :homes, :labelling ] ])
     end
 
-    def build_contribution(kind:, building_id: nil, target_code: nil, lat: nil, lng: nil, mutation_id: nil, payload: {})
+    def build_contribution(kind:, building_id: nil, target_code: nil, lat: nil, lng: nil, mutation_id: nil, payload: {}, photo: nil)
       building = building_id.present? ? current_gazetteer.buildings.find_by!(ingest_id: building_id) : nil
       target_kind = if building then :building
       elsif lat.present? then :point
@@ -78,6 +78,6 @@ class ContributionsController < ApplicationController
         kind: kind, building: building, target_code: target_code, target_kind: target_kind,
         lat: lat, lng: lng, payload: payload.to_h.compact_blank, mutation_id: mutation_id.presence,
         gazetteer_version: current_gazetteer, device: current_device, user: Current.user
-      )
+      ).tap { |c| c.photo_upload = photo if photo.present? }
     end
 end

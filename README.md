@@ -47,6 +47,19 @@ and admin; reputation is a counter that only changes who is asked first.
 - `/avo` and `/flipper`, admins: the back office and the flags. Both 404
   for anyone else.
 
+## Photos
+
+A delivery note, a problem report or a shared-building description may
+carry one photo. `PhotoUpload` sniffs the bytes, re-encodes the image
+through libvips with every metadata block dropped (EXIF including GPS,
+XMP, IPTC, ICC) and scales it to fit 1600 px before Active Storage ever
+sees it, so a gate photo cannot carry a household's location or a phone's
+identity. The author and moderators see it; everyone else only once the
+contribution is accepted. Active Storage's tables use string UUIDs like
+the rest (see `config/initializers/active_storage_ids.rb`). Development
+and test store on disk; production needs the object-storage block in
+`config/storage.yml` filled in.
+
 ## Changesets
 
 Accepted contributions reach the map through a changeset. `/changesets`

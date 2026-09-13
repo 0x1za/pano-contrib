@@ -28,5 +28,9 @@
 [x] Sub-addresses: LS33 9XX 17/3 in core, the API, buildings.csv and the confirm form; multi_occupancy kind
 
 ## Phase 4 — Notes and photos
+[x] Delivery notes (phase 1) and homes inside shared buildings (phase 3); naming places retired
+[x] Photos on notes, reports and shared-building descriptions: Active Storage with string ids, re-encoded through libvips with every metadata block stripped, scaled to 1600 px
+[x] Photos shown to the author and moderators; public only once the contribution is accepted
+[ ] Object storage for production (config/storage.yml amazon block)
 ## Phase 5 — Offline
 ## Phase 6 — Field protocol

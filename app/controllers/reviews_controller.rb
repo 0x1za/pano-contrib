@@ -4,7 +4,7 @@ class ReviewsController < ApplicationController
   before_action :require_reviewer
 
   def index
-    @contributions = Contribution.kept.queue.includes(:building, :gazetteer_version, :votes).limit(50)
+    @contributions = Contribution.kept.queue.includes(:building, :gazetteer_version, :votes).with_attached_photo.limit(50)
     @counts = Contribution.kept.status_pending.group(:kind).count
   end
 

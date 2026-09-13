@@ -244,6 +244,8 @@ en:
       labelling: "How are they labelled?"
       labelling_placeholder: "Numbers 1 to 20, letters A to D, block and door…"
       multi_hint: "A moderator will look at this. Residents can then confirm their own home with a label like 17/3."
+      photo: "Add a photo (optional)"
+      photo_hint: "The gate, the sign, the plot. It is scaled down and every trace of where and when it was taken is removed before it is stored; only moderators see it until the contribution is accepted."
       licence_html: "Contributions are published under <a href=\"https://creativecommons.org/licenses/by/4.0/\">CC BY 4.0</a> as \"pano contributors\"."
       send: "Send"
       cancel: "Cancel"
@@ -252,6 +254,9 @@ en:
       already: "You have already said this about %{label}. Here it is."
     show:
       title: "Your contribution"
+      photo_alt: "Photo sent with %{label}"
+      photo_public: "This photo is public: the contribution was accepted."
+      photo_private: "Only you and the moderators can see this photo until the contribution is accepted."
       sub: "Home"
       homes: "Homes"
       votes: "Votes"

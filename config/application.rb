@@ -26,6 +26,9 @@ module PanoContrib
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
+    # Every table uses string UUID ids (see ApplicationRecord); generated
+    # migrations, Active Storage's included, must follow.
+    config.generators { |g| g.orm :active_record, primary_key_type: :string }
     config.autoload_lib(ignore: %w[assets tasks])
 
     # Configuration for the application, engines, and railties goes here.

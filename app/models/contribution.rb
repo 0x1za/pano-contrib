@@ -20,6 +20,11 @@ class Contribution < ApplicationRecord
   # cuts that nobody has a name for. Existing rows stay for the record.
   RETIRED_KINDS = %w[dispute_district name_place].freeze
 
+  # Kinds a photo helps: the gate for a courier, the plot for a report,
+  # the block for a description. Never a confirmation: a photo of your
+  # own front door is not something to ask for.
+  PHOTO_KINDS = %w[delivery_note dispute_address missing_building multi_occupancy].freeze
+
   # A home inside a shared building, as residents label it: `3`, `B`,
   # `BLOCK C 12`. Free text, normalised like the Rust core's SubAddress:
   # upper case, single spaces, 1 to 12 letters, digits and spaces.
@@ -33,6 +38,10 @@ class Contribution < ApplicationRecord
   belongs_to :reviewed_by, class_name: "User", optional: true
   belongs_to :changeset, optional: true
   has_many :votes, dependent: :delete_all
+  # One photo, re-encoded with its metadata stripped before it is stored
+  # (PhotoUpload); shown to the author and to moderators, and to everyone
+  # only once the contribution is accepted.
+  has_one_attached :photo
 
   enum :kind, {
     confirm_address: 0, dispute_address: 1, confirm_district: 2, dispute_district: 3,
@@ -52,11 +61,14 @@ class Contribution < ApplicationRecord
 
   before_validation { self.mutation_id ||= SecureRandom.uuid }
   before_validation :normalise_sub_address
+  # The form always posts target_code; for a building it is blank.
+  normalizes :target_code, with: ->(code) { code.strip.presence }
   after_create :move_home
 
   validates :mutation_id, presence: true, uniqueness: { scope: :device_id }
   validate :one_open_contribution_per_target
   validates :kind, exclusion: { in: RETIRED_KINDS, message: "is no longer accepted" }, on: :create
+  validate :photo_fits_kind
   validates :building, presence: true, if: :target_kind_building?
   validates :target_code, presence: true, unless: -> { target_kind_building? || target_kind_point? }
   validates :lat, :lng, presence: true, if: :target_kind_point?
@@ -84,6 +96,20 @@ class Contribution < ApplicationRecord
   def duplicate_of
     Contribution.existing_for(device: device, user: user, kind: kind, building_id: building_id, target_code: target_code)
       &.then { |c| c.id == id ? nil : c }
+  end
+
+  # Takes the raw upload, strips and scales it, and attaches the result.
+  # A bad file becomes a validation error rather than an exception.
+  def photo_upload=(upload)
+    return if upload.blank?
+    processed = PhotoUpload.call(upload)
+    photo.attach(io: processed.file, filename: processed.filename, content_type: processed.content_type)
+  rescue PhotoUpload::Error => e
+    @photo_error = e.message
+  end
+
+  def photo_public?
+    photo.attached? && status_accepted?
   end
 
   def target_label
@@ -161,6 +187,11 @@ class Contribution < ApplicationRecord
   end
 
   private
+    def photo_fits_kind
+      errors.add(:photo, @photo_error) if @photo_error
+      errors.add(:photo, "does not go with this kind of contribution") if photo.attached? && !PHOTO_KINDS.include?(kind)
+    end
+
     # A new "I live here" supersedes the last one from the same person: they
     # moved, or tapped the wrong roof. Either way the earlier claim stops
     # counting, and the review note says where it went.

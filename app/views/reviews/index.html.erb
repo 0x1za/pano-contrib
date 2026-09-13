@@ -20,10 +20,13 @@
             <% if c.reason %><span><%= t("contributions.reasons.#{c.reason}") %></span><% end %>
             <% if c.payload["note"] %><span>“<%= c.payload["note"] %>”</span><% end %>
           </p>
+          <% if c.photo.attached? %>
+            <%= image_tag c.photo.variant(resize_to_limit: [ 480, 480 ]), class: "queue-photo", alt: "", loading: "lazy" %>
+          <% end %>
           <p class="hint">
             <% tally = c.tally %><%= t("votes.tally", agree: tally.agree, disagree: tally.disagree) %>
             · <%= link_to t(".on_map"), "#{PanoApi.base_url}/##{ERB::Util.url_encode(c.building ? c.building.address : c.target_code.to_s)}", target: "_blank", rel: "noopener" %>
-            <% if c.target_code %>· <%= link_to c.target_code, place_path(c.target_code) %><% end %>
+            <% if c.target_code.present? %>· <%= link_to c.target_code, place_path(c.target_code) %><% end %>
           </p>
           <%= form_with url: review_decision_path(c), method: :patch, class: "decision" do |f| %>
             <%= f.text_field :note, placeholder: t(".note"), maxlength: 280, class: "field", data: { review_target: "note" } %>

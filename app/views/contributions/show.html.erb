@@ -11,6 +11,12 @@
     <h1 class="display"><%= @contribution.target_label %></h1>
     <span class="pill is-<%= @contribution.status %>"><%= t("contributions.statuses.#{@contribution.status}") %></span>
   </header>
+  <% if @contribution.photo.attached? %>
+    <figure class="photo">
+      <%= image_tag @contribution.photo.variant(resize_to_limit: [ 1200, 1200 ]), alt: t(".photo_alt", label: @contribution.target_label), loading: "lazy" %>
+      <figcaption class="hint"><%= @contribution.photo_public? ? t(".photo_public") : t(".photo_private") %></figcaption>
+    </figure>
+  <% end %>
   <dl class="facts">
     <% if @contribution.name %><div><dt><%= t(".name") %></dt><dd><%= @contribution.name %></dd></div><% end %>
     <% if @contribution.reason %><div><dt><%= t(".reason") %></dt><dd><%= t("contributions.reasons.#{@contribution.reason}") %></dd></div><% end %>

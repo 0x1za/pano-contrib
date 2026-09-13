@@ -103,4 +103,23 @@ class ContributionsControllerTest < ActionDispatch::IntegrationTest
     assert first.reload.status_superseded?
     assert_equal 1, Contribution.kept.open.kind_confirm_address.where(device: first.device).count
   end
+
+  test "a delivery note with a photo is stored stripped and shown on its page" do
+    post contributions_path, params: { contribution: { kind: "delivery_note", building_id: buildings(:one).ingest_id, payload: { note: "Green gate" },
+                                                        photo: fixture_file_upload("gate.jpg", "image/jpeg") } }
+    c = Contribution.recent.first
+    assert c.photo.attached?
+    assert_redirected_to contribution_path(c)
+    follow_redirect!
+    assert_select "figure.photo img", 1
+    assert_select "figure.photo figcaption", /Only you and the moderators/
+  end
+
+  test "a building contribution's blank target code is stored as nothing, so the queue can render it" do
+    post contributions_path, params: { contribution: { kind: "confirm_address", building_id: buildings(:two).ingest_id, target_code: "" } }
+    assert_nil Contribution.recent.first.target_code
+    sign_in_as(users(:moderator))
+    get review_path
+    assert_response :success
+  end
 end

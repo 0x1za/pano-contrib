@@ -13,7 +13,7 @@
     <p class="sub"><%= @place.code %> · <%= t("places.tiers.#{@place.tier}") %></p>
   <% end %>
 
-  <%= form_with model: @contribution, class: "stack" do |f| %>
+  <%= form_with model: @contribution, class: "stack", multipart: true do |f| %>
     <% if @contribution.errors.any? %>
       <div class="flash is-error is-inline"><%= @contribution.errors.full_messages.to_sentence %></div>
     <% end %>
@@ -58,6 +58,13 @@
       <p class="sub"><%= t(".confirm_hint") %></p>
     <% end %>
 
+    <% if Contribution::PHOTO_KINDS.include?(@contribution.kind) %>
+      <div class="photo-field">
+        <label class="label" for="contribution_photo"><%= t(".photo") %></label>
+        <%= f.file_field :photo, id: "contribution_photo", accept: "image/*", capture: "environment", class: "file" %>
+        <p class="hint"><%= t(".photo_hint") %></p>
+      </div>
+    <% end %>
     <p class="hint"><%= t(".licence_html") %></p>
     <div class="actions">
       <%= f.submit t(".send"), class: "btn" %>

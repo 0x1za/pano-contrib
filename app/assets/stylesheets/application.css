@@ -275,3 +275,9 @@ a:hover { text-decoration: underline; text-underline-offset: .2em; }
 .badges-all[open] summary::before { content: "▾ "; }
 .badges-all .badges { margin-top: 1rem; }
 .modal .badges-all .badges { grid-template-columns: 1fr; }
+
+/* Photos on contributions */
+.file { display: block; width: 100%; padding: .8rem 0; font: inherit; }
+.photo { margin: 0 0 1.6rem; }
+.photo img { display: block; width: 100%; height: auto; border: 1px solid var(--hairline); border-radius: var(--radius); }
+.queue-photo { display: block; max-width: 24rem; max-height: 18rem; width: auto; margin: .8rem 0; border: 1px solid var(--hairline); border-radius: var(--radius); }
