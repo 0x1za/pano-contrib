@@ -330,7 +330,7 @@ export default class extends Controller {
         fetch(`/geocode?q=${encodeURIComponent(q)}&town=${encodeURIComponent(this.#townHere()?.area || "")}`, { headers: { Accept: "application/json" } }).then(r => r.ok ? r.json() : []).catch(() => [])
       ])
       if (seq !== this.suggestSeq) return
-      const list = [...(codes || []), ...places.map(p => ({ code: null, name: p.name, detail: p.detail, tier: p.kind, lat: p.lat, lng: p.lng }))].slice(0, 8)
+      const list = [...(codes || []), ...this.#wardMatches(q), ...places.map(p => ({ code: null, name: p.name, detail: p.detail, tier: p.kind, lat: p.lat, lng: p.lng }))].slice(0, 8)
       this.suggestions = list
       this.active = list.length ? 0 : -1
       this.#renderSuggest()
@@ -356,10 +356,38 @@ export default class extends Controller {
     if (q) this.#resolve(q)
   }
 
+  // Wards from the NSDI overlay whose name contains the query, at most three.
+  #wardMatches(q) {
+    const needle = q.toLowerCase().replace(/\s+ward$/, "")
+    const seen = new Set()
+    return (this.wards?.features || []).filter(f => {
+      const name = f.properties.name || ""
+      if (!name.toLowerCase().includes(needle) || seen.has(name)) return false
+      seen.add(name); return true
+    }).slice(0, 3).map(f => ({ code: null, tier: "ward", name: `${f.properties.name} ward`, detail: [f.properties.constituency, "NSDI, pre-2016"].filter(Boolean).join(" · "), ward: f }))
+  }
+
+  // A ward: fit it, draw it in amber, switch the ward lines on, and say what it is.
+  #showWard(x) {
+    const f = x.ward
+    const coords = []
+    const walk = (c) => { if (typeof c[0] === "number") coords.push(c); else c.forEach(walk) }
+    walk(f.geometry.coordinates)
+    const b = coords.reduce((acc, c) => acc.extend(c), new maplibregl.LngLatBounds(coords[0], coords[0]))
+    this.map.getSource("selected").setData(f)
+    this.#selectUnit(null)
+    this.wardsOn = true; try { localStorage.setItem("pano.wards", "1") } catch {}
+    this.#applyWards()
+    this.map.fitBounds(b, { padding: 40, duration: 700 })
+    this.at = b.getCenter()
+    this.map.once("moveend", () => this.#card({ eyebrow: "NSDI ward, pre-2016", headline: f.properties.name, sub: f.properties.constituency ? `${f.properties.constituency} constituency` : undefined, note: "A reference line only: wards are not part of the address. Tap a building for its address." }))
+  }
+
   #choose(x) {
     if (!x) return
     this.#closeSuggest()
     this.queryTarget.blur()
+    if (x.tier === "ward") { this.queryTarget.value = x.name; return this.#showWard(x) }
     if (!x.code) {
       // A street or place: fly there at building zoom and ask for the roof.
       this.queryTarget.value = x.name
