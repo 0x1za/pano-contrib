@@ -1,0 +1,26 @@
+<% content_for :title, t(".title") %>
+<main class="wrap">
+  <%= render "shared/header" %>
+  <p class="eyebrow"><%= t(".eyebrow") %></p>
+  <h1 class="display"><%= t(".title") %></h1>
+  <%= form_with model: @survey, class: "stack" do |f| %>
+    <% if @survey.errors.any? %><div class="flash is-inline is-error"><%= @survey.errors.full_messages.to_sentence %></div><% end %>
+    <div>
+      <%= f.label :target_code, t(".district"), class: "label" %>
+      <%= f.select :target_code, @districts.map { |d| [ "#{d.display_name} · #{d.code}", d.code ] }, {}, class: "field" %>
+    </div>
+    <div>
+      <%= f.label :goal, t(".goal"), class: "label" %>
+      <%= f.number_field :goal, min: 3, max: 100, class: "field field--short" %>
+      <p class="hint"><%= t(".goal_hint") %></p>
+    </div>
+    <div>
+      <%= f.label :notes, t(".notes"), class: "label" %>
+      <%= f.text_area :notes, rows: 3, maxlength: 500, class: "field", placeholder: t(".notes_placeholder") %>
+    </div>
+    <div class="actions">
+      <%= f.submit t(".submit"), class: "btn" %>
+      <%= link_to t("contributions.new.cancel"), surveys_path, class: "btn btn--ghost" %>
+    </div>
+  <% end %>
+</main>

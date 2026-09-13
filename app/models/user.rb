@@ -7,6 +7,8 @@ class User < ApplicationRecord
   has_many :contributions, dependent: :nullify
   has_many :votes, dependent: :nullify
   has_many :reviews, class_name: "Contribution", foreign_key: :reviewed_by_id, dependent: :nullify, inverse_of: :reviewed_by
+  has_many :surveys, foreign_key: :opened_by_id, dependent: :restrict_with_error, inverse_of: :opened_by
+  has_many :survey_responses, foreign_key: :recorded_by_id, dependent: :restrict_with_error, inverse_of: :recorded_by
 
   # Contributors manage their own; moderators review; admins manage users
   # and changesets. Reputation is a counter, not a permission.

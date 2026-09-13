@@ -26,6 +26,15 @@ Rails.application.routes.draw do
     end
   end
 
+  # Moderators: the field protocol, ten residents per district.
+  resources :surveys, only: %i[index new create show] do
+    member do
+      patch :close
+      get :fixture, defaults: { format: :json }
+    end
+    resources :responses, only: :create, controller: "survey_responses"
+  end
+
   # Moderators: the pending queue and its accept / reject decisions.
   get "review", to: "reviews#index", as: :review
   patch "review/:id", to: "reviews#update", as: :review_decision

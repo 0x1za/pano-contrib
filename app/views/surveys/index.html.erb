@@ -1,0 +1,28 @@
+<% content_for :title, t(".title") %>
+<main class="wrap">
+  <%= render "shared/header" %>
+  <p class="eyebrow"><%= t(".eyebrow") %></p>
+  <h1 class="display"><%= t(".title") %></h1>
+  <p class="lede"><%= t(".lede") %></p>
+  <div class="actions"><%= link_to t(".open"), new_survey_path, class: "btn" %></div>
+  <% if @surveys.empty? %>
+    <p class="sub"><%= t(".empty") %></p>
+  <% else %>
+    <ul class="entries">
+      <% @surveys.each do |s| %>
+        <li class="entry is-<%= s.status_open? ? "pending" : "accepted" %>">
+          <%= link_to survey_path(s) do %>
+            <span class="entry-main">
+              <strong class="entry-label"><%= s.display_name %> · <%= s.target_code %></strong>
+              <span class="entry-kind"><%= t(".residents", n: s.responses.count, goal: s.goal) %><% if s.recognition %> · <%= t(".recognise", pct: number_to_percentage(s.recognition * 100, precision: 0)) %><% end %></span>
+            </span>
+            <span class="entry-side">
+              <span class="pill is-<%= s.status_open? ? "pending" : "accepted" %>"><%= t("surveys.statuses.#{s.status}") %></span>
+              <time class="entry-when"><%= l(s.created_at, format: :short) %></time>
+            </span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</main>

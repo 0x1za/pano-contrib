@@ -39,3 +39,8 @@
 [x] Outbox badge in the map bar
 [ ] Offline map tiles (PMTiles), deferred with the Rust side
 ## Phase 6 — Field protocol
+[x] Surveys: a moderator opens one per district, goal ten residents
+[x] Two questions per resident, in person: recognise the name? what do you call it?
+[x] Answers are evidence, not votes: recognition rate, names heard, report
+[x] Residents who point at their house become hand-verified conformance fixtures (download)
+[ ] Bemba / Nyanja copy for the two questions

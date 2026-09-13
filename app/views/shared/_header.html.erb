@@ -9,6 +9,7 @@
       <% if current_user.reviewer? %>
         <%= link_to t("shared.header.review"), review_path %>
         <%= link_to t("shared.header.changesets"), changesets_path %>
+        <%= link_to t("shared.header.field"), surveys_path %>
       <% end %>
       <%= button_to t("shared.header.sign_out"), session_path, method: :delete, class: "linklike" %>
     <% else %>

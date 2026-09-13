@@ -72,6 +72,19 @@ answers per mutation; what it refuses stays on the phone with the reason.
 The map bar shows how many are waiting. Offline map tiles are deferred
 with the Rust side's PMTiles work.
 
+## Field protocol
+
+The map cannot tell whether people call an area what it calls it. Under
+`/surveys` a moderator opens a survey on one district and asks ten
+residents the same two things in person: do you recognise this name, and
+what do you call this place. Answers are evidence for the maintainers,
+not votes: the page shows the recognition rate and a tally of the names
+heard, folded across spellings, to read before touching `seeds.toml`.
+A resident who also points at their own building, and agrees it sits in
+the district, becomes a `hand-verified` conformance vector; the survey
+page downloads the file in the shape `fixtures/conformance/*.json` uses
+on the Rust side, with cells fetched from the pano API.
+
 ## Changesets
 
 Accepted contributions reach the map through a changeset. `/changesets`

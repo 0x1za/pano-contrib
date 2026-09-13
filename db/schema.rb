@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_13_100001) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_13_120000) do
   create_table "active_storage_attachments", id: :string, force: :cascade do |t|
     t.string "blob_id", null: false
     t.datetime "created_at", null: false
@@ -164,6 +164,37 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_13_100001) do
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
+  create_table "survey_responses", id: :string, force: :cascade do |t|
+    t.string "address"
+    t.string "building_id"
+    t.string "calls_it"
+    t.datetime "created_at", null: false
+    t.text "note"
+    t.boolean "recognises", null: false
+    t.string "recorded_by_id", null: false
+    t.string "survey_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["building_id"], name: "index_survey_responses_on_building_id"
+    t.index ["recorded_by_id"], name: "index_survey_responses_on_recorded_by_id"
+    t.index ["survey_id"], name: "index_survey_responses_on_survey_id"
+  end
+
+  create_table "surveys", id: :string, force: :cascade do |t|
+    t.datetime "closed_at"
+    t.datetime "created_at", null: false
+    t.string "gazetteer_version_id", null: false
+    t.integer "goal", default: 10, null: false
+    t.text "notes"
+    t.string "opened_by_id", null: false
+    t.integer "status", default: 0, null: false
+    t.string "target_code", null: false
+    t.string "target_name"
+    t.datetime "updated_at", null: false
+    t.index ["gazetteer_version_id", "target_code"], name: "index_surveys_on_gazetteer_version_id_and_target_code"
+    t.index ["gazetteer_version_id"], name: "index_surveys_on_gazetteer_version_id"
+    t.index ["opened_by_id"], name: "index_surveys_on_opened_by_id"
+  end
+
   create_table "users", id: :string, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "display_name"
@@ -205,6 +236,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_13_100001) do
   add_foreign_key "devices", "users"
   add_foreign_key "places", "gazetteer_versions"
   add_foreign_key "sessions", "users"
+  add_foreign_key "survey_responses", "buildings"
+  add_foreign_key "survey_responses", "surveys"
+  add_foreign_key "survey_responses", "users", column: "recorded_by_id"
+  add_foreign_key "surveys", "gazetteer_versions"
+  add_foreign_key "surveys", "users", column: "opened_by_id"
   add_foreign_key "votes", "contributions"
   add_foreign_key "votes", "devices"
   add_foreign_key "votes", "users"

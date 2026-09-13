@@ -6,6 +6,7 @@ class GazetteerVersion < ApplicationRecord
   has_many :buildings, dependent: :delete_all
   has_many :contributions, dependent: :restrict_with_error
   has_many :changesets, dependent: :restrict_with_error
+  has_many :surveys, dependent: :restrict_with_error
 
   validates :version, :sha256, :area, :imported_at, presence: true
   validates :version, :sha256, uniqueness: true

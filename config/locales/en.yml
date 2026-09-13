@@ -11,6 +11,7 @@ en:
       leaderboard: "Leaderboard"
       review: "Review"
       changesets: "Changesets"
+      field: "Field"
       sign_in: "Sign in"
       sign_out: "Sign out"
   sessions:
@@ -91,6 +92,57 @@ en:
         other: "Drafted with %{count} contributions."
     export:
       exported: "Exported. Download changes.json and run the cut."
+  surveys:
+    statuses:
+      open: "Open"
+      closed: "Closed"
+    index:
+      title: "Field surveys"
+      eyebrow: "Ten residents per district"
+      lede: "The question the map cannot answer for itself: do people call this area what the map calls it? Open a survey on a district, ask ten residents the same two things in person, and read what comes back before touching the seeds."
+      open: "Open a survey"
+      empty: "No surveys yet."
+      residents: "%{n} of %{goal} residents"
+      recognise: "%{pct} recognise the name"
+    new:
+      title: "Open a survey"
+      eyebrow: "Field"
+      district: "District"
+      goal: "How many residents?"
+      goal_hint: "Ten is the protocol. Fewer than three tells you nothing."
+      notes: "Notes for the team"
+      notes_placeholder: "Where to start, who to ask, when."
+      submit: "Open"
+    show:
+      title: "Survey"
+      residents: "Residents asked"
+      recognition: "Recognise the name"
+      buildings: "Pointed at their house"
+      names_heard: "What residents call it"
+      no_names: "No names heard yet."
+      add: "Record a resident"
+      address: "Their address, if they know it"
+      address_hint: "LS33 9XX 17 as on the wall. Leave empty if not; a building that is in another district is refused."
+      recognises: "Do they recognise “%{name}”?"
+      agrees: "Yes, that is what this place is"
+      disagrees: "No, or not by that name"
+      calls_it: "What do they call this area?"
+      note: "Anything else"
+      record: "Record"
+      done: "Ten residents asked. Close the survey when you are done in the field."
+      close: "Close the survey"
+      fixture: "Download the fixture"
+      fixture_hint: "Residents who recognised the district and pointed at their house become hand-verified conformance vectors for the pano repository: save this under fixtures/conformance/."
+      report: "Report"
+      recorded_by: "recorded by %{name}"
+      no_responses: "Nobody asked yet."
+    create:
+      opened: "Survey on %{name} opened. Go and ask."
+    close:
+      closed: "Survey closed."
+  survey_responses:
+    create:
+      recorded: "Recorded. %{n} of %{goal}."
   reviews:
     index:
       title: "Review"

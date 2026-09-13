@@ -290,3 +290,12 @@ a:hover { text-decoration: underline; text-underline-offset: .2em; }
 .entry-card { display: flex; align-items: flex-start; justify-content: space-between; gap: 1.2rem; padding: 1.2rem 1.4rem 1.2rem 1.6rem; border: 1px solid var(--hairline); border-left: 4px solid var(--amber); border-radius: var(--radius); }
 .entry.is-rejected .entry-card { border-left-color: #C8102E; }
 select.field { appearance: auto; }
+
+/* Field surveys */
+.progress { display: block; width: 100%; height: .8rem; margin: 0 0 1.6rem; accent-color: var(--accent); }
+.tally { list-style: none; margin: 0 0 1.6rem; padding: 0; display: flex; flex-wrap: wrap; gap: .6rem; }
+.tally li { display: inline-flex; gap: .6rem; align-items: baseline; padding: .4rem 1rem; border: 1px solid var(--hairline); border-radius: 999px; font-size: 1.4rem; }
+.tally li span { color: var(--subtle); font-variant-numeric: tabular-nums; }
+.resident .choices { margin: 0; }
+.resident { margin-bottom: 3.2rem; }
+.resident .choices { margin-top: .4rem; }
