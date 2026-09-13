@@ -10,7 +10,7 @@ class SurveysController < ApplicationController
 
   def new
     @survey = Survey.new(goal: 10)
-    @districts = current_gazetteer.places.tier_district.order(:code)
+    @districts = district_choices
   end
 
   def create
@@ -19,7 +19,7 @@ class SurveysController < ApplicationController
     if @survey.save
       redirect_to survey_path(@survey), notice: t(".opened", name: @survey.display_name)
     else
-      @districts = current_gazetteer.places.tier_district.order(:code)
+      @districts = district_choices
       render :new, status: :unprocessable_content
     end
   end
@@ -46,6 +46,22 @@ class SurveysController < ApplicationController
   private
     def survey_params
       params.expect(survey: [ :target_code, :goal, :notes ])
+    end
+
+    # Districts grouped by town, the town named by the pano API when it can
+    # be and by its area prefix otherwise.
+    def district_choices
+      names = town_names
+      current_gazetteer.places.tier_district.order(:code).group_by { |d| d.code[/\A[A-Z]+/] }
+        .map { |area, districts| [ names.fetch(area, area), districts.map { |d| [ "#{d.display_name} · #{d.code}", d.code ] } ] }
+    end
+
+    def town_names
+      status, body = PanoApi.meta
+      return {} unless status == 200
+      body.fetch("towns", []).to_h { |t| [ t["area"], t["name"].presence || t["area"] ] }
+    rescue PanoApi::Error
+      {}
     end
 
     def require_gazetteer

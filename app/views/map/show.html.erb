@@ -7,6 +7,7 @@
     <%= link_to root_path, class: "wordmark" do %>
       <%= render "shared/mark" %>pano
     <% end %>
+    <select class="town" data-map-target="town" data-action="change->map#town" aria-label="<%= t(".town") %>" title="<%= t(".town") %>" hidden></select>
     <form class="search" role="search" autocomplete="off" data-action="submit->map#search">
       <input type="text" name="q" data-map-target="query" placeholder="<%= t(".search_placeholder") %>" aria-label="<%= t(".search_placeholder") %>" spellcheck="false" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="map-suggest" data-action="input->map#suggest keydown->map#searchKey focus->map#suggest">
       <button type="submit" class="go" aria-label="<%= t(".search_go") %>">→</button>

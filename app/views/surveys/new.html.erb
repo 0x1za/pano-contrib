@@ -7,7 +7,7 @@
     <% if @survey.errors.any? %><div class="flash is-inline is-error"><%= @survey.errors.full_messages.to_sentence %></div><% end %>
     <div>
       <%= f.label :target_code, t(".district"), class: "label" %>
-      <%= f.select :target_code, @districts.map { |d| [ "#{d.display_name} · #{d.code}", d.code ] }, {}, class: "field" %>
+      <%= f.select :target_code, grouped_options_for_select(@districts, @survey.target_code), {}, class: "field" %>
     </div>
     <div>
       <%= f.label :goal, t(".goal"), class: "label" %>

@@ -34,7 +34,7 @@ function inRing(ring, x, y) {
 // questions. A tap on a building or the ground calls /encode and fills the
 // card; the card's buttons are plain links into the contribution forms.
 export default class extends Controller {
-  static targets = ["canvas", "welcome", "query", "suggest", "offline"]
+  static targets = ["canvas", "welcome", "query", "suggest", "offline", "town"]
   static values = {
     api: String,
     satellite: String,
@@ -98,6 +98,40 @@ export default class extends Controller {
     if (offline) this.offlineTarget.textContent = (await savedMap(this.apiValue)) ? "Offline · the saved map" : "Offline · no map saved on this phone"
   }
 
+  // ---------- towns: a gazetteer can hold several; the bar flies between them ----------
+  async #offerTowns() {
+    const meta = await this.#get("/meta")
+    this.towns = (meta?.towns || []).filter(t => t.name)
+    if (!this.hasTownTarget || this.towns.length < 2) return
+    this.townTarget.replaceChildren(...this.towns.map(t => { const o = document.createElement("option"); o.value = t.area; o.textContent = t.name; return o }))
+    this.townTarget.hidden = false
+    let chosen = null
+    try { chosen = localStorage.getItem("pano.town") } catch {}
+    const t = this.towns.find(x => x.area === chosen)
+    if (t && !this.#townHere()) this.#fitTown(t, 0)
+    this.map.on("moveend", () => { const here = this.#townHere(); if (here && this.townTarget.value !== here.area) this.townTarget.value = here.area })
+    if (this.#townHere()) this.townTarget.value = this.#townHere().area
+  }
+
+  town() {
+    const t = this.towns?.find(x => x.area === this.townTarget.value)
+    if (!t) return
+    try { localStorage.setItem("pano.town", t.area) } catch {}
+    this.popup?.remove()
+    this.#fitTown(t, 900)
+  }
+
+  #fitTown(t, duration) {
+    const b = t.bbox
+    this.map.fitBounds([[b.min_lng, b.min_lat], [b.max_lng, b.max_lat]], { padding: 40, duration })
+  }
+
+  // The town whose units cover the middle of the map, if any.
+  #townHere() {
+    const c = this.map.getCenter()
+    return (this.towns || []).find(t => c.lng >= t.bbox.min_lng && c.lng <= t.bbox.max_lng && c.lat >= t.bbox.min_lat && c.lat <= t.bbox.max_lat)
+  }
+
   // District names come from the API; offline, from the tiles already drawn.
   #districtName(code) {
     if (this.names?.[code]) return this.names[code]
@@ -158,6 +192,7 @@ export default class extends Controller {
     const districts = await this.#get("/districts")
     this.apiReachable = !!districts
     this.#paintOffline()
+    this.#offerTowns()
     if (districts) {
       this.names = Object.fromEntries(districts.features.map(f => [f.properties.code, f.properties.name || ""]))
       if (!this.tiles) {
@@ -245,7 +280,7 @@ export default class extends Controller {
       // Codes and districts from the pano API; streets and places people already know from the geocoder.
       const [codes, places] = await Promise.all([
         this.#get(`/search?q=${encodeURIComponent(q)}`),
-        fetch(`/geocode?q=${encodeURIComponent(q)}`, { headers: { Accept: "application/json" } }).then(r => r.ok ? r.json() : []).catch(() => [])
+        fetch(`/geocode?q=${encodeURIComponent(q)}&town=${encodeURIComponent(this.#townHere()?.area || "")}`, { headers: { Accept: "application/json" } }).then(r => r.ok ? r.json() : []).catch(() => [])
       ])
       if (seq !== this.suggestSeq) return
       const list = [...(codes || []), ...places.map(p => ({ code: null, name: p.name, detail: p.detail, tier: p.kind, lat: p.lat, lng: p.lng }))].slice(0, 8)

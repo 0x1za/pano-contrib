@@ -51,8 +51,12 @@ changes what anyone may do.
 ![Your pins on the map, your list in the panel](docs/screenshots/mine.png)
 
 Search takes a pano code, a district name, or the address you already
-have. "Chila Road, Kabulonga" goes to a Photon geocoder bounded to
-Lusaka and lands you on the street; then you tap your house. The old
+have. "Chila Road, Kabulonga" goes to a Photon geocoder bounded to the
+town the map is looking at and lands you on the street; then you tap
+your house. A gazetteer can hold several towns (Lusaka and
+Chililabombwe today); the chooser in the bar flies between them, the
+map remembers the last one, and the field surveys list districts by
+town. The old
 address is how you find the building, the pano code is what you leave
 with. A Satellite toggle sits in the corner for the compounds where the
 base map is a grey blur.
@@ -214,7 +218,7 @@ scripts/                       diagrams.sh, screenshots.sh
 
 ```
 bin/setup
-bin/rails "pano:import[../pano/gazetteer/v0.1.0]"    # a published gazetteer directory
+bin/rails "pano:import[../pano/gazetteer/v0.2.0]"    # a published gazetteer directory
 PANO_API_URL=http://127.0.0.1:8080 bin/dev            # the pano API must be running
 ```
 

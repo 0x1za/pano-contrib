@@ -320,3 +320,6 @@ select.field { appearance: auto; }
 
 /* Offline: the bar says so */
 .offline-pill { position: absolute; left: 50%; bottom: -1.6rem; transform: translate(-50%, 100%); padding: .3rem 1rem; background: var(--ink); color: var(--paper); border-radius: 999px; font-size: 1.2rem; font-weight: 700; letter-spacing: .04em; white-space: nowrap; }
+
+/* Town chooser in the bar */
+.bar .town { font: inherit; font-size: 1.4rem; font-weight: 700; color: var(--accent); background: var(--paper); border: 1px solid var(--hairline); border-radius: var(--radius); padding: .3rem .6rem; margin-left: 1rem; max-width: 16rem; }
