@@ -12,12 +12,12 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%# One hand-written stylesheet, pano's palette; /styleguide is the reference. %>
-    <link rel="preconnect" href="https://tile.openstreetmap.org">
-    <link rel="preconnect" href="https://fonts.openmaptiles.org">
-    <%= inline_app_css %>
+    <link rel="preconnect" href="https://tiles.openfreemap.org">
     <%= javascript_importmap_tags %>
     <%# After the import map: a module preloaded before it cannot resolve its bare imports. %>
     <%= yield :head %>
+    <%# Last, so it wins over library stylesheets such as MapLibre's, which sets the map container relative. %>
+    <%= inline_app_css %>
   </head>
   <body class="<%= content_for(:body_class) %>">
     <%# Flash as a toast; the map page keeps the header out of the way. %>

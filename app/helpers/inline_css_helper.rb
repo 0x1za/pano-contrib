@@ -12,8 +12,10 @@ module InlineCssHelper
   private
     @@app_css = nil
 
+    # By exact path: several gems ship an application.css of their own, and
+    # the load path would hand back the first of them.
     def read_app_css
-      Rails.application.assets.load_path.find("application.css")&.content&.dup&.force_encoding(Encoding::UTF_8)
+      Rails.root.join("app/assets/stylesheets/application.css").read(encoding: Encoding::UTF_8)
     rescue StandardError => e
       Rails.logger.warn("inline css: #{e.message}")
       nil

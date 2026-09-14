@@ -7,7 +7,7 @@ const CACHE = "pano-v2"
 const TILES = "pano-tiles-v1"
 const OFFLINE_URL = "/offline"
 const TILES_PATH = "/tiles/pano.pmtiles"
-const GLYPH_HOST = "fonts.openmaptiles.org"
+const GLYPH_HOST = "tiles.openfreemap.org"
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll([OFFLINE_URL])))

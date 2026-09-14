@@ -8,7 +8,7 @@ export const TILES_CACHE = "pano-tiles-v1"
 export const PAGE_CACHE = "pano-v2"
 export const CHUNK = 1024 * 1024
 export const TILES_PATH = "/tiles/pano.pmtiles"
-export const GLYPHS = ["https://fonts.openmaptiles.org/Open%20Sans%20Bold/0-255.pbf"]
+export const GLYPHS = ["https://tiles.openfreemap.org/fonts/Noto%20Sans%20Bold/0-255.pbf"]
 
 export function metaKey(url) { return `${url}?meta` }
 export function chunkKey(url, i) { return `${url}?chunk=${i}` }

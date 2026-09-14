@@ -55,18 +55,10 @@ export default class extends Controller {
       container: this.canvasTarget,
       // North stays up: no drag, touch or keyboard rotation, no pitch.
       dragRotate: false, pitchWithRotate: false, touchPitch: false, maxPitch: 0,
-      style: {
-        version: 8,
-        glyphs: "https://fonts.openmaptiles.org/{fontstack}/{range}.pbf",
-        sources: {
-          osm: { type: "raster", tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"], tileSize: 256, attribution: "© OpenStreetMap contributors" },
-          sat: { type: "raster", tiles: [this.satelliteValue], tileSize: 256, maxzoom: 19, attribution: "Imagery © Esri, Maxar, Earthstar Geographics, and the GIS User Community" }
-        },
-        layers: [
-          { id: "sat", type: "raster", source: "sat", layout: { visibility: "none" } },
-          { id: "osm", type: "raster", source: "osm", paint: { "raster-saturation": -1, "raster-opacity": 0.55 } }
-        ]
-      },
+      // The basemap is OpenFreeMap's light vector style: free, no key, no
+      // cap, and its terms allow an app to use it. (OpenStreetMap's own
+      // tile server forbids that and blocks addresses that lean on it.)
+      style: "https://tiles.openfreemap.org/styles/positron",
       center: this.centerValue, zoom: this.zoomValue, minZoom: 9, maxZoom: 20
     })
     this.map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "bottom-right")
@@ -168,6 +160,9 @@ export default class extends Controller {
 
   async #addLayers() {
     const empty = { type: "FeatureCollection", features: [] }
+    // Aerial imagery for the Satellite toggle, over the basemap, under our layers.
+    this.map.addSource("sat", { type: "raster", tiles: [this.satelliteValue], tileSize: 256, maxzoom: 19, attribution: "Imagery © Esri, Maxar, Earthstar Geographics, and the GIS User Community" })
+    this.map.addLayer({ id: "sat", type: "raster", source: "sat", layout: { visibility: "none" } })
     this.tiles = await this.#tilesAvailable()
     if (this.tiles) {
       this.map.addSource("pano", { type: "vector", url: `pmtiles://${this.apiValue}${TILES_PATH}`, promoteId: { districts: "code", sectors: "code", units: "code", buildings: "id", district_labels: "code" } })
@@ -186,7 +181,7 @@ export default class extends Controller {
     this.map.addLayer({ id: "districts-fill", type: "fill", ...from("districts", "district-outlines"), maxzoom: 13, paint: { "fill-color": "#022EAC", "fill-opacity": 0.05 } })
     this.map.addLayer({ id: "districts-halo", type: "line", ...from("districts", "district-outlines"), layout: { visibility: "none" }, paint: { "line-color": "#0B0C11", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 5, 14, 8], "line-opacity": 0.55, "line-blur": 1 } })
     this.map.addLayer({ id: "districts-line", type: "line", ...from("districts", "district-outlines"), paint: { "line-color": "#022EAC", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.2, 14, 2.2], "line-opacity": 0.9 } })
-    this.map.addLayer({ id: "district-labels", type: "symbol", ...from("district_labels", "districts"), maxzoom: 13.5, layout: { "text-field": labelText, "text-font": ["Open Sans Bold"], "text-size": 13 }, paint: { "text-color": "#022EAC", "text-halo-color": "#fff", "text-halo-width": 1.6 } })
+    this.map.addLayer({ id: "district-labels", type: "symbol", ...from("district_labels", "districts"), maxzoom: 13.5, layout: { "text-field": labelText, "text-font": ["Noto Sans Bold"], "text-size": 13 }, paint: { "text-color": "#022EAC", "text-halo-color": "#fff", "text-halo-width": 1.6 } })
     // The unit fill is the tap target and the selection highlight.
     this.map.addLayer({ id: "units-fill", type: "fill", ...from("units", "units"), minzoom: 15, paint: { "fill-color": "#FBA30C", "fill-opacity": ["case", ["boolean", ["feature-state", "selected"], false], 0.3, 0] } })
     this.map.addLayer({ id: "units-halo", type: "line", ...from("units", "units"), minzoom: 15, layout: { visibility: "none" }, paint: { "line-color": "#0B0C11", "line-width": 4.5, "line-opacity": 0.5, "line-blur": 1 } })
@@ -194,7 +189,7 @@ export default class extends Controller {
     this.map.addLayer({ id: "selected-fill", type: "fill", source: "selected", paint: { "fill-color": "#FBA30C", "fill-opacity": 0.3 } })
     this.map.addLayer({ id: "selected-line", type: "line", source: "selected", paint: { "line-color": "#022EAC", "line-width": 3 } })
     this.map.addLayer({ id: "buildings", type: "circle", ...from("buildings", "buildings"), minzoom: 15.5, paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 15.5, 2, 17, 4.5, 19, 8], "circle-color": "#13E19B", "circle-stroke-color": "#022EAC", "circle-stroke-width": 0.7 } })
-    this.map.addLayer({ id: "building-numbers", type: "symbol", ...from("buildings", "buildings"), minzoom: 17, layout: { "text-field": ["to-string", ["get", "number"]], "text-font": ["Open Sans Bold"], "text-size": 11, "text-offset": [0, -1], "text-anchor": "bottom" }, paint: { "text-color": "#0B0C11", "text-halo-color": "#fff", "text-halo-width": 1.4 } })
+    this.map.addLayer({ id: "building-numbers", type: "symbol", ...from("buildings", "buildings"), minzoom: 17, layout: { "text-field": ["to-string", ["get", "number"]], "text-font": ["Noto Sans Bold"], "text-size": 11, "text-offset": [0, -1], "text-anchor": "bottom" }, paint: { "text-color": "#0B0C11", "text-halo-color": "#fff", "text-halo-width": 1.4 } })
     // The visitor's own contributions, coloured by what became of them.
     this.map.addLayer({ id: "mine-pins", type: "circle", source: "mine", paint: {
       "circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 4, 15, 6, 19, 9],
@@ -236,7 +231,7 @@ export default class extends Controller {
   #offerWards() {
     this.map.addSource("wards", { type: "geojson", data: this.wards })
     this.map.addLayer({ id: "wards-line", type: "line", source: "wards", layout: { visibility: "none" }, paint: { "line-color": "#FBA30C", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.4, 15, 3], "line-dasharray": [1.5, 1.5], "line-opacity": 0.95 } }, "selected-fill")
-    this.map.addLayer({ id: "ward-labels", type: "symbol", source: "wards", minzoom: 11.5, layout: { visibility: "none", "symbol-placement": "line", "text-field": ["concat", ["coalesce", ["get", "name"], ["get", "constituency"]], " ward"], "text-font": ["Open Sans Bold"], "text-size": 11, "text-letter-spacing": 0.05 }, paint: { "text-color": "#FBA30C", "text-halo-color": "#fff", "text-halo-width": 1.6 } })
+    this.map.addLayer({ id: "ward-labels", type: "symbol", source: "wards", minzoom: 11.5, layout: { visibility: "none", "symbol-placement": "line", "text-field": ["concat", ["coalesce", ["get", "name"], ["get", "constituency"]], " ward"], "text-font": ["Noto Sans Bold"], "text-size": 11, "text-letter-spacing": 0.05 }, paint: { "text-color": "#FBA30C", "text-halo-color": "#fff", "text-halo-width": 1.6 } })
     const controller = this
     this.map.addControl({
       onAdd() {
@@ -273,7 +268,8 @@ export default class extends Controller {
   // Maps: it shows the mode you would switch to, labelled, next to the zoom.
   #basemapControl() {
     const sat = this.satelliteValue.replace("{z}", "13").replace("{y}", "4451").replace("{x}", "4741")
-    const osm = "https://tile.openstreetmap.org/13/4741/4451.png"
+    // The "Map" thumbnail is drawn, not fetched: a light grey block with two roads.
+    const osm = "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="#ececec"/><path d="M0 40 L64 22" stroke="#fff" stroke-width="7"/><path d="M26 0 L38 64" stroke="#fff" stroke-width="5"/><rect x="6" y="6" width="12" height="9" fill="#dcdcdc"/><rect x="44" y="44" width="14" height="10" fill="#dcdcdc"/></svg>')
     const controller = this
     return {
       onAdd() {
@@ -314,8 +310,7 @@ export default class extends Controller {
 
   #applyBasemap() {
     const sat = this.satellite
-    this.map.setLayoutProperty("sat", "visibility", sat ? "visible" : "none")
-    this.map.setLayoutProperty("osm", "visibility", sat ? "none" : "visible")
+    if (this.map.getLayer("sat")) this.map.setLayoutProperty("sat", "visibility", sat ? "visible" : "none")
     // Lines that read on a grey map vanish on imagery: switch them to white there.
     const line = sat ? "#FFFFFF" : "#022EAC"
     for (const id of ["districts-line", "units-line"]) if (this.map.getLayer(id)) this.map.setPaintProperty(id, "line-color", line)
