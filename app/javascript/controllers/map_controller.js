@@ -286,18 +286,20 @@ export default class extends Controller {
         div.append(btn)
         controller.basemapButton = btn
         controller.basemapThumbs = { sat, osm }
-        controller.#paintBasemapButton()
+        // The thumbnail is a third-party tile: the label now, the image once the map is idle.
+        controller.#paintBasemapButton(false)
+        controller.map.once("idle", () => controller.#paintBasemapButton())
         return div
       },
       onRemove() { controller.basemapButton = null }
     }
   }
 
-  #paintBasemapButton() {
+  #paintBasemapButton(withImage = true) {
     const btn = this.basemapButton
     if (!btn) return
     const toSat = !this.satellite
-    btn.style.backgroundImage = `url("${toSat ? this.basemapThumbs.sat : this.basemapThumbs.osm}")`
+    if (withImage) btn.style.backgroundImage = `url("${toSat ? this.basemapThumbs.sat : this.basemapThumbs.osm}")`
     btn.textContent = toSat ? "Satellite" : "Map"
     btn.title = toSat ? "Show aerial imagery" : "Show the street map"
     btn.setAttribute("aria-label", btn.title)

@@ -5,6 +5,9 @@
   <link rel="modulepreload" href="<%= asset_path("controllers/map_controller.js") %>">
   <%= stylesheet_link_tag "maplibre-gl" %>
   <link rel="dns-prefetch" href="https://server.arcgisonline.com">
+  <%# The two answers the map asks for first, fetched before any script runs. %>
+  <link rel="preload" href="/api/districts" as="fetch" crossorigin>
+  <link rel="preload" href="/api/meta" as="fetch" crossorigin>
 <% end %>
 <div data-controller="map" data-map-api-value="<%= @api_url %>" data-map-satellite-value="<%= @satellite_tiles %>" data-map-tiles-value="<%= feature?(:offline_map) %>">
   <div class="map" data-map-target="canvas" role="application" aria-label="<%= t(".map_label") %>"></div>
