@@ -10,9 +10,9 @@ pin_all_from "app/javascript/offline", under: "offline"
 
 # MapLibre GL JS 4.7.1, UMD build vendored from jsDelivr (BSD-3). It sets
 # window.maplibregl; controllers import it for its side effect.
-pin "maplibre-gl" # vendor/javascript/maplibre-gl.js
+pin "maplibre-gl", preload: false # vendor/javascript/maplibre-gl.js; the map page preloads it itself
 
 # pmtiles 4.5.0, UMD build vendored from npm (BSD-3), which bundles fflate
 # and sets window.pmtiles: the pmtiles:// protocol that lets MapLibre
 # range-read one archive instead of a tile server.
-pin "pmtiles" # vendor/javascript/pmtiles.js
+pin "pmtiles", preload: false # vendor/javascript/pmtiles.js; imported only when the tiles archive is in play

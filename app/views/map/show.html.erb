@@ -1,4 +1,11 @@
 <% content_for :body_class, "is-map" %>
+<% content_for :head do %>
+  <%# The map page, and only the map page, needs MapLibre: say so before the parser finds out. %>
+  <link rel="modulepreload" href="<%= asset_path("maplibre-gl.js") %>">
+  <link rel="modulepreload" href="<%= asset_path("controllers/map_controller.js") %>">
+  <%= stylesheet_link_tag "maplibre-gl" %>
+  <link rel="dns-prefetch" href="https://server.arcgisonline.com">
+<% end %>
 <div data-controller="map" data-map-api-value="<%= @api_url %>" data-map-satellite-value="<%= @satellite_tiles %>" data-map-tiles-value="<%= feature?(:offline_map) %>">
   <div class="map" data-map-target="canvas" role="application" aria-label="<%= t(".map_label") %>"></div>
 

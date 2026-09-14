@@ -14,7 +14,7 @@
     <%# One hand-written stylesheet, pano's palette; /styleguide is the reference. %>
     <link rel="preconnect" href="https://tile.openstreetmap.org">
     <link rel="preconnect" href="https://fonts.openmaptiles.org">
-    <%= stylesheet_link_tag "maplibre-gl" %>
+    <%= yield :head %>
     <%= inline_app_css %>
     <%= javascript_importmap_tags %>
   </head>

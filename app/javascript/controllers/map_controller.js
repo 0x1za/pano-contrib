@@ -1,6 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
 import "maplibre-gl"
-import { Protocol } from "pmtiles"
 import { TILES_PATH, savedMap } from "offline/map_store"
 const maplibregl = window.maplibregl
 
@@ -43,11 +42,15 @@ export default class extends Controller {
     zoom: { type: Number, default: 12 }
   }
 
-  connect() {
+  async connect() {
     // pmtiles:// lets MapLibre range-read one archive instead of a tile
     // server; the service worker answers those reads from the saved copy
     // when there is one, so the same source works with no network.
-    if (!window.__panoPmtiles) { window.__panoPmtiles = new Protocol(); maplibregl.addProtocol("pmtiles", window.__panoPmtiles.tile) }
+    if (this.tilesValue && !window.__panoPmtiles) {
+      // Only when the tiles archive is in play; the library is not loaded otherwise.
+      const { Protocol } = await import("pmtiles")
+      window.__panoPmtiles = new Protocol(); maplibregl.addProtocol("pmtiles", window.__panoPmtiles.tile)
+    }
     this.map = new maplibregl.Map({
       container: this.canvasTarget,
       // North stays up: no drag, touch or keyboard rotation, no pitch.
