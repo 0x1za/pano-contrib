@@ -14,9 +14,10 @@
     <%# One hand-written stylesheet, pano's palette; /styleguide is the reference. %>
     <link rel="preconnect" href="https://tile.openstreetmap.org">
     <link rel="preconnect" href="https://fonts.openmaptiles.org">
-    <%= yield :head %>
     <%= inline_app_css %>
     <%= javascript_importmap_tags %>
+    <%# After the import map: a module preloaded before it cannot resolve its bare imports. %>
+    <%= yield :head %>
   </head>
   <body class="<%= content_for(:body_class) %>">
     <%# Flash as a toast; the map page keeps the header out of the way. %>
