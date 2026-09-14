@@ -328,3 +328,7 @@ select.field { appearance: auto; }
 .maplibregl-ctrl.wards-switch { margin: 0 10px 10px 0; }
 .wards-switch__btn { padding: .4rem 1rem; border: 1.5px dashed var(--amber); border-radius: 999px; background: var(--paper); color: var(--ink); font: inherit; font-size: 1.2rem; font-weight: 700; letter-spacing: .04em; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,.2); }
 .wards-switch__btn.is-on { background: var(--amber); border-style: solid; }
+
+/* When the map does not start */
+.stalled { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 6; max-width: 36rem; padding: 2rem; background: var(--paper); border: 1px solid var(--ink); border-radius: var(--radius); text-align: center; font-size: 1.5rem; }
+.stalled p { margin: 0 0 1.2rem; }

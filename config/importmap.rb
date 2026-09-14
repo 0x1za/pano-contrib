@@ -16,3 +16,7 @@ pin "maplibre-gl", preload: false # vendor/javascript/maplibre-gl.js; the map pa
 # and sets window.pmtiles: the pmtiles:// protocol that lets MapLibre
 # range-read one archive instead of a tile server.
 pin "pmtiles", preload: false # vendor/javascript/pmtiles.js; imported only when the tiles archive is in play
+
+# Avo's admin bundle, pinned here with preload off so no public page
+# downloads 3 MB it never runs; /avo imports it itself.
+pin "avo/application", to: "avo/application.js", preload: false

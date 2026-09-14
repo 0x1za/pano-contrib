@@ -9,6 +9,18 @@
   <link rel="preload" href="/api/districts" as="fetch" crossorigin>
   <link rel="preload" href="/api/meta" as="fetch" crossorigin>
 <% end %>
+<%# If the map has not started in a few seconds, say so instead of staying blank: a browser holding a stale module needs a hard reload. %>
+<script>
+  setTimeout(function () {
+    var el = document.querySelector("[data-controller~=map]");
+    if (!el || el.classList.contains("is-live")) return;
+    var box = document.createElement("div");
+    box.className = "stalled";
+    box.innerHTML = '<p><strong><%= j t(".stalled_title") %></strong> <%= j t(".stalled_body") %></p><button type="button" class="btn"><%= j t(".stalled_reload") %></button>';
+    box.querySelector("button").addEventListener("click", function () { location.reload(true); });
+    document.body.appendChild(box);
+  }, 5000);
+</script>
 <div data-controller="map" data-map-api-value="<%= @api_url %>" data-map-satellite-value="<%= @satellite_tiles %>" data-map-tiles-value="<%= feature?(:offline_map) %>">
   <div class="map" data-map-target="canvas" role="application" aria-label="<%= t(".map_label") %>"></div>
 

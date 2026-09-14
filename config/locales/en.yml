@@ -182,6 +182,9 @@ en:
       welcome_go: "Got it, show me the map"
       welcome_more: "How it works"
       version: "map v%{version}, %{districts} districts"
+      stalled_title: "The map did not start."
+      stalled_body: "Your browser may be holding an old copy of the page. Reload it; on a phone, close the tab and open the address again."
+      stalled_reload: "Reload"
       bemba: "pano is Bemba for here."
   badges:
     none_yet: "No badges yet. Your first accepted contribution earns one."
