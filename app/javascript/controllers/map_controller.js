@@ -338,17 +338,24 @@ export default class extends Controller {
     if (!q) return this.#closeSuggest()
     const seq = (this.suggestSeq = (this.suggestSeq || 0) + 1)
     this.suggestTimer = setTimeout(async () => {
-      // Codes and districts from the pano API; streets and places people already know from the geocoder.
-      const [codes, places] = await Promise.all([
-        this.#get(`/search?q=${encodeURIComponent(q)}`),
-        fetch(`/geocode?q=${encodeURIComponent(q)}&town=${encodeURIComponent(this.#townHere()?.area || "")}`, { headers: { Accept: "application/json" } }).then(r => r.ok ? r.json() : []).catch(() => [])
-      ])
-      if (seq !== this.suggestSeq) return
-      const list = [...(codes || []), ...this.#wardMatches(q), ...places.map(p => ({ code: null, name: p.name, detail: p.detail, tier: p.kind, lat: p.lat, lng: p.lng }))].slice(0, 8)
-      this.suggestions = list
-      this.active = list.length ? 0 : -1
-      this.#renderSuggest()
-    }, 160)
+      // Codes, districts and wards answer in milliseconds; streets and
+      // places come from the geocoder, which can take a second the first
+      // time. Show the fast ones at once and merge the streets when they
+      // land. A query that looks like a code never asks the geocoder.
+      const show = (list) => {
+        if (seq !== this.suggestSeq) return
+        this.suggestions = list.slice(0, 8)
+        this.active = this.suggestions.length ? 0 : -1
+        this.#renderSuggest()
+      }
+      const looksLikeCode = /^[a-z]{1,2}\d/i.test(q)
+      const streets = looksLikeCode ? Promise.resolve([]) : fetch(`/geocode?q=${encodeURIComponent(q)}&town=${encodeURIComponent(this.#townHere()?.area || "")}`, { headers: { Accept: "application/json" } }).then(r => r.ok ? r.json() : []).catch(() => [])
+      const codes = (await this.#get(`/search?q=${encodeURIComponent(q)}`)) || []
+      const fast = [...codes, ...this.#wardMatches(q)]
+      if (fast.length) show(fast)
+      const places = await streets
+      show([...fast, ...places.map(p => ({ code: null, name: p.name, detail: p.detail, tier: p.kind, lat: p.lat, lng: p.lng }))])
+    }, 120)
   }
 
   searchKey(e) {
