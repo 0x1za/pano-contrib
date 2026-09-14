@@ -12,6 +12,8 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%# One hand-written stylesheet, pano's palette; /styleguide is the reference. %>
+    <link rel="preconnect" href="https://tile.openstreetmap.org">
+    <link rel="preconnect" href="https://fonts.openmaptiles.org">
     <%= stylesheet_link_tag "maplibre-gl" %>
     <%= stylesheet_link_tag :app %>
     <%= javascript_importmap_tags %>

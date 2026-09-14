@@ -244,6 +244,28 @@ To make the first admin:
 bin/rails runner 'User.find_by!(email_address: "you@example.com").role_admin!'
 ```
 
+## Fast on a phone
+
+The map page moved 6 MB on every load before anything was drawn; it now
+moves under a megabyte and opens in half the time. What changed, and
+stays true:
+
+- **Nothing loads that the page does not need.** Avo added its 3 MB admin
+  bundle to the app's importmap and importmap-rails preloaded it on every
+  page; the pin stays, so `/avo` resolves it, but it is never preloaded.
+  The ward overlay, a megabyte of lines, is fetched once the map is idle.
+- **Everything compresses.** `Rack::Deflater` sits ahead of the asset
+  server in development, where phones test through ngrok; Thruster does
+  the same in production. The API proxy passes `Accept-Encoding` through,
+  so gazetteer answers arrive gzipped from the API and are kept by the
+  browser for a day against the gazetteer's ETag.
+- **A tap answers at once.** The dot a person taps already carries its
+  id, unit and number, so the card opens from the dot with no round trip.
+- **The tile and glyph hosts are preconnected** before the map asks.
+
+`scripts/screenshots.sh` retakes the screenshots; a quick way to see the
+bytes is the network panel with a phone viewport and gzip on.
+
 ## Development
 
 `bin/rails test`, `bin/rubocop`, `bin/brakeman`. `lefthook install` wires

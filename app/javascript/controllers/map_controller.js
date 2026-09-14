@@ -214,13 +214,20 @@ export default class extends Controller {
     // The NSDI ward lines shaped the partition; the card names the ward a
     // point falls in when the server has the layer, and a switch draws
     // them. Reference only, pre-2016 delimitation: not part of the scheme.
-    this.wards = await this.#get("/overlays/wards")
-    if (this.wards) this.#offerWards()
+    // A megabyte the first paint does not need: fetched once the map is idle.
+    this.map.once("idle", () => setTimeout(() => this.#loadWards(), 1500))
     try { this.satellite = localStorage.getItem("pano.basemap") === "sat" } catch { this.satellite = false }
     if (this.satellite) this.#applyBasemap()
   }
 
   // ---------- wards: the NSDI lines as a reference overlay, off until asked ----------
+  async #loadWards() {
+    if (this.wards || this.wardsLoading) return
+    this.wardsLoading = true
+    this.wards = await this.#get("/overlays/wards")
+    if (this.wards) this.#offerWards()
+  }
+
   #offerWards() {
     this.map.addSource("wards", { type: "geojson", data: this.wards })
     this.map.addLayer({ id: "wards-line", type: "line", source: "wards", layout: { visibility: "none" }, paint: { "line-color": "#FBA30C", "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1.4, 15, 3], "line-dasharray": [1.5, 1.5], "line-opacity": 0.95 } }, "selected-fill")
@@ -498,6 +505,12 @@ export default class extends Controller {
     const hit = this.map.queryRenderedFeatures(e.point, { layers: ["buildings"] })
     const p = hit.length ? { lng: hit[0].geometry.coordinates[0], lat: hit[0].geometry.coordinates[1] } : e.lngLat
     this.at = p
+    // A tapped dot already carries its id, unit and number: the card opens
+    // at once, with no round trip.
+    if (hit.length && !this.tiles && hit[0].properties.code) {
+      const f = hit[0].properties
+      return this.#showBuilding({ code: f.code, parents: parentsOf(f.code), building: { id: f.id, number: f.number, address: `${f.code} ${f.number}`, lat: p.lat, lng: p.lng, subs: [] } })
+    }
     if (this.map.getZoom() < 13 && !hit.length) {
       const d = this.map.queryRenderedFeatures(e.point, { layers: ["districts-fill"] })
       if (d.length) return this.#showDistrict(d[0].properties, this.tiles ? { structures: d[0].properties.structures } : undefined)

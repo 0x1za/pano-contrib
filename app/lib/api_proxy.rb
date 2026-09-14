@@ -11,8 +11,8 @@ class ApiProxy
   Response = Data.define(:status, :headers, :body)
 
   ALLOWED = %r{\A/(meta|resolve/[^/]+|encode|buildings|units|search|districts|sectors|overlays/wards|tiles/pano\.pmtiles)\z}
-  FORWARD_IN = %w[Range If-None-Match Accept].freeze
-  FORWARD_OUT = %w[Content-Type ETag Content-Range Accept-Ranges Cache-Control Content-Length].freeze
+  FORWARD_IN = %w[Range If-None-Match Accept Accept-Encoding].freeze
+  FORWARD_OUT = %w[Content-Type Content-Encoding Vary ETag Content-Range Accept-Ranges Cache-Control Content-Length].freeze
 
   mattr_accessor :transport, default: ->(uri, headers) { request(uri, headers) }
 
@@ -37,6 +37,9 @@ class ApiProxy
       http.get(uri.request_uri, headers)
     end
     out = FORWARD_OUT.filter_map { |h| (v = res[h]).present? ? [ h, v ] : nil }.to_h
+    # Gazetteer answers change only with the gazetteer, whose hash is the
+    # ETag: let the browser keep them for a day and revalidate after.
+    out["Cache-Control"] ||= "public, max-age=86400" if res["ETag"].present?
     Response.new(status: res.code.to_i, headers: out, body: res.body.to_s)
   rescue SystemCallError, Net::OpenTimeout, Net::ReadTimeout => e
     raise Error, "pano API unreachable at #{PanoApi.base_url}: #{e.message}"

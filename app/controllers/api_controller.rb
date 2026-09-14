@@ -7,6 +7,7 @@ class ApiController < ApplicationController
     return head :not_found unless ApiProxy.allowed?(path)
     res = ApiProxy.fetch(path, request.query_string, request.headers)
     res.headers.each { |k, v| response.set_header(k, v) unless k == "Content-Length" }
+    response.set_header("Cache-Control", res.headers["Cache-Control"]) if res.headers["Cache-Control"]
     return head res.status if res.status == 304 || res.body.empty?
     send_data res.body, status: res.status, type: res.headers["Content-Type"] || "application/octet-stream", disposition: "inline"
   rescue ApiProxy::Error => e
