@@ -8,6 +8,7 @@ class WelcomeTest < ApplicationSystemTestCase
     assert_no_selector "dialog.welcome[open]"
 
     visit root_path
+    assert_selector "[data-controller=map].is-live"
     assert_no_selector "dialog.welcome[open]", wait: 2
 
     execute_script("arguments[0].click()", find("button.help"))

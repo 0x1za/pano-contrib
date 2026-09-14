@@ -84,6 +84,8 @@ export default class extends Controller {
     this.onLine = async () => { if (navigator.onLine) { this.apiReachable = !!(await this.#get("/meta")) } this.#paintOffline() }
     addEventListener("online", this.onLine); addEventListener("offline", this.onLine)
     this.#paintOffline()
+    // Controllers load lazily; this says the map is listening.
+    this.element.classList.add("is-live")
   }
 
   disconnect() {
