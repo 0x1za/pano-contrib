@@ -15,7 +15,7 @@
     <link rel="preconnect" href="https://tile.openstreetmap.org">
     <link rel="preconnect" href="https://fonts.openmaptiles.org">
     <%= stylesheet_link_tag "maplibre-gl" %>
-    <%= stylesheet_link_tag :app %>
+    <%= inline_app_css %>
     <%= javascript_importmap_tags %>
   </head>
   <body class="<%= content_for(:body_class) %>">
